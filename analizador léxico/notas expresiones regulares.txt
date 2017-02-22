@@ -1,0 +1,15 @@
+Expresiones regulares
+() Agrupación
++ repetición 1 o mas
+* repeitción 0 o mas
+? opcionalidad
+| or
+. cualquier caracter diferente de \nx
+´c` representa c, donde c es cualquier caracter
+[] representa conjunto, varios
+[^c] todo excepto c
+\r = CR (Carriage Return) // Used as a new line character in Mac OS before X
+
+\n = LF (Line Feed) // Used as a new line character in Unix/Mac OS X
+
+\r\n = CR + LF // Used as a new line character in Windows
