@@ -10,7 +10,7 @@ class CalcLexer(Lexer):
 	
 	tokens = {
 		#valores
-		'identificador', 'INTEGER',  'FACTOR', 
+		'identificador', 'INTEGER',
 		#simbolos
 		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "MAS", "MENOS", "MULTIPLICADOR", "IGUAL", "POTENCIA", 
 		#palabras reservadas
