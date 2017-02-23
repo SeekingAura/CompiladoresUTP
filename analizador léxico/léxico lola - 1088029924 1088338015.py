@@ -72,6 +72,7 @@ class CalcLexer(Lexer):
 		t.type = 'PLUS'      # Set token type to the expected literal
 		return t
 	"""
+	
 	#others ignore
 	@_(r'\n+')
 	def ignore_NEWLINE(self, t):
