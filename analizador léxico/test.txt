@@ -15,7 +15,7 @@ VAR S:[N]Cell; (* composite type instances *)
 BEGIN
   S.0(X.0, Y.0, ci); (* inputs in cell 0*)
   FOR i:=1..N-1 DO
-    S.i(X.i,Y.i,S[i-1].co); (* inputs in cell i 
+    S.i(X.i,Y.i,S[i-1].co); (* inputs in cell i *)
   END;
   FOR i:=0..N-1 DO
     Z.i:=S.i.z;
@@ -23,3 +23,4 @@ BEGIN
 END;
   co:=S.7.co;
 END Adder.
+'1
