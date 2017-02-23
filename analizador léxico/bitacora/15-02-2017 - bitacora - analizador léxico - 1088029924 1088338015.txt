@@ -1,0 +1,138 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+Se dieron avances con el codigo "test léxico.py", agregando mas token de palabras reservadas, en unas compilaciones que se hizo se notó que simbolos compuestos del codigo prueba como :=, .. no los comprendia como esos propios si no como 2 distintos (es decir al := lo veia como : y = y no como uno solo) s efectuó una solución asignando un token para cada simbolo compuesto de la siguiente forma:
+
+parte referida del archivo "test léxico.py":
+tokens = {
+		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', 
+	}
+	
+	literals = { '~', '&', '|', '^', '+', '-', '*', '=', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '?'}#se quitaron los simbolos compuestos
+	
+	#Tokens - simbolos compuestos
+	DOBLEPUNTO = r'[.][.]'
+	FLECHADERECHA = r'->'
+	MAYORIGUAL = r'>='
+	MENORIGUAL = r'<='
+	DOSPUNTOSIGUAL = r':='
+
+Fue agregado la parte de identificar linea y columna de cada token que va indicando, para ello se usó lo siguiente:
+
+	# Compute column.
+	#     input is the input text string
+	#     token is a token instance
+	def getColumn(self, text, token):
+		last_cr = text.rfind('\n', 0, token.index)
+		if last_cr < 0:
+			last_cr = 0
+		column = (token.index - last_cr) + 1
+		return column
+		
+print("Linea {}, columna {}, indexado {}".format(tok.lineno, lexer.getColumn(data, tok), tok.index))
+
+* Para obtener la linea es una variavle que ya lleva la clase que se actualiza correctamente, como no habia un valor asi para la columna se busco en el tema de https://github.com/dabeaz/sly/blob/master/docs/sly.rst y se tomó la función para obtener la columna, pero al parecer no calculaba del todo bien, quedó pendiente a ser modificada		
+
+* Tambien fue modificado la forma de leer comentario, se empezó a pensar en las situaciones como "(* comentario1 *) MODULE Algo; (* comentario 2 *)", con la expresión regular que se tenia antes hacia que lo que estaba en medio de os 2 comentarios era como parte del comentario, entonces para solucionarlo su expresión regular fue modificada a r'[(][*][^(*]*[^*)]*[*][)]'. Y se modificó la manera en que toma el archivo para aplicar el lexer.tokenize, haciendo que no sea 1 string por cada linea si no que todo el contenido sea 1 solo string completo para que funcionará bien, quedando asi:
+
+parte archivo "test léxico.py"
+#--#
+	file= open('test.txt')
+	data=""
+	lexer = CalcLexer()
+	LineNum=1
+	ColumNum=1
+	for linea in file:
+		data+=linea
+	print("Archivo recibido - contenido")
+	print(data)
+	for tok in lexer.tokenize(data):
+		print("Linea {}, columna {}, indexado {}".format(tok.lineno, lexer.getColumn(data, tok), tok.index))
+		print('tipo={}, valor={}'.format(tok.type, tok.value))
+#--#
+
+Con esto garantizaba que las variables propias para Linea, columna e indexado las calculara como debia. el codigo completo quedó asi:
+
+archivo "test léxico.py"
+#--#
+
+# -----------------------------------------------------------------------------
+# calc.py
+# -----------------------------------------------------------------------------
+
+from sly import Lexer, Parser
+
+class CalcLexer(Lexer):
+	#keywords = { 
+	#	'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSIF', 'FOR', 'DO', 
+	#}
+	tokens = {
+		'identificador', 'NUMBER', 'MODULE', 'TYPE', 'IN', 'OUT', 'BEGIN', 'END', 'FOR', 'IN', 'OUT', 'BIT', 'END', 'CONST', 'VAR', 'FACTOR', 'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', 
+	}
+	ignore = ' \t'
+	
+	literals = { '~', '&', '|', '^', '+', '-', '*', '=', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '?'}
+	
+	# Tokens - Reservados
+	VAR = r'VAR'
+	CONST = r'CONST'
+	END = r'END'
+	BIT = r'BIT'
+	OUT = r'OUT'
+	IN = r'IN'
+	TYPE = r'TYPE'
+	MODULE = r'MODULE'
+	
+	#Tokens - simbolos compuestos
+	DOBLEPUNTO = r'[.][.]'
+	FLECHADERECHA = r'->'
+	MAYORIGUAL = r'>='
+	MENORIGUAL = r'<='
+	DOSPUNTOSIGUAL = r':='
+	
+	# Tokens - otros
+	identificador = r'[a-zA-Z_][a-zA-Z0-9_]*' 
+	
+	@_(r'\d+')#expresión regular que trabaja [0-9]
+	def NUMBER(self, t):
+		t.value = int(t.value)
+		return t
+	
+	@_(r'\n+')
+	def newline(self, t):
+		self.lineno += t.value.count('\n')
+		return
+
+	def error(self, value):
+		print("Illegal character '%s'" % value[0])
+		self.index += 1
+		
+	@_(r'[(][*][^(*]*[^*)]*[*][)]')
+	def COMMENT(self, t):
+		return
+		
+	# Compute column.
+	#     input is the input text string
+	#     token is a token instance
+	def getColumn(self, text, token):
+		last_cr = text.rfind('\n', 0, token.index)
+		if last_cr < 0:
+			last_cr = 0
+		column = (token.index - last_cr) + 1
+		return column
+	
+if __name__ == '__main__':
+	file= open('test.txt')
+	data=""
+	lexer = CalcLexer()
+	LineNum=1
+	ColumNum=1
+	for linea in file:
+		data+=linea
+	print("Archivo recibido - contenido")
+	print(data)
+	for tok in lexer.tokenize(data):
+		print("Linea {}, columna {}, indexado {}".format(tok.lineno, lexer.getColumn(data, tok), tok.index))
+		print('tipo={}, valor={}'.format(tok.type, tok.value))
+	
+#--#

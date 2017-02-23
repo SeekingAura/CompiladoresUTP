@@ -1,0 +1,41 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+el codigo léxico y trabajos de compiladores se pasan a repositorio privado de github https://github.com/SeekingAura/CompiladoresUTP y se empieza a trabajar de una manera mas formal para controlar versiones.
+
+Se agrega expresión regular para Logic value partiendo de  pagina 4 del libro 215 lola
+
+LogicValue = " '0" | " '1".
+
+parte de archivo léxico lola - 1088029924 1088338015:
+#--#
+	def LOGICVALUE(self, t):
+			t.value = bool(int(t.value[1]))
+			return t
+
+#--#
+
+y se actualizan los comentarios si se puden saltos de linea partiendo de un codigo de ejemplo que hay en el 236
+
+archivo 236 lola pagina 24:
+
+MODULE LSB; (*Lola System Base NW 25.2.95 / 15.4.95*)
+	IMPORT Texts, Oberon, MenuViewers, TextFrames;
+	CONST NameLen* = 7;
+		black* = 5; grey* = 4; (*node values used in loop search*)
+		(*function codes*)
+		bit* = 0; ts* = 1; oc* = 2; integer* = 3; array* = 4; record* = 5; buf* = 7; not* = 8; and* = 9;
+		or* = 10; xor* = 11; mux* = 12; mux1* = 13; reg* = 14; reg1* = 15; latch* = 16; sr* = 17; tsg* = 18; link* = 19;
+
+		(*class codes*) var* = 0; in* = 1; out* = 2; io* = 3;
+	TYPE Name* = ARRAY NameLen OF CHAR;
+		Signal* = POINTER TO SignalDesc;
+		Variable* = POINTER TO VarDesc;
+	(*fct field: bits 0−4: function code, bits 5−7: class code;
+		val field: not used; u,v fields: position data*)
+	SignalDesc* = RECORD
+		x*, y*: Signal;
+		fct*, val*, u*, v*: SHORTINT
+	END ;
+
+	
