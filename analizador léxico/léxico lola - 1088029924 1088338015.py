@@ -10,30 +10,22 @@ class CalcLexer(Lexer):
 	
 	tokens = {
 		#valores
-		'identificador', 'INTEGER',
+		'ID', 'INTEGER', 'LOGICVALUE'
 		#simbolos
-		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "MAS", "MENOS", "MULTIPLICADOR", "IGUAL", "POTENCIA", 
+		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "PLUS", "MENOS", "TIMES", "IQUAL", "POTENCIA", 
 		#palabras reservadas
 		*reserved_words,
 	}
 	ignore = ' \t'
 	
 	literals = { '~', '&', '|', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
+
 	
+
 	
-	
-	#Tokens - otros
-	#Tokens - operadores
-	"""
-	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token
-	@_(r'\+')
-	def PLUS(self, t):
-		t.type = 'PLUS'      # Set token type to the expected literal
-		return t
-	"""
-	#@_ es un llamado por parte d ela clase por su patron decorador
+	#Tokens - valores
 	@_(r'[a-zA-Z_][a-zA-Z0-9_]*')
-	def identificador(self, t):
+	def ID(self, t):
 		#Control de palabras reservadas, o ma bien de priorizar check de expresión regular
 		# Chec	k if name matches a reserved word (change token type if true)
 		if t.value.upper() in self.reserved_words:
@@ -45,6 +37,12 @@ class CalcLexer(Lexer):
 	def INTEGER(self, t):
 		t.value = int(t.value)
 		return t
+	
+	@_(r"'[0-1]")
+	def LOGICVALUE(self, t):
+		t.value = bool(int(t.value[1]))
+		return t
+		
 	"""
 	@_(r'\d+|[0-9a-fA-F]+H')
     def INTEGER(self, t):
@@ -55,37 +53,32 @@ class CalcLexer(Lexer):
             t.value = int (str(t.value), 10)
         return t
 	"""
-	#othres ignore
-	@_(r'\n+')
-	def ignore_NEWLINE(self, t):
-		self.lineno += t.value.count('\n')
-	#r'\(\*([^*)]|\*[^*]\).*)*\*\)' expresion mejorada
-	ignore_COMMENT=r'\(\*([^*]|\*[^)]|\))*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
-
-
-		
-	# Compute column.
-	#     input is the input text string
-	#     token is a token instance
-	def getColumn(self, token):
-		last_cr = self.text.rfind('\n', 0, token.index)+1
-		#print("last_cr {}".format(last_cr))#verificando valor de indexados previos
-		if last_cr < 0:
-			last_cr = 0
-		column = (token.index - last_cr) + 1
-		return column
-	#Tokens - simbolos compuestos
+	#Tokens - simbolos compuestos, operadores
 	DOBLEPUNTO = r'\.\.'#r'[.][.]'
 	FLECHADERECHA = r'->'
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
 	#Tokens - otros simbolos sencillos
-	MAS = r'\+'
-	MENOS = r'-'
-	MULTIPLICADOR = r'\*'
-	IGUAL = r'='
+	PLUS = r'\+'
+	MINUS = r'-'
+	TIMES = r'\*'
+	IQUAL = r'='
 	POTENCIA = r'\^'
+	"""
+	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
+	@_(r'\+')
+	def PLUS(self, t):
+		t.type = 'PLUS'      # Set token type to the expected literal
+		return t
+	"""
+	#others ignore
+	@_(r'\n+')
+	def ignore_NEWLINE(self, t):
+		self.lineno += t.value.count('\n')
+	#r'\(\*([^*)]|\*[^*]\).*)*\*\)' expresion mejorada
+	ignore_COMMENT=r'\(\*([^*]|\*[^)]|\))*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
+	
 	
 	#error control
 	@_(r'\(\*([^*]|\*[^)]|\))*')
@@ -97,6 +90,18 @@ class CalcLexer(Lexer):
 	def error(self, value):
 		print("Illegal character {}".format(value[0]))
 		self.index += 1
+		
+	#metodos funcionales
+	# Compute column.
+	#     input is the input text string
+	#     token is a token instance
+	def getColumn(self, token):
+		last_cr = self.text.rfind('\n', 0, token.index)+1
+		#print("last_cr {}".format(last_cr))#verificando valor de indexados previos
+		if last_cr < 0:
+			last_cr = 0
+		column = (token.index - last_cr) + 1
+		return column
 		
 if __name__ == '__main__':
 	import sys
