@@ -63,16 +63,6 @@ class CalcLexer(Lexer):
 		t.value = bool(int(t.value[1]))
 		return t
 		
-	"""
-	@_(r'\d+|[0-9a-fA-F]+H')
-    def INTEGER(self, t):
-        a=str(t.value)
-        if(a[len(a)-1]== 'H'):#manejo hexa
-            t.value = int (str(t.value), 16)
-        else:
-            t.value = int (str(t.value), 10)
-        return t
-	"""
 	#Tokens - simbolos compuestos, operadores
 	DOBLEPUNTO = r'\.\.'#r'[.][.]'
 	FLECHADERECHA = r'->'
