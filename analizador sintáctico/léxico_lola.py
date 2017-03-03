@@ -18,7 +18,7 @@ class CalcLexer(Lexer):
 	}
 	ignore = ' \t'
 	
-	literals = { '~', '&', '|', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
+	literals = { '~', '&', '|', '#', '<', '>', '[', ']', '{', '}', '.', "'", '!', '↑'}
 
 	
 
@@ -69,13 +69,18 @@ class CalcLexer(Lexer):
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
+	
 	#Tokens - otros simbolos sencillos
 	PLUS = r'\+'
 	MINUS = r'-'
 	TIMES = r'\*'
 	IQUAL = r'='
 	POTENCIA = r'\^'
-	
+	LPAREN = r'\('
+	RPAREN = r'\)'
+	DOSPUNTOS = r':'
+	PUNTOYCOMA = r';'
+	COMA = r',';
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
 	@_(r'\+')
@@ -99,6 +104,7 @@ class CalcLexer(Lexer):
 		print(t.value)
 		print("ERROR - No terminó comentario")
 		print("Se esperaba un *)")
+
 	def error(self, value):
 		print("Illegal character {}".format(value[0]))
 		self.index += 1

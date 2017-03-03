@@ -1,5 +1,5 @@
-identificador : letra letraRecursivo
-	|	letra letraRecursivo '""'
+ID : letra letraRecursivo
+	|	letra letraRecursivo "'"
 	;
 	
 letraRecursivo : letraRecursivo
@@ -20,7 +20,7 @@ valorLogico : " '0"
 	;
 	
 tipoSimple : tipoBasico
-	|	identificador conjuntoExpresiones
+	|	ID conjuntoExpresiones
 	;
 
 tipoBasico : 'BIT'
@@ -47,20 +47,20 @@ expresionCorchete : expresionCorchete
 	|	'[' expresion ']'
 	;
 
-declaraciónConstante : identificador ':=' expresion ';'
+declaracionConstante : ID ':=' expresion ';'
 	;
 	
-declaraciónVariable : listaId ':' tipo ';'
+declaracionVariable : listaId ':' tipo ';'
 	;
 	
-listaId : identificador identificadorComa
+listaId : ID IDComa
 	;
 	
-identificadorComa : identificadorComa
-	|	',' identificador
+IDComa : IDComa
+	|	',' ID
 	
 selector : selector
-	|	identificadorComa
+	|	IDComa
 	|	enteroPunto
 	|	expresionCorchete
 	;
@@ -69,7 +69,7 @@ enteroPunto : enteroPunto
 	|	'.' entero
 	;
 	
-factor : identificador selector
+factor : ID selector
 	|	valorLogico
 	|	entero
 	|	'~' factor
@@ -113,20 +113,20 @@ simbolosMasMenos : '+'
 	|	'-'
 	;
 	
-asignación : identificador selector ':=' condiciónOr expresion
+asignacion : ID selector ':=' condicionOr expresion
 	;
 	
-condiciónOr : 
-	|	condición '|'
+condicionOr : 
+	|	condicion '|'
 	;
 	
-condición : expresion
+condicion : expresion
 	;
 	
-relación : expresion simbolosRelación expresion
+relacion : expresion simbolosRelacion expresion
 	;
 	
-simbolosRelación : '='
+simbolosRelacion : '='
 	|	'#'
 	|	'<'
 	|	'<='
@@ -134,23 +134,23 @@ simbolosRelación : '='
 	|	'=>'
 	;
 	
-sentenciaSi : 'IF' relación 'THEN' sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces 'END'
+sentenciaSi : 'IF' relacion 'THEN' sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces 'END'
 	;
 
 sentenciaSiSino : sentenciaSiSino
-	|	'ELSIF' relación 'THEN' sentenciaEstado
+	|	'ELSIF' relacion 'THEN' sentenciaEstado
 	;
 	
 sentenciaSiEntonces : 
 	|	'ELSE' sentenciaEstado
 	;
 	
-sentenciaPara : 'FOR' identificador ':=' expresion '..' expresion 'DO' sentenciaSecuencia 'END'
+sentenciaPara : 'FOR' ID ':=' expresion '..' expresion 'DO' sentenciaSecuencia 'END'
 	;
 	
 sentencia : 
-	|	asignación
-	|	asignaciónUnidad
+	|	asignacion
+	|	asignacionUnidad
 	|	sentenciaSi
 	|	sentenciaPara
 	;
@@ -162,51 +162,51 @@ sentenciaPuntoComa | sentenciaPuntoComa
 	|	';' sentencia
 	;
 	
-modulo : 'MODULE' identificador ';' 
-declaraciónTipoPuntoComa 
-declaraciónConstanteCONST 
-declaraciónVariableIN 
-declaraciónVariableINOUT 
-declaraciónVariableOUT 
-declaraciónVariableVAR 
+modulo : 'MODULE' ID ';' 
+declaracionTipoPuntoComa 
+declaracionConstanteCONST 
+declaracionVariableIN 
+declaracionVariableINOUT 
+declaracionVariableOUT 
+declaracionVariableVAR 
 sentenciaSecuenciaBEGIN 
-END identificador '.'
+END ID '.'
 	;
 	
-declaraciónTipoPuntoComa : declaraciónTipoPuntoComa
-	|	declaraciónTipoPuntoComa ';'
+declaracionTipoPuntoComa : declaracionTipoPuntoComa
+	|	declaracionTipoPuntoComa ';'
 	;
 	
-declaraciónConstanteCONST : 
-	|	'CONST' declaraciónDeConstanteRecursivo
+declaracionConstanteCONST : 
+	|	'CONST' declaracionDeConstanteRecursivo
 	;
 
-declaraciónDeConstanteRecursivo : declaraciónDeConstanteRecursivo
-	|	declaraciónConstante
+declaracionDeConstanteRecursivo : declaracionDeConstanteRecursivo
+	|	declaracionConstante
 	;
 	
-declaraciónVariableIN : 
-	|	'IN' declaraciónVariableRecursivo
+declaracionVariableIN : 
+	|	'IN' declaracionVariableRecursivo
 	;
 
-declaraciónVariableINOUT : 
-	|	'INOUT' declaraciónVariableRecursivo
+declaracionVariableINOUT : 
+	|	'INOUT' declaracionVariableRecursivo
 	;
 	
-declaraciónVariableOUT : 
-	|	'OUT' declaraciónVariableRecursivo
+declaracionVariableOUT : 
+	|	'OUT' declaracionVariableRecursivo
 	;
 	
-declaraciónVariableVAR : 
-	|	'VAR' declaraciónVariableRecursivo
+declaracionVariableVAR : 
+	|	'VAR' declaracionVariableRecursivo
 	;
 	
 sentenciaSecuenciaBEGIN : 
 	|	'BEGIN' sentenciaSecuencia
 	;
 	
-declaraciónVariableRecursivo : declaraciónVariableRecursivo
-	|	declaraciónVariable
+declaracionVariableRecursivo : declaracionVariableRecursivo
+	|	declaracionVariable
 	;
 	
 tipoFormal : expresionCorchete2 'BIT'
@@ -220,15 +220,15 @@ expresionOpcional :
 	|	expresion
 	;
 	
-tipoFormalBus : 'TYPE' identificador simboloPor listaIdParentesis ';'
-declaraciónTipoPuntoComa 
-declaraciónConstanteCONST 
-declaraciónVariableIN 
-declaraciónVariableINOUT 
-declaraciónVariableOUT 
-declaraciónVariableVAR 
+tipoFormalBus : 'TYPE' ID simboloPor listaIdParentesis ';'
+declaracionTipoPuntoComa 
+declaracionConstanteCONST 
+declaracionVariableIN 
+declaracionVariableINOUT 
+declaracionVariableOUT 
+declaracionVariableVAR 
 sentenciaSecuenciaBEGIN 
-END identificador '.'
+END ID '.'
 	;
 	
 simboloPor : 
