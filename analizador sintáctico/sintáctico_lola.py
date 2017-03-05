@@ -103,6 +103,7 @@ class CalcParser(Parser):
 	'''
 	IDComa : IDComa
 	|	',' ID
+	;
 	'''
 	@_('IDComa', '"," ID')
 	def IDComa(self, p):

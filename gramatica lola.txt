@@ -1,5 +1,5 @@
 ID : letra letraRecursivo
-	|	letra letraRecursivo """
+	|	letra letraRecursivo "'"
 	;
 	
 letraRecursivo : letraRecursivo
@@ -15,8 +15,8 @@ digitoRecursivo : digitoRecursivo
 	|	digito
 	;
 
-LOGICVALUE : " "0"
-	|	" "1"
+LOGICVALUE : "'0"
+	|	"'1"
 	;
 	
 tipoSimple : tipoBasico
@@ -58,6 +58,7 @@ listaId : ID IDComa
 	
 IDComa : IDComa
 	|	"," ID
+	;
 	
 selector : selector
 	|	IDComa
