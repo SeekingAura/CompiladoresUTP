@@ -1,0 +1,4 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+se inicializa analizador sintáctico en la clase colocando metodos apartir de como se tenian la grámaticas que se realizaron antes de lola

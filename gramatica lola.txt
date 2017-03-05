@@ -1,5 +1,5 @@
 ID : letra letraRecursivo
-	|	letra letraRecursivo "'"
+	|	letra letraRecursivo """
 	;
 	
 letraRecursivo : letraRecursivo
@@ -7,7 +7,7 @@ letraRecursivo : letraRecursivo
 	|	digito
 	;
 
-entero : digito digitoRecursivo
+INTEGER : digito digitoRecursivo
 	|
 	;
 	
@@ -15,21 +15,21 @@ digitoRecursivo : digitoRecursivo
 	|	digito
 	;
 
-valorLogico : " '0"
-	|	" '1"
+LOGICVALUE : " "0"
+	|	" "1"
 	;
 	
 tipoSimple : tipoBasico
 	|	ID conjuntoExpresiones
 	;
 
-tipoBasico : 'BIT'
-		| 'TS'
-		| 'OC'
+tipoBasico : "BIT"
+		| "TS"
+		| "OC"
 		;
 		
 conjuntoExpresiones :
-	|	'(' listaExpresiones ')'
+	|	"(" listaExpresiones ")"
 	;
 	
 		
@@ -37,53 +37,53 @@ listaExpresiones : expresion expresionComa
 		;
 		
 expresionComa :  expresionComa
-	|	',' expresion
+	|	"," expresion
 	;
 	
 tipo : expresionCorchete tipoSimple
 	;
 	
 expresionCorchete : expresionCorchete
-	|	'[' expresion ']'
+	|	"[" expresion "]"
 	;
 
-declaracionConstante : ID ':=' expresion ';'
+declaracionConstante : ID ":=" expresion ";"
 	;
 	
-declaracionVariable : listaId ':' tipo ';'
+declaracionVariable : listaId ":" tipo ";"
 	;
 	
 listaId : ID IDComa
 	;
 	
 IDComa : IDComa
-	|	',' ID
+	|	"," ID
 	
 selector : selector
 	|	IDComa
-	|	enteroPunto
+	|	integerPunto
 	|	expresionCorchete
 	;
 	
-enteroPunto : enteroPunto
-	|	'.' entero
+integerPunto : integerPunto
+	|	"." INTEGER
 	;
 	
 factor : ID selector
 	|	valorLogico
-	|	entero
-	|	'~' factor
-	|	'?' factor
-	|	'(' expresion ')'
-	|	'MUX' '(' expresion ':' expresion ',' expresion ')'
-	|	'MUX' '(' expresion ',' expresion ':' expresion ',' expresion ',' expresion ',' expresion)
-	|	'REG' '(' expresionComa2 expresion ')'
-	|	'LATCH" '(' expresion ',' expresion ')'
-	|	'SR' '(' expresion ',' expresion ')'
+	|	INTEGER
+	|	"~" factor
+	|	"?" factor
+	|	"(" expresion ")"
+	|	"MUX" "(" expresion ":" expresion "," expresion ")"
+	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
+	|	"REG" "(" expresionComa2 expresion ")"
+	|	"LATCH" "(" expresion "," expresion ")"
+	|	"SR" "(" expresion "," expresion ")"
 	;
 
 expresionComa2 : 
-	|	expresion ','
+	|	expresion ","
 	;
 	
 termino : factor terminoOperadores
@@ -91,15 +91,12 @@ termino : factor terminoOperadores
 	
 terminoOperadores : terminoOperadores
 	|	simbolosProd factor
-	|	simbolosProd factor
-	|	simbolosProd factor
-	|	simbolosProd factor
 	;
 	
-simbolosProd : '*'
-	|	'/'
-	|	'DIV'
-	|	'MOD'
+simbolosProd : "*"
+	|	"/"
+	|	"DIV"
+	|	"MOD"
 	;
 	
 expresion : termino terminoMasMenos
@@ -109,15 +106,15 @@ terminoMasMenos : terminoMasMenos
 	|	simbolosMasMenos termino
 	;
 	
-simbolosMasMenos : '+'
-	|	'-'
+simbolosMasMenos : "+"
+	|	"-"
 	;
 	
-asignacion : ID selector ':=' condicionOr expresion
+asignacion : ID selector ":=" condicionOr expresion
 	;
 	
 condicionOr : 
-	|	condicion '|'
+	|	condicion "|"
 	;
 	
 condicion : expresion
@@ -126,26 +123,26 @@ condicion : expresion
 relacion : expresion simbolosRelacion expresion
 	;
 	
-simbolosRelacion : '='
-	|	'#'
-	|	'<'
-	|	'<='
-	|	'>'
-	|	'=>'
+simbolosRelacion : "="
+	|	"#"
+	|	"<"
+	|	"<="
+	|	">"
+	|	">="
 	;
 	
-sentenciaSi : 'IF' relacion 'THEN' sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces 'END'
+sentenciaSi : "IF" relacion "THEN" sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces "END"
 	;
 
 sentenciaSiSino : sentenciaSiSino
-	|	'ELSIF' relacion 'THEN' sentenciaEstado
+	|	"ELSIF" relacion "THEN" sentenciaSecuencia
 	;
 	
 sentenciaSiEntonces : 
-	|	'ELSE' sentenciaEstado
+	|	"ELSE" sentenciaSecuencia
 	;
 	
-sentenciaPara : 'FOR' ID ':=' expresion '..' expresion 'DO' sentenciaSecuencia 'END'
+sentenciaPara : "FOR" ID ":=" expresion ".." expresion "DO" sentenciaSecuencia "END"
 	;
 	
 sentencia : 
@@ -159,10 +156,10 @@ sentenciaSecuencia : sentencia sentenciaPuntoComa
 	;
 	
 sentenciaPuntoComa | sentenciaPuntoComa
-	|	';' sentencia
+	|	";" sentencia
 	;
 	
-modulo : 'MODULE' ID ';' 
+modulo : "MODULE" ID ";" 
 declaracionTipoPuntoComa 
 declaracionConstanteCONST 
 declaracionVariableIN 
@@ -170,71 +167,92 @@ declaracionVariableINOUT
 declaracionVariableOUT 
 declaracionVariableVAR 
 sentenciaSecuenciaBEGIN 
-END ID '.'
+END ID "."
 	;
 	
 declaracionTipoPuntoComa : declaracionTipoPuntoComa
-	|	declaracionTipoPuntoComa ';'
+	|	declaracionTipo ";"
 	;
 	
 declaracionConstanteCONST : 
-	|	'CONST' declaracionDeConstanteRecursivo
+	|	"CONST" declaracionConstanteRecursivo
 	;
 
-declaracionDeConstanteRecursivo : declaracionDeConstanteRecursivo
+declaracionConstanteRecursivo : declaracionConstanteRecursivo
 	|	declaracionConstante
 	;
 	
 declaracionVariableIN : 
-	|	'IN' declaracionVariableRecursivo
+	|	"IN" declaracionVariableRecursivo
 	;
 
 declaracionVariableINOUT : 
-	|	'INOUT' declaracionVariableRecursivo
+	|	"INOUT" declaracionVariableRecursivo
 	;
 	
 declaracionVariableOUT : 
-	|	'OUT' declaracionVariableRecursivo
+	|	"OUT" declaracionVariableRecursivo
 	;
 	
 declaracionVariableVAR : 
-	|	'VAR' declaracionVariableRecursivo
+	|	"VAR" declaracionVariableRecursivo
 	;
 	
 sentenciaSecuenciaBEGIN : 
-	|	'BEGIN' sentenciaSecuencia
+	|	"BEGIN" sentenciaSecuencia
 	;
 	
 declaracionVariableRecursivo : declaracionVariableRecursivo
 	|	declaracionVariable
 	;
 	
-tipoFormal : expresionCorchete2 'BIT'
+tipoFormal : expresionCorchete2 "BIT"
 	;
 	
 expresionCorchete2 : expresionCorchete2
-	|	'[' expresionOpcional ']'
+	|	"[" expresionOpcional "]"
 	;
 	
 expresionOpcional : 
 	|	expresion
 	;
 	
-tipoFormalBus : 'TYPE' ID simboloPor listaIdParentesis ';'
-declaracionTipoPuntoComa 
+tipoFormalBus : expresionCorchete2 "TS"
+	|	expresionCorchete2 "OC"
+	;
+	
+declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 
 declaracionConstanteCONST 
-declaracionVariableIN 
-declaracionVariableINOUT 
+tipoFormalIN
+tipoFormlINOUT
 declaracionVariableOUT 
 declaracionVariableVAR 
 sentenciaSecuenciaBEGIN 
-END ID '.'
+END ID "."
 	;
 	
 simboloPor : 
-	|	'*'
+	|	"*"
 	;
 
 listaIdParentesis :
-	|	'(' listaId ')'
+	|	"(" listaId ")"
 	;
+	
+tipoFormalIN : 
+	|	IN tipoFormallistaId
+	;
+
+tipoFormallistaId : tipoFormallistaId
+	|	listaId ":" tipoFormal ";"
+	;
+	
+tipoFormnalINOUT : 
+	|	INOUT tipoFormlBuslistaId
+	;
+	
+tipoFormlBuslistaId : tipoFormlBuslistaId
+	|	listaId ":" tipoFormalBus ";"
+	;
+
+assinacionUnidad : ID selector "(" listaExpresiones ")"

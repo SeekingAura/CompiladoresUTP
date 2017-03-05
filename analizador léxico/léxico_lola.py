@@ -6,21 +6,19 @@ from sly import Lexer
 
 class CalcLexer(Lexer):
 	fileName=""
-	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSIF', 'FOR', 'DO', 'WHILE', 'RETURN' }
+	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO', 'WHILE', 'RETURN' }
 	
 	tokens = {
 		#valores
-		'ID', 'INTEGER', 'LOGICVALUE', 'HEXA'
+		'ID', 'INTEGER', 'LOGICVALUE', 'HEXA',
 		#simbolos
-		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "PLUS", "MENOS", "TIMES", "IQUAL", "POTENCIA", 
+		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO',
 		#palabras reservadas
 		*reserved_words,
 	}
 	ignore = ' \t'
 	
-	literals = { '~', '&', '|', '#', '<', '>', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
-
-	
+	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
 
 	
 	#Tokens - valores
@@ -70,11 +68,7 @@ class CalcLexer(Lexer):
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
 	#Tokens - otros simbolos sencillos
-	PLUS = r'\+'
-	MINUS = r'-'
-	TIMES = r'\*'
-	IQUAL = r'='
-	POTENCIA = r'\^'
+	
 	
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales

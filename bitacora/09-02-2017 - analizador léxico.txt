@@ -1,4 +1,5 @@
-
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
 
 Se inicia el proceso de elaboración de la grámatica de lola al modo de Backus Naur, se instala paquetes sly y hace prueba de dichos paquetes comprobando su funcionamiento con un ejemplo que esta en https://github.com/dabeaz/sly, iniciandolo como "test léxico.py"
 

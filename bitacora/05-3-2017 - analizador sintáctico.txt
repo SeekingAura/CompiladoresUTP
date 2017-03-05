@@ -1,0 +1,50 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+se continua el analizador sintáctico, para el manejo de expresiones con literales se encuentra en el https://github.com/dabeaz/sly/blob/master/docs/sly.rst lo siguiente
+
+De https://github.com/dabeaz/sly/blob/master/docs/sly.rst
+#--#
+	Instead of writing two functions, you might write a single function like this:
+
+	@_('expr PLUS term',
+	   'expr MINUS term')
+	def expr(self, p):
+		return (p[1], p.expr, p.term)
+	In this example, the operator could be PLUS or MINUS. Thus, we can't use the symbolic name to refer to its value. Instead, use the array index p[1] to get it as shown.
+
+	In general, the @_() decorator for any given method can list multiple grammar rules. When combining grammar rules into a single function though, all of the rules should have a similar structure (e.g., the same number of terms and consistent symbol names). Otherwise, the corresponding action code may end up being more complicated than necessary.
+
+	Character Literals
+
+	If desired, a grammar may contain tokens defined as single character literals. For example:
+
+	@_('expr "+" term')
+	def expr(self, p):
+		return p.expr + p.term
+
+	@_('expr "-" term')
+	def expr(self, p):
+		return p.expr - p.term
+	A character literal must be enclosed in quotes such as "+". In addition, if literals are used, they must be declared in the corresponding lexer class through the use of a special literals declaration:
+
+	class CalcLexer(Lexer):
+		...
+		literals = { '+','-','*','/' }
+		...
+	Character literals are limited to a single character. Thus, it is not legal to specify literals such as <= or ==. For this, use the normal lexing rules (e.g., define a rule such as LE = r'<=').
+#--#
+
+Y para producciones vacias se enceuntra como controlarlo en el mismo documento
+De https://github.com/dabeaz/sly/blob/master/docs/sly.rst
+#--#
+	Empty Productions
+
+	If you need an empty production, define a special rule like this:
+
+	@_('')
+	def empty(self, p):
+		pass
+#--#
+
+Se efectuan modificaciones a la grámatica (conservando las reglas que se indican en el documento 215.pdf de lola)
