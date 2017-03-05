@@ -1,0 +1,240 @@
+identificador : letra letraRecursivo
+	|	letra letraRecursivo '""'
+	;
+	
+letraRecursivo : letraRecursivo
+	|	letra
+	|	digito
+	;
+
+entero : digito digitoRecursivo
+	|
+	;
+	
+digitoRecursivo : digitoRecursivo
+	|	digito
+	;
+
+valorLogico : " '0"
+	|	" '1"
+	;
+	
+tipoSimple : tipoBasico
+	|	identificador conjuntoExpresiones
+	;
+
+tipoBasico : 'BIT'
+		| 'TS'
+		| 'OC'
+		;
+		
+conjuntoExpresiones :
+	|	'(' listaExpresiones ')'
+	;
+	
+		
+listaExpresiones : expresion expresionComa
+		;
+		
+expresionComa :  expresionComa
+	|	',' expresion
+	;
+	
+tipo : expresionCorchete tipoSimple
+	;
+	
+expresionCorchete : expresionCorchete
+	|	'[' expresion ']'
+	;
+
+declaraciónConstante : identificador ':=' expresion ';'
+	;
+	
+declaraciónVariable : listaId ':' tipo ';'
+	;
+	
+listaId : identificador identificadorComa
+	;
+	
+identificadorComa : identificadorComa
+	|	',' identificador
+	
+selector : selector
+	|	identificadorComa
+	|	enteroPunto
+	|	expresionCorchete
+	;
+	
+enteroPunto : enteroPunto
+	|	'.' entero
+	;
+	
+factor : identificador selector
+	|	valorLogico
+	|	entero
+	|	'~' factor
+	|	'?' factor
+	|	'(' expresion ')'
+	|	'MUX' '(' expresion ':' expresion ',' expresion ')'
+	|	'MUX' '(' expresion ',' expresion ':' expresion ',' expresion ',' expresion ',' expresion)
+	|	'REG' '(' expresionComa2 expresion ')'
+	|	'LATCH" '(' expresion ',' expresion ')'
+	|	'SR' '(' expresion ',' expresion ')'
+	;
+
+expresionComa2 : 
+	|	expresion ','
+	;
+	
+termino : factor terminoOperadores
+	;
+	
+terminoOperadores : terminoOperadores
+	|	simbolosProd factor
+	|	simbolosProd factor
+	|	simbolosProd factor
+	|	simbolosProd factor
+	;
+	
+simbolosProd : '*'
+	|	'/'
+	|	'DIV'
+	|	'MOD'
+	;
+	
+expresion : termino terminoMasMenos
+	;
+	
+terminoMasMenos : terminoMasMenos
+	|	simbolosMasMenos termino
+	;
+	
+simbolosMasMenos : '+'
+	|	'-'
+	;
+	
+asignación : identificador selector ':=' condiciónOr expresion
+	;
+	
+condiciónOr : 
+	|	condición '|'
+	;
+	
+condición : expresion
+	;
+	
+relación : expresion simbolosRelación expresion
+	;
+	
+simbolosRelación : '='
+	|	'#'
+	|	'<'
+	|	'<='
+	|	'>'
+	|	'=>'
+	;
+	
+sentenciaSi : 'IF' relación 'THEN' sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces 'END'
+	;
+
+sentenciaSiSino : sentenciaSiSino
+	|	'ELSIF' relación 'THEN' sentenciaEstado
+	;
+	
+sentenciaSiEntonces : 
+	|	'ELSE' sentenciaEstado
+	;
+	
+sentenciaPara : 'FOR' identificador ':=' expresion '..' expresion 'DO' sentenciaSecuencia 'END'
+	;
+	
+sentencia : 
+	|	asignación
+	|	asignaciónUnidad
+	|	sentenciaSi
+	|	sentenciaPara
+	;
+	
+sentenciaSecuencia : sentencia sentenciaPuntoComa
+	;
+	
+sentenciaPuntoComa | sentenciaPuntoComa
+	|	';' sentencia
+	;
+	
+modulo : 'MODULE' identificador ';' 
+declaraciónTipoPuntoComa 
+declaraciónConstanteCONST 
+declaraciónVariableIN 
+declaraciónVariableINOUT 
+declaraciónVariableOUT 
+declaraciónVariableVAR 
+sentenciaSecuenciaBEGIN 
+END identificador '.'
+	;
+	
+declaraciónTipoPuntoComa : declaraciónTipoPuntoComa
+	|	declaraciónTipoPuntoComa ';'
+	;
+	
+declaraciónConstanteCONST : 
+	|	'CONST' declaraciónDeConstanteRecursivo
+	;
+
+declaraciónDeConstanteRecursivo : declaraciónDeConstanteRecursivo
+	|	declaraciónConstante
+	;
+	
+declaraciónVariableIN : 
+	|	'IN' declaraciónVariableRecursivo
+	;
+
+declaraciónVariableINOUT : 
+	|	'INOUT' declaraciónVariableRecursivo
+	;
+	
+declaraciónVariableOUT : 
+	|	'OUT' declaraciónVariableRecursivo
+	;
+	
+declaraciónVariableVAR : 
+	|	'VAR' declaraciónVariableRecursivo
+	;
+	
+sentenciaSecuenciaBEGIN : 
+	|	'BEGIN' sentenciaSecuencia
+	;
+	
+declaraciónVariableRecursivo : declaraciónVariableRecursivo
+	|	declaraciónVariable
+	;
+	
+tipoFormal : expresionCorchete2 'BIT'
+	;
+	
+expresionCorchete2 : expresionCorchete2
+	|	'[' expresionOpcional ']'
+	;
+	
+expresionOpcional : 
+	|	expresion
+	;
+	
+tipoFormalBus : 'TYPE' identificador simboloPor listaIdParentesis ';'
+declaraciónTipoPuntoComa 
+declaraciónConstanteCONST 
+declaraciónVariableIN 
+declaraciónVariableINOUT 
+declaraciónVariableOUT 
+declaraciónVariableVAR 
+sentenciaSecuenciaBEGIN 
+END identificador '.'
+	;
+	
+simboloPor : 
+	|	'*'
+	;
+
+listaIdParentesis :
+	|	'(' listaId ')'
+	;

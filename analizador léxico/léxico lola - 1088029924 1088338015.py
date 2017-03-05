@@ -10,7 +10,7 @@ class CalcLexer(Lexer):
 	
 	tokens = {
 		#valores
-		'ID', 'INTEGER', 'LOGICVALUE'
+		'ID', 'INTEGER', 'LOGICVALUE', 'HEXA'
 		#simbolos
 		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "PLUS", "MENOS", "TIMES", "IQUAL", "POTENCIA", 
 		#palabras reservadas
@@ -32,6 +32,26 @@ class CalcLexer(Lexer):
 			t.type = t.value.upper()
 		return t
 	
+	@_(r'[0-9a-fA-F]+H')
+	def HEXA(self, t):
+		value=0
+		for enum, i in enumerate(reversed(t.value)):
+			if(i=="a" or i=="A"):
+				value+=(16**(enum-1))*int(10)
+			elif(i=="b" or i=="B"):
+				value+=(16**(enum-1))*int(11)
+			elif(i=="c" or i=="C"):
+				value+=(16**(enum-1))*int(12)
+			elif(i=="d" or i=="D"):
+				value+=(16**(enum-1))*int(13)
+			elif(i=="e" or i=="E"):
+				value+=(16**(enum-1))*int(14)
+			elif(i=="f" or i=="F"):
+				value+=(16**(enum-1))*int(15)
+			elif(not i=="H"):
+				value+=(16**(enum-1))*int(i)
+		t.value=value
+		return t
 	
 	@_(r'\d+')#expresión regular que trabaja [0-9]
 	def INTEGER(self, t):
@@ -65,6 +85,7 @@ class CalcLexer(Lexer):
 	TIMES = r'\*'
 	IQUAL = r'='
 	POTENCIA = r'\^'
+	
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
 	@_(r'\+')
@@ -77,9 +98,9 @@ class CalcLexer(Lexer):
 	@_(r'\n+')
 	def ignore_NEWLINE(self, t):
 		self.lineno += t.value.count('\n')
+		
 	#r'\(\*([^*)]|\*[^*]\).*)*\*\)' expresion mejorada
 	ignore_COMMENT=r'\(\*([^*]|\*[^)]|\))*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
-	
 	
 	#error control
 	@_(r'\(\*([^*]|\*[^)]|\))*')
