@@ -1,0 +1,114 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+se realizan los últimos ajustes al archivo "test léxico.py", se agregaron tokens para el + - * y se redefinió el modo de obtener archivor a la hora de compilar con la siguiente sentencia:
+
+parte del archivo "test léxico.py"
+#--#
+if(len(sys.argv)!=2):
+		sys.stderr.write('Usage: "{}" "filename"\n'.format(sys.argv[0]))
+		raise SystemExit(1)
+	file= open(sys.argv[1])
+#--#
+
+el sys.argv es un vector que permite tomar los terminos que se entran al momento de mandar la setencia de compilación, entonces con esto permitimos que sea tipo "python fichero archivo y asi queda terminado para la entrega, se le cambió el nombre del fichero de "test léxico.py" a "léxico lola - 1088029924 1088338015" y es enviado
+archivo "léxico lola - 1088029924 1088338015":
+#--#
+# -----------------------------------------------------------------------------
+# calc.py
+# -----------------------------------------------------------------------------
+
+from sly import Lexer
+
+class CalcLexer(Lexer):
+	
+	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSIF', 'FOR', 'DO' }
+	
+	tokens = {
+		'identificador', 'INTEGER',  'FACTOR', 'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO', "MAS", "MENOS", "MULTIPLICADOR", "IGUAL", "POTENCIA", *reserved_words,
+	}
+	ignore = ' \t'
+	
+	literals = { '~', '&', '|', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '?'}
+	
+	#Tokens - simbolos compuestos
+	DOBLEPUNTO = r'\.\.'#r'[.][.]'
+	FLECHADERECHA = r'->'
+	MAYORIGUAL = r'>='
+	MENORIGUAL = r'<='
+	DOSPUNTOSIGUAL = r':='
+	#Tokens - otros simbolos
+	MAS = r'\+'
+	MENOS = r'-'
+	MULTIPLICADOR = r'\*'
+	IGUAL = r'='
+	POTENCIA = r'\^'
+	
+	#Tokens - otros
+	#Tokens - operadores
+	"""
+	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token
+	@_(r'\+')
+	def PLUS(self, t):
+		t.type = 'PLUS'      # Set token type to the expected literal
+		return t
+	"""
+	#@_ es un llamado por parte d ela clase por su patron decorador
+	@_(r'[a-zA-Z_][a-zA-Z0-9_]*')
+	def identificador(self, t):
+		#Control de palabras reservadas, o ma bien de priorizar check de expresión regular
+		# Chec	k if name matches a reserved word (change token type if true)
+		if t.value.upper() in self.reserved_words:
+			t.type = t.value.upper()
+		return t
+	
+	
+	@_(r'\d+')#expresión regular que trabaja [0-9]
+	def INTEGER(self, t):
+		t.value = int(t.value)
+		return t
+	
+	@_(r'\n+')
+	def ignore_newline(self, t):
+		self.lineno += t.value.count('\n')
+
+	def error(self, value):
+		print("Illegal character {}" % value[0])
+		self.index += 1
+	ignore_comment=r'\(\*[^(*]*[^*)]*\*\)'
+		
+	# Compute column.
+	#     input is the input text string
+	#     token is a token instance
+	def getColumn(self, text, token):
+		last_cr = text.rfind('\n', 0, token.index)+1
+		#print("last_cr : {}".format(last_cr))#verificando valor de indexados previos
+		if last_cr < 0:
+			last_cr = 0
+		column = (token.index - last_cr) + 1
+		return column
+	
+if __name__ == '__main__':
+	import sys
+	lexer = CalcLexer()
+	if(len(sys.argv)!=2):#Verifica la cantidad de argumentos a la hora de compilar si no son 2. "py 'fichero.py' 'archivo'"
+		sys.stderr.write('Usage: "{}" "filename"\n'.format(sys.argv[0]))#permite que al al compilar indique que debe de darse el archivo de la forma python.exe "fichero.py" "Archivo a abrir, como un simple print"
+		raise SystemExit(1)#termina el programa
+	file= open(sys.argv[1])#en caso de que indique archivo tome el segundo string y abra el archivo
+	data=""#String que contendrá el codigo a efectuar léxico
+	maxLenthLine=0
+	for linea in file:
+		data+=linea
+		if(maxLenthLine<len(linea)):
+			maxLenthLine=len(linea)#verifica la columna maxima para el formato de centrado (visual en los print)
+	print("{:{align}{width}}".format("Archivo recibido - contenido inicio", align="^", width=maxLenthLine))
+	print("-"*maxLenthLine)
+	print(data)
+	print("-"*maxLenthLine)
+	print("{:{align}{width}}".format("Archivo recibido - contenido fin", align="^", width=maxLenthLine))
+	
+	#print("aplicando tokenize")
+	for tok in lexer.tokenize(data):
+		print("Linea {}, columna {}, indexado {}".format(tok.lineno, lexer.getColumn(data, tok), tok.index))
+		print('tipo {} valor {}'.format(tok.type, tok.value))
+#--#

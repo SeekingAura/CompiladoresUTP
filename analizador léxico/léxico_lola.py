@@ -6,6 +6,7 @@ from sly import Lexer
 
 class CalcLexer(Lexer):
 	fileName=""
+
 	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO', 'WHILE', 'RETURN' }
 	
 	tokens = {
@@ -18,8 +19,8 @@ class CalcLexer(Lexer):
 	}
 	ignore = ' \t'
 	
-	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
 
+	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
 	
 	#Tokens - valores
 	@_(r'[a-zA-Z_][a-zA-Z0-9_]*')
@@ -67,7 +68,6 @@ class CalcLexer(Lexer):
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
-	#Tokens - otros simbolos sencillos
 	
 	
 	"""

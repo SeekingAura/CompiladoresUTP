@@ -8,7 +8,9 @@ from léxico_lola import CalcLexer
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
 	
+
 	tokens = CalcLexer.tokens
+
 	
 	'''
 	tipoSimple : tipoBasico
@@ -37,6 +39,7 @@ class CalcParser(Parser):
 	;
 	'''
 	
+
 	@_('empty', '"(" listaExpresiones ")"')
 	def conjuntoExpresiones(self, p):
 		pass
@@ -55,6 +58,7 @@ class CalcParser(Parser):
 	|	',' expresion
 	;
 	'''
+
 	@_('expresionComa', '"," expresion')
 	def expresionComa(self, p):
 		pass
@@ -64,6 +68,7 @@ class CalcParser(Parser):
 	;
 	'''
 	@_('expresionCorchete tipoSimple')
+
 	def tipo(self, p):
 		pass
 		
@@ -77,6 +82,7 @@ class CalcParser(Parser):
 		pass
 		
 	'''
+
 	declaracionConstante : ID ":=" expresion ";"'
 	;
 	'''
@@ -93,6 +99,7 @@ class CalcParser(Parser):
 		pass
 		
 	'''
+
 	listaId : ID IDComa
 		;
 	'''
@@ -104,6 +111,7 @@ class CalcParser(Parser):
 	IDComa : IDComa
 	|	',' ID
 	'''
+
 	@_('IDComa', '"," ID')
 	def IDComa(self, p):
 		pass
@@ -531,9 +539,6 @@ class CalcParser(Parser):
 	@_('')
 	def empty(self, p):
 		pass
-		
-		
-		
 		
 if __name__ == '__main__':
 	import sys

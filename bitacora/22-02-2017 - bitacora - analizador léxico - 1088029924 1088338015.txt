@@ -1,0 +1,32 @@
+Estudiantes: Carlos Arturo Moreno Tabares - 1088029924
+Karen Stefanny Lopez Segura - 1088338015
+
+se ha mejorado la expresión regular de comentario r'\(\*([^*]|\*[^)]|\))*\*\)' para que permita casos tipo
+
+(* Composite Type *) TYPE Cell; (* Composite Type
+  IN x,y,ci:BIT; (* input signals *)
+  
+Donde TYPE Cell; es otra cosa es decir no hace parte del comentario, en otras palabras allí hay 2 comentarios; y ademas se agregó la expresión regular para cuando se abre comentario y nunca cierra
+
+parte del archivo "léxico lola - 1088029924 1088338015.py"
+#--#
+	@_(r'\(\*([^*]|\*[^)]|\))*')
+		def error_COMMENT(self, t):
+			print('File "{}" Line {} Colum {}'.format(self.fileName, t.lineno, self.getColumn(t)))
+			print(t.value)
+			print("ERROR - No terminó comentario")
+			print("Se esperaba un *)")
+#--#
+
+tambien fue mejorada la función de obtener columna, ya que necesitaba saber de que texto ubicar la columna de un token dado y al realizar tokenize este guarda ese texto entonces se le puso la variable que ya se guardaba (para evitar mas assinación innecesaria)
+
+parte del archivo "léxico lola - 1088029924 1088338015.py"
+#--#
+	def getColumn(self, token):
+		last_cr = self.text.rfind('\n', 0, token.index)+1
+		#print("last_cr {}".format(last_cr))#verificando valor de indexados previos
+		if last_cr < 0:
+			last_cr = 0
+		column = (token.index - last_cr) + 1
+		return column
+#--#
