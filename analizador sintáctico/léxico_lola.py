@@ -6,6 +6,7 @@ from sly import Lexer
 
 class CalcLexer(Lexer):
 	fileName=""
+
 	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO', 'WHILE', 'RETURN' }
 	
 	tokens = {
@@ -13,16 +14,19 @@ class CalcLexer(Lexer):
 		'ID', 'INTEGER', 'LOGICVALUE', 'HEXA',
 		#simbolos
 		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO',
+
 		#palabras reservadas
 		*reserved_words,
 	}
 	ignore = ' \t'
 	
+
 	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
+
 
 	
 	#Tokens - valores
-	@_(r'[a-zA-Z_][a-zA-Z0-9_]*')
+	@_(r"[a-zA-Z_][a-zA-Z0-9_]*'?")
 	def ID(self, t):
 		#Control de palabras reservadas, o ma bien de priorizar check de expresión regular
 		# Chec	k if name matches a reserved word (change token type if true)
@@ -67,9 +71,7 @@ class CalcLexer(Lexer):
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
-	#Tokens - otros simbolos sencillos
-	
-	
+
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
 	@_(r'\+')
@@ -93,6 +95,7 @@ class CalcLexer(Lexer):
 		print(t.value)
 		print("ERROR - No terminó comentario")
 		print("Se esperaba un *)")
+
 	def error(self, value):
 		print("Illegal character {}".format(value[0]))
 		self.index += 1

@@ -6,240 +6,253 @@ Rule 2     tipoSimple -> tipoBasico
 Rule 3     tipoBasico -> OC
 Rule 4     tipoBasico -> TS
 Rule 5     tipoBasico -> BIT
-Rule 6     conjuntoExpresiones -> ( listaExpresiones )
-Rule 7     conjuntoExpresiones -> empty
+Rule 6     conjuntoExpresiones -> empty
+Rule 7     conjuntoExpresiones -> ( listaExpresiones )
 Rule 8     listaExpresiones -> expresion expresionComa
-Rule 9     expresionComa -> , expresion
-Rule 10    expresionComa -> expresionComa
-Rule 11    tipo -> expresionCorchete tipoSimple
-Rule 12    expresionCorchete -> [ expresion ]
-Rule 13    expresionCorchete -> expresionCorchete
-Rule 14    declaracionConstante -> ID DOSPUNTOSIGUAL expresion ;
-Rule 15    declaracionVariable -> listaId : tipo ;
-Rule 16    listaId -> ID IDComa
-Rule 17    IDComa -> , ID
-Rule 18    IDComa -> IDComa
-Rule 19    selector -> expresionCorchete
-Rule 20    selector -> integerPunto
-Rule 21    selector -> IDComa
-Rule 22    selector -> selector
-Rule 23    integerPunto -> . INTEGER
-Rule 24    integerPunto -> integerPunto
-Rule 25    factor -> SR ( expresion , expresion )
-Rule 26    factor -> LATCH ( expresion , expresion )
-Rule 27    factor -> REG ( expresionComa2 expresion
-Rule 28    factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-Rule 29    factor -> MUX ( expresion : expresion , expresion )
-Rule 30    factor -> ( expresion )
-Rule 31    factor -> ? factor
-Rule 32    factor -> ~ factor
-Rule 33    factor -> INTEGER
-Rule 34    factor -> LOGICVALUE
-Rule 35    factor -> ID selector
-Rule 36    expresionComa2 -> expresion ,
-Rule 37    expresionComa2 -> empty
-Rule 38    termino -> factor terminoOperadores
-Rule 39    terminoOperadores -> simbolosProd factor
-Rule 40    terminoOperadores -> terminoOperadores
-Rule 41    simbolosProd -> MOD
-Rule 42    simbolosProd -> DIV
-Rule 43    simbolosProd -> /
-Rule 44    simbolosProd -> *
-Rule 45    expresion -> termino terminoMasMenos
-Rule 46    terminoMasMenos -> simbolosMasMenos termino
-Rule 47    terminoMasMenos -> terminoMasMenos
-Rule 48    simbolosMasMenos -> -
-Rule 49    simbolosMasMenos -> +
-Rule 50    asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion
-Rule 51    condicionOr -> condicion |
-Rule 52    condicionOr -> empty
-Rule 53    condicion -> expresion
-Rule 54    relacion -> expresion simbolosRelacion expresion
-Rule 55    simbolosRelacion -> MAYORIGUAL
-Rule 56    simbolosRelacion -> >
-Rule 57    simbolosRelacion -> MENORIGUAL
-Rule 58    simbolosRelacion -> <
-Rule 59    simbolosRelacion -> #
-Rule 60    simbolosRelacion -> =
-Rule 61    sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
-Rule 62    sentenciaSiSino -> ELSIF relacion THEN sentenciaSecuencia
-Rule 63    sentenciaSiSino -> sentenciaSiSino
-Rule 64    sentenciaSiEntonces -> ELSE sentenciaSecuencia
-Rule 65    sentenciaSiEntonces -> empty
-Rule 66    sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END
-Rule 67    sentencia -> sentenciaPara
-Rule 68    sentencia -> sentenciaSi
-Rule 69    sentencia -> asignacionUnidad
-Rule 70    sentencia -> asignacion
-Rule 71    sentencia -> empty
-Rule 72    sentenciaSecuencia -> sentencia sentenciaPuntoComa
-Rule 73    sentenciaPuntoComa -> ; sentencia
-Rule 74    sentenciaPuntoComa -> sentenciaPuntoComa
-Rule 75    modulo -> MODULE ID ; declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID
-Rule 76    declaracionTipoPuntoComa -> declaracionTipo ;
-Rule 77    declaracionTipoPuntoComa -> declaracionTipoPuntoComa
-Rule 78    declaracionConstanteCONST -> CONST declaracionConstanteRecursivo
-Rule 79    declaracionConstanteCONST -> empty
-Rule 80    declaracionConstanteRecursivo -> declaracionConstante
-Rule 81    declaracionConstanteRecursivo -> declaracionConstanteRecursivo
-Rule 82    declaracionVariableIN -> IN declaracionVariableRecursivo
-Rule 83    declaracionVariableIN -> empty
-Rule 84    declaracionVariableINOUT -> INOUT declaracionVariableRecursivo
-Rule 85    declaracionVariableINOUT -> empty
-Rule 86    declaracionVariableOUT -> OUT declaracionConstanteRecursivo
-Rule 87    declaracionVariableOUT -> empty
-Rule 88    declaracionVariableVAR -> VAR declaracionVariableRecursivo
-Rule 89    declaracionVariableVAR -> empty
-Rule 90    sentenciaSecuenciaBEGIN -> BEGIN sentenciaSecuencia
-Rule 91    sentenciaSecuenciaBEGIN -> empty
-Rule 92    declaracionVariableRecursivo -> declaracionVariable
-Rule 93    declaracionVariableRecursivo -> declaracionVariableRecursivo
-Rule 94    tipoFormal -> expresionCorchete2 BIT
-Rule 95    expresionCorchete2 -> [ expresionOpcional ]
-Rule 96    expresionCorchete2 -> expresionCorchete2
-Rule 97    expresionOpcional -> expresion
-Rule 98    expresionOpcional -> empty
-Rule 99    tipoFormalBus -> expresionCorchete2 OC
-Rule 100   tipoFormalBus -> expresionCorchete2 TS
-Rule 101   declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID .
-Rule 102   simboloPor -> *
-Rule 103   simboloPor -> empty
-Rule 104   listaIdParentesis -> ( listaId )
-Rule 105   listaIdParentesis -> empty
-Rule 106   tipoFormalIN -> IN tipoFormallistaId
-Rule 107   tipoFormalIN -> empty
-Rule 108   tipoFormallistaId -> listaId : tipoFormal ;
-Rule 109   tipoFormallistaId -> tipoFormallistaId
-Rule 110   tipoFormlINOUT -> INOUT tipoFormallistaId
-Rule 111   tipoFormlINOUT -> empty
-Rule 112   tipoFormlBuslistaId -> listaId : tipoFormalBus ;
-Rule 113   tipoFormlBuslistaId -> tipoFormlBuslistaId
-Rule 114   asignacionUnidad -> ID selector ( listaExpresiones )
-Rule 115   empty -> <empty>
+Rule 9     expresionComa -> empty
+Rule 10    expresionComa -> , expresion
+Rule 11    expresionComa -> expresionComa , expresion
+Rule 12    tipo -> expresionCorchete tipoSimple
+Rule 13    expresionCorchete -> empty
+Rule 14    expresionCorchete -> [ expresion ]
+Rule 15    expresionCorchete -> expresionCorchete [ expresion ]
+Rule 16    declaracionConstante -> ID DOSPUNTOSIGUAL expresion ;
+Rule 17    declaracionVariable -> listaId : tipo ;
+Rule 18    listaId -> ID IDComa
+Rule 19    IDComa -> empty
+Rule 20    IDComa -> , ID
+Rule 21    IDComa -> IDComa , ID
+Rule 22    selector -> empty
+Rule 23    selector -> [ expresion ]
+Rule 24    selector -> . INTEGER
+Rule 25    selector -> . ID
+Rule 26    selector -> selector [ expresion ]
+Rule 27    selector -> selector . INTEGER
+Rule 28    selector -> selector . ID
+Rule 29    factor -> SR ( expresion , expresion )
+Rule 30    factor -> LATCH ( expresion , expresion )
+Rule 31    factor -> REG ( expresionComa2 expresion
+Rule 32    factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+Rule 33    factor -> MUX ( expresion : expresion , expresion )
+Rule 34    factor -> ( expresion )
+Rule 35    factor -> ? factor
+Rule 36    factor -> ~ factor
+Rule 37    factor -> INTEGER
+Rule 38    factor -> LOGICVALUE
+Rule 39    factor -> ID selector
+Rule 40    expresionComa2 -> empty
+Rule 41    expresionComa2 -> expresion ,
+Rule 42    termino -> factor terminoOperadores
+Rule 43    terminoOperadores -> empty
+Rule 44    terminoOperadores -> simbolosProd factor
+Rule 45    terminoOperadores -> terminoOperadores simbolosProd factor
+Rule 46    simbolosProd -> MOD
+Rule 47    simbolosProd -> DIV
+Rule 48    simbolosProd -> /
+Rule 49    simbolosProd -> *
+Rule 50    expresion -> termino terminoMasMenos
+Rule 51    terminoMasMenos -> empty
+Rule 52    terminoMasMenos -> simbolosMasMenos termino
+Rule 53    terminoMasMenos -> terminoMasMenos simbolosMasMenos termino
+Rule 54    simbolosMasMenos -> -
+Rule 55    simbolosMasMenos -> +
+Rule 56    asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion
+Rule 57    condicionOr -> empty
+Rule 58    condicionOr -> condicion |
+Rule 59    condicion -> expresion
+Rule 60    relacion -> expresion simbolosRelacion expresion
+Rule 61    simbolosRelacion -> MAYORIGUAL
+Rule 62    simbolosRelacion -> >
+Rule 63    simbolosRelacion -> MENORIGUAL
+Rule 64    simbolosRelacion -> <
+Rule 65    simbolosRelacion -> #
+Rule 66    simbolosRelacion -> =
+Rule 67    sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
+Rule 68    sentenciaSiSino -> empty
+Rule 69    sentenciaSiSino -> ELSIF relacion THEN sentenciaSecuencia
+Rule 70    sentenciaSiSino -> sentenciaSiSino ELSIF relacion THEN sentenciaSecuencia
+Rule 71    sentenciaSiEntonces -> empty
+Rule 72    sentenciaSiEntonces -> ELSE sentenciaSecuencia
+Rule 73    sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END
+Rule 74    sentencia -> empty
+Rule 75    sentencia -> sentenciaPara
+Rule 76    sentencia -> sentenciaSi
+Rule 77    sentencia -> asignacionUnidad
+Rule 78    sentencia -> asignacion
+Rule 79    sentenciaSecuencia -> sentencia sentenciaPuntoComa
+Rule 80    sentenciaPuntoComa -> empty
+Rule 81    sentenciaPuntoComa -> ; sentencia
+Rule 82    sentenciaPuntoComa -> sentenciaPuntoComa ; sentencia
+Rule 83    modulo -> MODULE ID ; declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID .
+Rule 84    declaracionTipoPuntoComa -> empty
+Rule 85    declaracionTipoPuntoComa -> declaracionTipo ;
+Rule 86    declaracionTipoPuntoComa -> declaracionTipoPuntoComa declaracionTipo ;
+Rule 87    declaracionConstanteCONST -> empty
+Rule 88    declaracionConstanteCONST -> CONST declaracionConstanteRecursivo
+Rule 89    declaracionConstanteRecursivo -> empty
+Rule 90    declaracionConstanteRecursivo -> declaracionConstante
+Rule 91    declaracionConstanteRecursivo -> declaracionConstanteRecursivo declaracionConstante
+Rule 92    declaracionVariableIN -> empty
+Rule 93    declaracionVariableIN -> IN declaracionVariableRecursivo
+Rule 94    declaracionVariableINOUT -> empty
+Rule 95    declaracionVariableINOUT -> INOUT declaracionVariableRecursivo
+Rule 96    declaracionVariableOUT -> empty
+Rule 97    declaracionVariableOUT -> OUT declaracionConstanteRecursivo
+Rule 98    declaracionVariableVAR -> empty
+Rule 99    declaracionVariableVAR -> VAR declaracionVariableRecursivo
+Rule 100   sentenciaSecuenciaBEGIN -> empty
+Rule 101   sentenciaSecuenciaBEGIN -> BEGIN sentenciaSecuencia
+Rule 102   declaracionVariableRecursivo -> empty
+Rule 103   declaracionVariableRecursivo -> declaracionVariable
+Rule 104   declaracionVariableRecursivo -> declaracionVariableRecursivo declaracionVariable
+Rule 105   tipoFormal -> expresionCorchete2 BIT
+Rule 106   expresionCorchete2 -> empty
+Rule 107   expresionCorchete2 -> [ expresionOpcional ]
+Rule 108   expresionCorchete2 -> expresionCorchete2 [ expresionOpcional ]
+Rule 109   expresionOpcional -> empty
+Rule 110   expresionOpcional -> expresion
+Rule 111   tipoFormalBus -> expresionCorchete2 OC
+Rule 112   tipoFormalBus -> expresionCorchete2 TS
+Rule 113   declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID
+Rule 114   simboloPor -> empty
+Rule 115   simboloPor -> *
+Rule 116   listaIdParentesis -> empty
+Rule 117   listaIdParentesis -> ( listaId )
+Rule 118   tipoFormalIN -> empty
+Rule 119   tipoFormalIN -> IN tipoFormallistaId
+Rule 120   tipoFormallistaId -> empty
+Rule 121   tipoFormallistaId -> listaId : tipoFormal ;
+Rule 122   tipoFormallistaId -> tipoFormallistaId listaId : tipoFormal ;
+Rule 123   tipoFormlINOUT -> empty
+Rule 124   tipoFormlINOUT -> INOUT tipoFormallistaId
+Rule 125   tipoFormlBuslistaId -> empty
+Rule 126   tipoFormlBuslistaId -> listaId : tipoFormalBus ;
+Rule 127   tipoFormlBuslistaId -> tipoFormlBuslistaId listaId : tipoFormalBus ;
+Rule 128   asignacionUnidad -> ID selector ( listaExpresiones )
+Rule 129   empty -> <empty>
 
 Unused terminals:
 
-    WHILE
-    RETURN
     FLECHADERECHA
     HEXA
+    RETURN
+    WHILE
 
 Terminals, with rules where they appear:
 
-#                    : 59
-(                    : 6 25 26 27 28 29 30 104 114
-)                    : 6 25 26 28 29 30 104 114
-*                    : 44 102
-+                    : 49
-,                    : 9 17 25 26 28 28 28 28 29 36
--                    : 48
-.                    : 23 101
-/                    : 43
-:                    : 15 28 29 108 112
-;                    : 14 15 73 75 76 101 108 112
-<                    : 58
-=                    : 60
->                    : 56
-?                    : 31
-BEGIN                : 90
-BIT                  : 5 94
-CONST                : 78
-DIV                  : 42
-DO                   : 66
-DOBLEPUNTO           : 66
-DOSPUNTOSIGUAL       : 14 50 66
-ELSE                 : 64
-ELSIF                : 62
-END                  : 61 66 75 101
+#                    : 65
+(                    : 7 29 30 31 32 33 34 117 128
+)                    : 7 29 30 32 33 34 117 128
+*                    : 49 115
++                    : 55
+,                    : 10 11 20 21 29 30 32 32 32 32 33 41
+-                    : 54
+.                    : 24 25 27 28 83
+/                    : 48
+:                    : 17 32 33 121 122 126 127
+;                    : 16 17 81 82 83 85 86 113 121 122 126 127
+<                    : 64
+=                    : 66
+>                    : 62
+?                    : 35
+BEGIN                : 101
+BIT                  : 5 105
+CONST                : 88
+DIV                  : 47
+DO                   : 73
+DOBLEPUNTO           : 73
+DOSPUNTOSIGUAL       : 16 56 73
+ELSE                 : 72
+ELSIF                : 69 70
+END                  : 67 73 83 113
 FLECHADERECHA        : 
-FOR                  : 66
+FOR                  : 73
 HEXA                 : 
-ID                   : 1 14 16 17 35 50 66 75 75 101 101 114
-IF                   : 61
-IN                   : 82 106
-INOUT                : 84 110
-INTEGER              : 23 33
-LATCH                : 26
-LOGICVALUE           : 34
-MAYORIGUAL           : 55
-MENORIGUAL           : 57
-MOD                  : 41
-MODULE               : 75
-MUX                  : 28 29
-OC                   : 3 99
-OUT                  : 86
-REG                  : 27
+ID                   : 1 16 18 20 21 25 28 39 56 73 83 83 113 113 128
+IF                   : 67
+IN                   : 93 119
+INOUT                : 95 124
+INTEGER              : 24 27 37
+LATCH                : 30
+LOGICVALUE           : 38
+MAYORIGUAL           : 61
+MENORIGUAL           : 63
+MOD                  : 46
+MODULE               : 83
+MUX                  : 32 33
+OC                   : 3 111
+OUT                  : 97
+REG                  : 31
 RETURN               : 
-SR                   : 25
-THEN                 : 61 62
-TS                   : 4 100
-TYPE                 : 101
-VAR                  : 88
+SR                   : 29
+THEN                 : 67 69 70
+TS                   : 4 112
+TYPE                 : 113
+VAR                  : 99
 WHILE                : 
-[                    : 12 95
-]                    : 12 95
+[                    : 14 15 23 26 107 108
+]                    : 14 15 23 26 107 108
 error                : 
-|                    : 51
-~                    : 32
+|                    : 58
+~                    : 36
 
 Nonterminals, with rules where they appear:
 
-IDComa               : 16 18 21
-asignacion           : 70
-asignacionUnidad     : 69
-condicion            : 51
-condicionOr          : 50
+IDComa               : 18 21
+asignacion           : 78
+asignacionUnidad     : 77
+condicion            : 58
+condicionOr          : 56
 conjuntoExpresiones  : 1
-declaracionConstante : 80
-declaracionConstanteCONST : 75 101
-declaracionConstanteRecursivo : 78 81 86
-declaracionTipo      : 76
-declaracionTipoPuntoComa : 75 77
-declaracionVariable  : 92
-declaracionVariableIN : 75
-declaracionVariableINOUT : 75
-declaracionVariableOUT : 75 101
-declaracionVariableRecursivo : 82 84 88 93
-declaracionVariableVAR : 75 101
-empty                : 7 37 52 65 71 79 83 85 87 89 91 98 103 105 107 111
-expresion            : 8 9 12 14 25 25 26 26 27 28 28 28 28 28 28 29 29 29 30 36 50 53 54 54 66 66 97
-expresionComa        : 8 10
-expresionComa2       : 27
-expresionCorchete    : 11 13 19
-expresionCorchete2   : 94 96 99 100
-expresionOpcional    : 95
-factor               : 31 32 38 39
-integerPunto         : 20 24
-listaExpresiones     : 6 114
-listaId              : 15 104 108 112
-listaIdParentesis    : 101
+declaracionConstante : 90 91
+declaracionConstanteCONST : 83 113
+declaracionConstanteRecursivo : 88 91 97
+declaracionTipo      : 85 86
+declaracionTipoPuntoComa : 83 86
+declaracionVariable  : 103 104
+declaracionVariableIN : 83
+declaracionVariableINOUT : 83
+declaracionVariableOUT : 83 113
+declaracionVariableRecursivo : 93 95 99 104
+declaracionVariableVAR : 83 113
+empty                : 6 9 13 19 22 40 43 51 57 68 71 74 80 84 87 89 92 94 96 98 100 102 106 109 114 116 118 120 123 125
+expresion            : 8 10 11 14 15 16 23 26 29 29 30 30 31 32 32 32 32 32 32 33 33 33 34 41 56 59 60 60 73 73 110
+expresionComa        : 8 11
+expresionComa2       : 31
+expresionCorchete    : 12 15
+expresionCorchete2   : 105 108 111 112
+expresionOpcional    : 107 108
+factor               : 35 36 42 44 45
+listaExpresiones     : 7 128
+listaId              : 17 117 121 122 126 127
+listaIdParentesis    : 113
 modulo               : 
-relacion             : 61 62
-selector             : 22 35 50 114
-sentencia            : 72 73
-sentenciaPara        : 67
-sentenciaPuntoComa   : 72 74
-sentenciaSecuencia   : 61 62 64 66 90
-sentenciaSecuenciaBEGIN : 75 101
-sentenciaSi          : 68
-sentenciaSiEntonces  : 61
-sentenciaSiSino      : 61 63
-simboloPor           : 101
-simbolosMasMenos     : 46
-simbolosProd         : 39
-simbolosRelacion     : 54
-termino              : 45 46
-terminoMasMenos      : 45 47
-terminoOperadores    : 38 40
-tipo                 : 15
+relacion             : 67 69 70
+selector             : 26 27 28 39 56 128
+sentencia            : 79 81 82
+sentenciaPara        : 75
+sentenciaPuntoComa   : 79 82
+sentenciaSecuencia   : 67 69 70 72 73 101
+sentenciaSecuenciaBEGIN : 83 113
+sentenciaSi          : 76
+sentenciaSiEntonces  : 67
+sentenciaSiSino      : 67 70
+simboloPor           : 113
+simbolosMasMenos     : 52 53
+simbolosProd         : 44 45
+simbolosRelacion     : 60
+termino              : 50 52 53
+terminoMasMenos      : 50 53
+terminoOperadores    : 42 45
+tipo                 : 17
 tipoBasico           : 2
-tipoFormal           : 108
-tipoFormalBus        : 112
-tipoFormalIN         : 101
-tipoFormallistaId    : 106 109 110
-tipoFormlBuslistaId  : 113
-tipoFormlINOUT       : 101
-tipoSimple           : 11 0
+tipoFormal           : 121 122
+tipoFormalBus        : 126 127
+tipoFormalIN         : 113
+tipoFormallistaId    : 119 122 124
+tipoFormlBuslistaId  : 127
+tipoFormlINOUT       : 113
+tipoSimple           : 12 0
 
 
 state 0
@@ -266,14 +279,14 @@ state 1
 state 2
 
     (1) tipoSimple -> ID . conjuntoExpresiones
-    (6) conjuntoExpresiones -> . ( listaExpresiones )
-    (7) conjuntoExpresiones -> . empty
-    (115) empty -> .
-    (               shift and go to state 8
-    $end            reduce using rule 115 (empty -> .)
+    (6) conjuntoExpresiones -> . empty
+    (7) conjuntoExpresiones -> . ( listaExpresiones )
+    (129) empty -> .
+    (               shift and go to state 9
+    $end            reduce using rule 129 (empty -> .)
 
     conjuntoExpresiones            shift and go to state 7
-    empty                          shift and go to state 9
+    empty                          shift and go to state 8
 
 state 3
 
@@ -307,21 +320,27 @@ state 7
 
 state 8
 
-    (6) conjuntoExpresiones -> ( . listaExpresiones )
+    (6) conjuntoExpresiones -> empty .
+    $end            reduce using rule 6 (conjuntoExpresiones -> empty .)
+
+
+state 9
+
+    (7) conjuntoExpresiones -> ( . listaExpresiones )
     (8) listaExpresiones -> . expresion expresionComa
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -338,28 +357,22 @@ state 8
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 9
-
-    (7) conjuntoExpresiones -> empty .
-    $end            reduce using rule 7 (conjuntoExpresiones -> empty .)
-
-
 state 10
 
-    (30) factor -> ( . expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (34) factor -> ( . expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -377,88 +390,119 @@ state 10
 
 state 11
 
-    (6) conjuntoExpresiones -> ( listaExpresiones . )
+    (7) conjuntoExpresiones -> ( listaExpresiones . )
     )               shift and go to state 25
 
 
 state 12
 
     (8) listaExpresiones -> expresion . expresionComa
-    (9) expresionComa -> . , expresion
-    (10) expresionComa -> . expresionComa
-    ,               shift and go to state 27
+    (9) expresionComa -> . empty
+    (10) expresionComa -> . , expresion
+    (11) expresionComa -> . expresionComa , expresion
+    (129) empty -> .
+  ! shift/reduce conflict for , resolved as shift
+    ,               shift and go to state 28
+    )               reduce using rule 129 (empty -> .)
 
     expresionComa                  shift and go to state 26
+    empty                          shift and go to state 27
 
 state 13
 
-    (45) expresion -> termino . terminoMasMenos
-    (46) terminoMasMenos -> . simbolosMasMenos termino
-    (47) terminoMasMenos -> . terminoMasMenos
-    (48) simbolosMasMenos -> . -
-    (49) simbolosMasMenos -> . +
-    -               shift and go to state 30
-    +               shift and go to state 31
+    (50) expresion -> termino . terminoMasMenos
+    (51) terminoMasMenos -> . empty
+    (52) terminoMasMenos -> . simbolosMasMenos termino
+    (53) terminoMasMenos -> . terminoMasMenos simbolosMasMenos termino
+    (129) empty -> .
+    (54) simbolosMasMenos -> . -
+    (55) simbolosMasMenos -> . +
+  ! shift/reduce conflict for - resolved as shift
+  ! shift/reduce conflict for + resolved as shift
+    ,               reduce using rule 129 (empty -> .)
+    )               reduce using rule 129 (empty -> .)
+    :               reduce using rule 129 (empty -> .)
+    ]               reduce using rule 129 (empty -> .)
+    MOD             reduce using rule 129 (empty -> .)
+    DIV             reduce using rule 129 (empty -> .)
+    /               reduce using rule 129 (empty -> .)
+    *               reduce using rule 129 (empty -> .)
+    -               shift and go to state 32
+    +               shift and go to state 33
 
-    terminoMasMenos                shift and go to state 28
-    simbolosMasMenos               shift and go to state 29
+    terminoMasMenos                shift and go to state 29
+    empty                          shift and go to state 30
+    simbolosMasMenos               shift and go to state 31
 
 state 14
 
-    (38) termino -> factor . terminoOperadores
-    (39) terminoOperadores -> . simbolosProd factor
-    (40) terminoOperadores -> . terminoOperadores
-    (41) simbolosProd -> . MOD
-    (42) simbolosProd -> . DIV
-    (43) simbolosProd -> . /
-    (44) simbolosProd -> . *
-    MOD             shift and go to state 34
-    DIV             shift and go to state 35
-    /               shift and go to state 36
-    *               shift and go to state 37
+    (42) termino -> factor . terminoOperadores
+    (43) terminoOperadores -> . empty
+    (44) terminoOperadores -> . simbolosProd factor
+    (45) terminoOperadores -> . terminoOperadores simbolosProd factor
+    (129) empty -> .
+    (46) simbolosProd -> . MOD
+    (47) simbolosProd -> . DIV
+    (48) simbolosProd -> . /
+    (49) simbolosProd -> . *
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for / resolved as shift
+  ! shift/reduce conflict for * resolved as shift
+    -               reduce using rule 129 (empty -> .)
+    +               reduce using rule 129 (empty -> .)
+    ,               reduce using rule 129 (empty -> .)
+    )               reduce using rule 129 (empty -> .)
+    :               reduce using rule 129 (empty -> .)
+    ]               reduce using rule 129 (empty -> .)
+    MOD             shift and go to state 37
+    DIV             shift and go to state 38
+    /               shift and go to state 39
+    *               shift and go to state 40
 
-    terminoOperadores              shift and go to state 32
-    simbolosProd                   shift and go to state 33
+    terminoOperadores              shift and go to state 34
+    empty                          shift and go to state 35
+    simbolosProd                   shift and go to state 36
 
 state 15
 
-    (25) factor -> SR . ( expresion , expresion )
-    (               shift and go to state 38
+    (29) factor -> SR . ( expresion , expresion )
+    (               shift and go to state 41
 
 
 state 16
 
-    (26) factor -> LATCH . ( expresion , expresion )
-    (               shift and go to state 39
+    (30) factor -> LATCH . ( expresion , expresion )
+    (               shift and go to state 42
 
 
 state 17
 
-    (27) factor -> REG . ( expresionComa2 expresion
-    (               shift and go to state 40
+    (31) factor -> REG . ( expresionComa2 expresion
+    (               shift and go to state 43
 
 
 state 18
 
-    (28) factor -> MUX . ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> MUX . ( expresion : expresion , expresion )
-    (               shift and go to state 41
+    (32) factor -> MUX . ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> MUX . ( expresion : expresion , expresion )
+    (               shift and go to state 44
 
 
 state 19
 
-    (31) factor -> ? . factor
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (35) factor -> ? . factor
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -470,22 +514,22 @@ state 19
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    factor                         shift and go to state 42
+    factor                         shift and go to state 45
 
 state 20
 
-    (32) factor -> ~ . factor
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (36) factor -> ~ . factor
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -497,152 +541,110 @@ state 20
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    factor                         shift and go to state 43
+    factor                         shift and go to state 46
 
 state 21
 
-    (33) factor -> INTEGER .
-    MOD             reduce using rule 33 (factor -> INTEGER .)
-    DIV             reduce using rule 33 (factor -> INTEGER .)
-    /               reduce using rule 33 (factor -> INTEGER .)
-    *               reduce using rule 33 (factor -> INTEGER .)
-    ,               reduce using rule 33 (factor -> INTEGER .)
-    )               reduce using rule 33 (factor -> INTEGER .)
-    :               reduce using rule 33 (factor -> INTEGER .)
-    ]               reduce using rule 33 (factor -> INTEGER .)
-    -               reduce using rule 33 (factor -> INTEGER .)
-    +               reduce using rule 33 (factor -> INTEGER .)
+    (37) factor -> INTEGER .
+    MOD             reduce using rule 37 (factor -> INTEGER .)
+    DIV             reduce using rule 37 (factor -> INTEGER .)
+    /               reduce using rule 37 (factor -> INTEGER .)
+    *               reduce using rule 37 (factor -> INTEGER .)
+    -               reduce using rule 37 (factor -> INTEGER .)
+    +               reduce using rule 37 (factor -> INTEGER .)
+    ,               reduce using rule 37 (factor -> INTEGER .)
+    )               reduce using rule 37 (factor -> INTEGER .)
+    :               reduce using rule 37 (factor -> INTEGER .)
+    ]               reduce using rule 37 (factor -> INTEGER .)
 
 
 state 22
 
-    (34) factor -> LOGICVALUE .
-    MOD             reduce using rule 34 (factor -> LOGICVALUE .)
-    DIV             reduce using rule 34 (factor -> LOGICVALUE .)
-    /               reduce using rule 34 (factor -> LOGICVALUE .)
-    *               reduce using rule 34 (factor -> LOGICVALUE .)
-    ,               reduce using rule 34 (factor -> LOGICVALUE .)
-    )               reduce using rule 34 (factor -> LOGICVALUE .)
-    :               reduce using rule 34 (factor -> LOGICVALUE .)
-    ]               reduce using rule 34 (factor -> LOGICVALUE .)
-    -               reduce using rule 34 (factor -> LOGICVALUE .)
-    +               reduce using rule 34 (factor -> LOGICVALUE .)
+    (38) factor -> LOGICVALUE .
+    MOD             reduce using rule 38 (factor -> LOGICVALUE .)
+    DIV             reduce using rule 38 (factor -> LOGICVALUE .)
+    /               reduce using rule 38 (factor -> LOGICVALUE .)
+    *               reduce using rule 38 (factor -> LOGICVALUE .)
+    -               reduce using rule 38 (factor -> LOGICVALUE .)
+    +               reduce using rule 38 (factor -> LOGICVALUE .)
+    ,               reduce using rule 38 (factor -> LOGICVALUE .)
+    )               reduce using rule 38 (factor -> LOGICVALUE .)
+    :               reduce using rule 38 (factor -> LOGICVALUE .)
+    ]               reduce using rule 38 (factor -> LOGICVALUE .)
 
 
 state 23
 
-    (35) factor -> ID . selector
-    (19) selector -> . expresionCorchete
-    (20) selector -> . integerPunto
-    (21) selector -> . IDComa
-    (22) selector -> . selector
-    (12) expresionCorchete -> . [ expresion ]
-    (13) expresionCorchete -> . expresionCorchete
-    (23) integerPunto -> . . INTEGER
-    (24) integerPunto -> . integerPunto
-    (17) IDComa -> . , ID
-    (18) IDComa -> . IDComa
-    [               shift and go to state 48
-    .               shift and go to state 49
-    ,               shift and go to state 50
+    (39) factor -> ID . selector
+    (22) selector -> . empty
+    (23) selector -> . [ expresion ]
+    (24) selector -> . . INTEGER
+    (25) selector -> . . ID
+    (26) selector -> . selector [ expresion ]
+    (27) selector -> . selector . INTEGER
+    (28) selector -> . selector . ID
+    (129) empty -> .
+  ! shift/reduce conflict for [ resolved as shift
+  ! shift/reduce conflict for . resolved as shift
+    [               shift and go to state 49
+    .               shift and go to state 50
+    MOD             reduce using rule 129 (empty -> .)
+    DIV             reduce using rule 129 (empty -> .)
+    /               reduce using rule 129 (empty -> .)
+    *               reduce using rule 129 (empty -> .)
+    -               reduce using rule 129 (empty -> .)
+    +               reduce using rule 129 (empty -> .)
+    ,               reduce using rule 129 (empty -> .)
+    )               reduce using rule 129 (empty -> .)
+    :               reduce using rule 129 (empty -> .)
+    ]               reduce using rule 129 (empty -> .)
 
-    selector                       shift and go to state 44
-    expresionCorchete              shift and go to state 45
-    integerPunto                   shift and go to state 46
-    IDComa                         shift and go to state 47
+    selector                       shift and go to state 47
+    empty                          shift and go to state 48
 
 state 24
 
-    (30) factor -> ( expresion . )
+    (34) factor -> ( expresion . )
     )               shift and go to state 51
 
 
 state 25
 
-    (6) conjuntoExpresiones -> ( listaExpresiones ) .
-    $end            reduce using rule 6 (conjuntoExpresiones -> ( listaExpresiones ) .)
+    (7) conjuntoExpresiones -> ( listaExpresiones ) .
+    $end            reduce using rule 7 (conjuntoExpresiones -> ( listaExpresiones ) .)
 
 
 state 26
 
     (8) listaExpresiones -> expresion expresionComa .
-    (10) expresionComa -> expresionComa .
-  ! reduce/reduce conflict for ) resolved using rule 8 (listaExpresiones -> expresion expresionComa .)
+    (11) expresionComa -> expresionComa . , expresion
     )               reduce using rule 8 (listaExpresiones -> expresion expresionComa .)
+    ,               shift and go to state 52
 
 
 state 27
 
-    (9) expresionComa -> , . expresion
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
+    (9) expresionComa -> empty .
+    ,               reduce using rule 9 (expresionComa -> empty .)
+    )               reduce using rule 9 (expresionComa -> empty .)
 
-    expresion                      shift and go to state 52
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
 
 state 28
 
-    (45) expresion -> termino terminoMasMenos .
-    (47) terminoMasMenos -> terminoMasMenos .
-  ! reduce/reduce conflict for , resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for ) resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for : resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for ] resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for MOD resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for DIV resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for / resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for * resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for - resolved using rule 45 (expresion -> termino terminoMasMenos .)
-  ! reduce/reduce conflict for + resolved using rule 45 (expresion -> termino terminoMasMenos .)
-    ,               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    )               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    :               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    ]               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    MOD             reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    DIV             reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    /               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    *               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    -               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-    +               reduce using rule 45 (expresion -> termino terminoMasMenos .)
-
-
-state 29
-
-    (46) terminoMasMenos -> simbolosMasMenos . termino
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (10) expresionComa -> , . expresion
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -654,199 +656,248 @@ state 29
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    termino                        shift and go to state 53
+    expresion                      shift and go to state 53
+    termino                        shift and go to state 13
     factor                         shift and go to state 14
+
+state 29
+
+    (50) expresion -> termino terminoMasMenos .
+    (53) terminoMasMenos -> terminoMasMenos . simbolosMasMenos termino
+    (54) simbolosMasMenos -> . -
+    (55) simbolosMasMenos -> . +
+  ! shift/reduce conflict for - resolved as shift
+  ! shift/reduce conflict for + resolved as shift
+    ,               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    )               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    :               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    ]               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    MOD             reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    DIV             reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    /               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    *               reduce using rule 50 (expresion -> termino terminoMasMenos .)
+    -               shift and go to state 32
+    +               shift and go to state 33
+
+    simbolosMasMenos               shift and go to state 54
 
 state 30
 
-    (48) simbolosMasMenos -> - .
-    SR              reduce using rule 48 (simbolosMasMenos -> - .)
-    LATCH           reduce using rule 48 (simbolosMasMenos -> - .)
-    REG             reduce using rule 48 (simbolosMasMenos -> - .)
-    MUX             reduce using rule 48 (simbolosMasMenos -> - .)
-    (               reduce using rule 48 (simbolosMasMenos -> - .)
-    ?               reduce using rule 48 (simbolosMasMenos -> - .)
-    ~               reduce using rule 48 (simbolosMasMenos -> - .)
-    INTEGER         reduce using rule 48 (simbolosMasMenos -> - .)
-    LOGICVALUE      reduce using rule 48 (simbolosMasMenos -> - .)
-    ID              reduce using rule 48 (simbolosMasMenos -> - .)
+    (51) terminoMasMenos -> empty .
+    -               reduce using rule 51 (terminoMasMenos -> empty .)
+    +               reduce using rule 51 (terminoMasMenos -> empty .)
+    ,               reduce using rule 51 (terminoMasMenos -> empty .)
+    )               reduce using rule 51 (terminoMasMenos -> empty .)
+    :               reduce using rule 51 (terminoMasMenos -> empty .)
+    ]               reduce using rule 51 (terminoMasMenos -> empty .)
+    MOD             reduce using rule 51 (terminoMasMenos -> empty .)
+    DIV             reduce using rule 51 (terminoMasMenos -> empty .)
+    /               reduce using rule 51 (terminoMasMenos -> empty .)
+    *               reduce using rule 51 (terminoMasMenos -> empty .)
 
 
 state 31
 
-    (49) simbolosMasMenos -> + .
-    SR              reduce using rule 49 (simbolosMasMenos -> + .)
-    LATCH           reduce using rule 49 (simbolosMasMenos -> + .)
-    REG             reduce using rule 49 (simbolosMasMenos -> + .)
-    MUX             reduce using rule 49 (simbolosMasMenos -> + .)
-    (               reduce using rule 49 (simbolosMasMenos -> + .)
-    ?               reduce using rule 49 (simbolosMasMenos -> + .)
-    ~               reduce using rule 49 (simbolosMasMenos -> + .)
-    INTEGER         reduce using rule 49 (simbolosMasMenos -> + .)
-    LOGICVALUE      reduce using rule 49 (simbolosMasMenos -> + .)
-    ID              reduce using rule 49 (simbolosMasMenos -> + .)
+    (52) terminoMasMenos -> simbolosMasMenos . termino
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
 
+    termino                        shift and go to state 55
+    factor                         shift and go to state 14
 
 state 32
 
-    (38) termino -> factor terminoOperadores .
-    (40) terminoOperadores -> terminoOperadores .
-  ! reduce/reduce conflict for , resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for ) resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for : resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for ] resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for MOD resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for DIV resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for / resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for * resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for - resolved using rule 38 (termino -> factor terminoOperadores .)
-  ! reduce/reduce conflict for + resolved using rule 38 (termino -> factor terminoOperadores .)
-    -               reduce using rule 38 (termino -> factor terminoOperadores .)
-    +               reduce using rule 38 (termino -> factor terminoOperadores .)
-    ,               reduce using rule 38 (termino -> factor terminoOperadores .)
-    )               reduce using rule 38 (termino -> factor terminoOperadores .)
-    :               reduce using rule 38 (termino -> factor terminoOperadores .)
-    ]               reduce using rule 38 (termino -> factor terminoOperadores .)
-    MOD             reduce using rule 38 (termino -> factor terminoOperadores .)
-    DIV             reduce using rule 38 (termino -> factor terminoOperadores .)
-    /               reduce using rule 38 (termino -> factor terminoOperadores .)
-    *               reduce using rule 38 (termino -> factor terminoOperadores .)
+    (54) simbolosMasMenos -> - .
+    SR              reduce using rule 54 (simbolosMasMenos -> - .)
+    LATCH           reduce using rule 54 (simbolosMasMenos -> - .)
+    REG             reduce using rule 54 (simbolosMasMenos -> - .)
+    MUX             reduce using rule 54 (simbolosMasMenos -> - .)
+    (               reduce using rule 54 (simbolosMasMenos -> - .)
+    ?               reduce using rule 54 (simbolosMasMenos -> - .)
+    ~               reduce using rule 54 (simbolosMasMenos -> - .)
+    INTEGER         reduce using rule 54 (simbolosMasMenos -> - .)
+    LOGICVALUE      reduce using rule 54 (simbolosMasMenos -> - .)
+    ID              reduce using rule 54 (simbolosMasMenos -> - .)
 
 
 state 33
 
-    (39) terminoOperadores -> simbolosProd . factor
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
+    (55) simbolosMasMenos -> + .
+    SR              reduce using rule 55 (simbolosMasMenos -> + .)
+    LATCH           reduce using rule 55 (simbolosMasMenos -> + .)
+    REG             reduce using rule 55 (simbolosMasMenos -> + .)
+    MUX             reduce using rule 55 (simbolosMasMenos -> + .)
+    (               reduce using rule 55 (simbolosMasMenos -> + .)
+    ?               reduce using rule 55 (simbolosMasMenos -> + .)
+    ~               reduce using rule 55 (simbolosMasMenos -> + .)
+    INTEGER         reduce using rule 55 (simbolosMasMenos -> + .)
+    LOGICVALUE      reduce using rule 55 (simbolosMasMenos -> + .)
+    ID              reduce using rule 55 (simbolosMasMenos -> + .)
 
-    factor                         shift and go to state 54
 
 state 34
 
-    (41) simbolosProd -> MOD .
-    SR              reduce using rule 41 (simbolosProd -> MOD .)
-    LATCH           reduce using rule 41 (simbolosProd -> MOD .)
-    REG             reduce using rule 41 (simbolosProd -> MOD .)
-    MUX             reduce using rule 41 (simbolosProd -> MOD .)
-    (               reduce using rule 41 (simbolosProd -> MOD .)
-    ?               reduce using rule 41 (simbolosProd -> MOD .)
-    ~               reduce using rule 41 (simbolosProd -> MOD .)
-    INTEGER         reduce using rule 41 (simbolosProd -> MOD .)
-    LOGICVALUE      reduce using rule 41 (simbolosProd -> MOD .)
-    ID              reduce using rule 41 (simbolosProd -> MOD .)
+    (42) termino -> factor terminoOperadores .
+    (45) terminoOperadores -> terminoOperadores . simbolosProd factor
+    (46) simbolosProd -> . MOD
+    (47) simbolosProd -> . DIV
+    (48) simbolosProd -> . /
+    (49) simbolosProd -> . *
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for DIV resolved as shift
+  ! shift/reduce conflict for / resolved as shift
+  ! shift/reduce conflict for * resolved as shift
+    -               reduce using rule 42 (termino -> factor terminoOperadores .)
+    +               reduce using rule 42 (termino -> factor terminoOperadores .)
+    ,               reduce using rule 42 (termino -> factor terminoOperadores .)
+    )               reduce using rule 42 (termino -> factor terminoOperadores .)
+    :               reduce using rule 42 (termino -> factor terminoOperadores .)
+    ]               reduce using rule 42 (termino -> factor terminoOperadores .)
+    MOD             shift and go to state 37
+    DIV             shift and go to state 38
+    /               shift and go to state 39
+    *               shift and go to state 40
 
+    simbolosProd                   shift and go to state 56
 
 state 35
 
-    (42) simbolosProd -> DIV .
-    SR              reduce using rule 42 (simbolosProd -> DIV .)
-    LATCH           reduce using rule 42 (simbolosProd -> DIV .)
-    REG             reduce using rule 42 (simbolosProd -> DIV .)
-    MUX             reduce using rule 42 (simbolosProd -> DIV .)
-    (               reduce using rule 42 (simbolosProd -> DIV .)
-    ?               reduce using rule 42 (simbolosProd -> DIV .)
-    ~               reduce using rule 42 (simbolosProd -> DIV .)
-    INTEGER         reduce using rule 42 (simbolosProd -> DIV .)
-    LOGICVALUE      reduce using rule 42 (simbolosProd -> DIV .)
-    ID              reduce using rule 42 (simbolosProd -> DIV .)
+    (43) terminoOperadores -> empty .
+    -               reduce using rule 43 (terminoOperadores -> empty .)
+    +               reduce using rule 43 (terminoOperadores -> empty .)
+    ,               reduce using rule 43 (terminoOperadores -> empty .)
+    )               reduce using rule 43 (terminoOperadores -> empty .)
+    :               reduce using rule 43 (terminoOperadores -> empty .)
+    ]               reduce using rule 43 (terminoOperadores -> empty .)
+    MOD             reduce using rule 43 (terminoOperadores -> empty .)
+    DIV             reduce using rule 43 (terminoOperadores -> empty .)
+    /               reduce using rule 43 (terminoOperadores -> empty .)
+    *               reduce using rule 43 (terminoOperadores -> empty .)
 
 
 state 36
 
-    (43) simbolosProd -> / .
-    SR              reduce using rule 43 (simbolosProd -> / .)
-    LATCH           reduce using rule 43 (simbolosProd -> / .)
-    REG             reduce using rule 43 (simbolosProd -> / .)
-    MUX             reduce using rule 43 (simbolosProd -> / .)
-    (               reduce using rule 43 (simbolosProd -> / .)
-    ?               reduce using rule 43 (simbolosProd -> / .)
-    ~               reduce using rule 43 (simbolosProd -> / .)
-    INTEGER         reduce using rule 43 (simbolosProd -> / .)
-    LOGICVALUE      reduce using rule 43 (simbolosProd -> / .)
-    ID              reduce using rule 43 (simbolosProd -> / .)
+    (44) terminoOperadores -> simbolosProd . factor
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
 
+    factor                         shift and go to state 57
 
 state 37
 
-    (44) simbolosProd -> * .
-    SR              reduce using rule 44 (simbolosProd -> * .)
-    LATCH           reduce using rule 44 (simbolosProd -> * .)
-    REG             reduce using rule 44 (simbolosProd -> * .)
-    MUX             reduce using rule 44 (simbolosProd -> * .)
-    (               reduce using rule 44 (simbolosProd -> * .)
-    ?               reduce using rule 44 (simbolosProd -> * .)
-    ~               reduce using rule 44 (simbolosProd -> * .)
-    INTEGER         reduce using rule 44 (simbolosProd -> * .)
-    LOGICVALUE      reduce using rule 44 (simbolosProd -> * .)
-    ID              reduce using rule 44 (simbolosProd -> * .)
+    (46) simbolosProd -> MOD .
+    SR              reduce using rule 46 (simbolosProd -> MOD .)
+    LATCH           reduce using rule 46 (simbolosProd -> MOD .)
+    REG             reduce using rule 46 (simbolosProd -> MOD .)
+    MUX             reduce using rule 46 (simbolosProd -> MOD .)
+    (               reduce using rule 46 (simbolosProd -> MOD .)
+    ?               reduce using rule 46 (simbolosProd -> MOD .)
+    ~               reduce using rule 46 (simbolosProd -> MOD .)
+    INTEGER         reduce using rule 46 (simbolosProd -> MOD .)
+    LOGICVALUE      reduce using rule 46 (simbolosProd -> MOD .)
+    ID              reduce using rule 46 (simbolosProd -> MOD .)
 
 
 state 38
 
-    (25) factor -> SR ( . expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
+    (47) simbolosProd -> DIV .
+    SR              reduce using rule 47 (simbolosProd -> DIV .)
+    LATCH           reduce using rule 47 (simbolosProd -> DIV .)
+    REG             reduce using rule 47 (simbolosProd -> DIV .)
+    MUX             reduce using rule 47 (simbolosProd -> DIV .)
+    (               reduce using rule 47 (simbolosProd -> DIV .)
+    ?               reduce using rule 47 (simbolosProd -> DIV .)
+    ~               reduce using rule 47 (simbolosProd -> DIV .)
+    INTEGER         reduce using rule 47 (simbolosProd -> DIV .)
+    LOGICVALUE      reduce using rule 47 (simbolosProd -> DIV .)
+    ID              reduce using rule 47 (simbolosProd -> DIV .)
 
-    expresion                      shift and go to state 55
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
 
 state 39
 
-    (26) factor -> LATCH ( . expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (48) simbolosProd -> / .
+    SR              reduce using rule 48 (simbolosProd -> / .)
+    LATCH           reduce using rule 48 (simbolosProd -> / .)
+    REG             reduce using rule 48 (simbolosProd -> / .)
+    MUX             reduce using rule 48 (simbolosProd -> / .)
+    (               reduce using rule 48 (simbolosProd -> / .)
+    ?               reduce using rule 48 (simbolosProd -> / .)
+    ~               reduce using rule 48 (simbolosProd -> / .)
+    INTEGER         reduce using rule 48 (simbolosProd -> / .)
+    LOGICVALUE      reduce using rule 48 (simbolosProd -> / .)
+    ID              reduce using rule 48 (simbolosProd -> / .)
+
+
+state 40
+
+    (49) simbolosProd -> * .
+    SR              reduce using rule 49 (simbolosProd -> * .)
+    LATCH           reduce using rule 49 (simbolosProd -> * .)
+    REG             reduce using rule 49 (simbolosProd -> * .)
+    MUX             reduce using rule 49 (simbolosProd -> * .)
+    (               reduce using rule 49 (simbolosProd -> * .)
+    ?               reduce using rule 49 (simbolosProd -> * .)
+    ~               reduce using rule 49 (simbolosProd -> * .)
+    INTEGER         reduce using rule 49 (simbolosProd -> * .)
+    LOGICVALUE      reduce using rule 49 (simbolosProd -> * .)
+    ID              reduce using rule 49 (simbolosProd -> * .)
+
+
+state 41
+
+    (29) factor -> SR ( . expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -858,29 +909,60 @@ state 39
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    expresion                      shift and go to state 56
+    expresion                      shift and go to state 58
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 40
+state 42
 
-    (27) factor -> REG ( . expresionComa2 expresion
-    (36) expresionComa2 -> . expresion ,
-    (37) expresionComa2 -> . empty
-    (45) expresion -> . termino terminoMasMenos
-    (115) empty -> .
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (30) factor -> LATCH ( . expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 59
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 43
+
+    (31) factor -> REG ( . expresionComa2 expresion
+    (40) expresionComa2 -> . empty
+    (41) expresionComa2 -> . expresion ,
+    (129) empty -> .
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
   ! shift/reduce conflict for SR resolved as shift
   ! shift/reduce conflict for LATCH resolved as shift
   ! shift/reduce conflict for REG resolved as shift
@@ -902,29 +984,29 @@ state 40
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    expresionComa2                 shift and go to state 57
-    expresion                      shift and go to state 58
-    empty                          shift and go to state 59
+    expresionComa2                 shift and go to state 60
+    expresion                      shift and go to state 61
+    empty                          shift and go to state 62
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 41
+state 44
 
-    (28) factor -> MUX ( . expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> MUX ( . expresion : expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (32) factor -> MUX ( . expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> MUX ( . expresion : expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -936,266 +1018,93 @@ state 41
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    expresion                      shift and go to state 60
+    expresion                      shift and go to state 63
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 42
-
-    (31) factor -> ? factor .
-    MOD             reduce using rule 31 (factor -> ? factor .)
-    DIV             reduce using rule 31 (factor -> ? factor .)
-    /               reduce using rule 31 (factor -> ? factor .)
-    *               reduce using rule 31 (factor -> ? factor .)
-    ,               reduce using rule 31 (factor -> ? factor .)
-    )               reduce using rule 31 (factor -> ? factor .)
-    :               reduce using rule 31 (factor -> ? factor .)
-    ]               reduce using rule 31 (factor -> ? factor .)
-    -               reduce using rule 31 (factor -> ? factor .)
-    +               reduce using rule 31 (factor -> ? factor .)
-
-
-state 43
-
-    (32) factor -> ~ factor .
-    MOD             reduce using rule 32 (factor -> ~ factor .)
-    DIV             reduce using rule 32 (factor -> ~ factor .)
-    /               reduce using rule 32 (factor -> ~ factor .)
-    *               reduce using rule 32 (factor -> ~ factor .)
-    ,               reduce using rule 32 (factor -> ~ factor .)
-    )               reduce using rule 32 (factor -> ~ factor .)
-    :               reduce using rule 32 (factor -> ~ factor .)
-    ]               reduce using rule 32 (factor -> ~ factor .)
-    -               reduce using rule 32 (factor -> ~ factor .)
-    +               reduce using rule 32 (factor -> ~ factor .)
-
-
-state 44
-
-    (35) factor -> ID selector .
-    (22) selector -> selector .
-  ! reduce/reduce conflict for MOD resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for DIV resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for / resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for * resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for , resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for ) resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for : resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for ] resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for - resolved using rule 22 (selector -> selector .)
-  ! reduce/reduce conflict for + resolved using rule 22 (selector -> selector .)
-    MOD             reduce using rule 22 (selector -> selector .)
-    DIV             reduce using rule 22 (selector -> selector .)
-    /               reduce using rule 22 (selector -> selector .)
-    *               reduce using rule 22 (selector -> selector .)
-    ,               reduce using rule 22 (selector -> selector .)
-    )               reduce using rule 22 (selector -> selector .)
-    :               reduce using rule 22 (selector -> selector .)
-    ]               reduce using rule 22 (selector -> selector .)
-    -               reduce using rule 22 (selector -> selector .)
-    +               reduce using rule 22 (selector -> selector .)
-
-
 state 45
 
-    (19) selector -> expresionCorchete .
-    (13) expresionCorchete -> expresionCorchete .
-  ! reduce/reduce conflict for MOD resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for DIV resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for / resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for * resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for , resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for ) resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for : resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for ] resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for - resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-  ! reduce/reduce conflict for + resolved using rule 13 (expresionCorchete -> expresionCorchete .)
-    MOD             reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    DIV             reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    /               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    *               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    ,               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    )               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    :               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    ]               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    -               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
-    +               reduce using rule 13 (expresionCorchete -> expresionCorchete .)
+    (35) factor -> ? factor .
+    MOD             reduce using rule 35 (factor -> ? factor .)
+    DIV             reduce using rule 35 (factor -> ? factor .)
+    /               reduce using rule 35 (factor -> ? factor .)
+    *               reduce using rule 35 (factor -> ? factor .)
+    -               reduce using rule 35 (factor -> ? factor .)
+    +               reduce using rule 35 (factor -> ? factor .)
+    ,               reduce using rule 35 (factor -> ? factor .)
+    )               reduce using rule 35 (factor -> ? factor .)
+    :               reduce using rule 35 (factor -> ? factor .)
+    ]               reduce using rule 35 (factor -> ? factor .)
 
 
 state 46
 
-    (20) selector -> integerPunto .
-    (24) integerPunto -> integerPunto .
-  ! reduce/reduce conflict for MOD resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for DIV resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for / resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for * resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for , resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for ) resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for : resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for ] resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for - resolved using rule 20 (selector -> integerPunto .)
-  ! reduce/reduce conflict for + resolved using rule 20 (selector -> integerPunto .)
-    MOD             reduce using rule 20 (selector -> integerPunto .)
-    DIV             reduce using rule 20 (selector -> integerPunto .)
-    /               reduce using rule 20 (selector -> integerPunto .)
-    *               reduce using rule 20 (selector -> integerPunto .)
-    ,               reduce using rule 20 (selector -> integerPunto .)
-    )               reduce using rule 20 (selector -> integerPunto .)
-    :               reduce using rule 20 (selector -> integerPunto .)
-    ]               reduce using rule 20 (selector -> integerPunto .)
-    -               reduce using rule 20 (selector -> integerPunto .)
-    +               reduce using rule 20 (selector -> integerPunto .)
+    (36) factor -> ~ factor .
+    MOD             reduce using rule 36 (factor -> ~ factor .)
+    DIV             reduce using rule 36 (factor -> ~ factor .)
+    /               reduce using rule 36 (factor -> ~ factor .)
+    *               reduce using rule 36 (factor -> ~ factor .)
+    -               reduce using rule 36 (factor -> ~ factor .)
+    +               reduce using rule 36 (factor -> ~ factor .)
+    ,               reduce using rule 36 (factor -> ~ factor .)
+    )               reduce using rule 36 (factor -> ~ factor .)
+    :               reduce using rule 36 (factor -> ~ factor .)
+    ]               reduce using rule 36 (factor -> ~ factor .)
 
 
 state 47
 
-    (21) selector -> IDComa .
-    (18) IDComa -> IDComa .
-  ! reduce/reduce conflict for MOD resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for DIV resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for / resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for * resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for , resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for ) resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for : resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for ] resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for - resolved using rule 18 (IDComa -> IDComa .)
-  ! reduce/reduce conflict for + resolved using rule 18 (IDComa -> IDComa .)
-    MOD             reduce using rule 18 (IDComa -> IDComa .)
-    DIV             reduce using rule 18 (IDComa -> IDComa .)
-    /               reduce using rule 18 (IDComa -> IDComa .)
-    *               reduce using rule 18 (IDComa -> IDComa .)
-    ,               reduce using rule 18 (IDComa -> IDComa .)
-    )               reduce using rule 18 (IDComa -> IDComa .)
-    :               reduce using rule 18 (IDComa -> IDComa .)
-    ]               reduce using rule 18 (IDComa -> IDComa .)
-    -               reduce using rule 18 (IDComa -> IDComa .)
-    +               reduce using rule 18 (IDComa -> IDComa .)
+    (39) factor -> ID selector .
+    (26) selector -> selector . [ expresion ]
+    (27) selector -> selector . . INTEGER
+    (28) selector -> selector . . ID
+    MOD             reduce using rule 39 (factor -> ID selector .)
+    DIV             reduce using rule 39 (factor -> ID selector .)
+    /               reduce using rule 39 (factor -> ID selector .)
+    *               reduce using rule 39 (factor -> ID selector .)
+    -               reduce using rule 39 (factor -> ID selector .)
+    +               reduce using rule 39 (factor -> ID selector .)
+    ,               reduce using rule 39 (factor -> ID selector .)
+    )               reduce using rule 39 (factor -> ID selector .)
+    :               reduce using rule 39 (factor -> ID selector .)
+    ]               reduce using rule 39 (factor -> ID selector .)
+    [               shift and go to state 64
+    .               shift and go to state 65
 
 
 state 48
 
-    (12) expresionCorchete -> [ . expresion ]
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
+    (22) selector -> empty .
+    [               reduce using rule 22 (selector -> empty .)
+    .               reduce using rule 22 (selector -> empty .)
+    MOD             reduce using rule 22 (selector -> empty .)
+    DIV             reduce using rule 22 (selector -> empty .)
+    /               reduce using rule 22 (selector -> empty .)
+    *               reduce using rule 22 (selector -> empty .)
+    -               reduce using rule 22 (selector -> empty .)
+    +               reduce using rule 22 (selector -> empty .)
+    ,               reduce using rule 22 (selector -> empty .)
+    )               reduce using rule 22 (selector -> empty .)
+    :               reduce using rule 22 (selector -> empty .)
+    ]               reduce using rule 22 (selector -> empty .)
 
-    expresion                      shift and go to state 61
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
 
 state 49
 
-    (23) integerPunto -> . . INTEGER
-    INTEGER         shift and go to state 62
-
-
-state 50
-
-    (17) IDComa -> , . ID
-    ID              shift and go to state 63
-
-
-state 51
-
-    (30) factor -> ( expresion ) .
-    MOD             reduce using rule 30 (factor -> ( expresion ) .)
-    DIV             reduce using rule 30 (factor -> ( expresion ) .)
-    /               reduce using rule 30 (factor -> ( expresion ) .)
-    *               reduce using rule 30 (factor -> ( expresion ) .)
-    ,               reduce using rule 30 (factor -> ( expresion ) .)
-    )               reduce using rule 30 (factor -> ( expresion ) .)
-    :               reduce using rule 30 (factor -> ( expresion ) .)
-    ]               reduce using rule 30 (factor -> ( expresion ) .)
-    -               reduce using rule 30 (factor -> ( expresion ) .)
-    +               reduce using rule 30 (factor -> ( expresion ) .)
-
-
-state 52
-
-    (9) expresionComa -> , expresion .
-    )               reduce using rule 9 (expresionComa -> , expresion .)
-
-
-state 53
-
-    (46) terminoMasMenos -> simbolosMasMenos termino .
-    ,               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    )               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    :               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    ]               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    MOD             reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    DIV             reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    /               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    *               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    -               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-    +               reduce using rule 46 (terminoMasMenos -> simbolosMasMenos termino .)
-
-
-state 54
-
-    (39) terminoOperadores -> simbolosProd factor .
-    ,               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    )               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    :               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    ]               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    MOD             reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    DIV             reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    /               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    *               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    -               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-    +               reduce using rule 39 (terminoOperadores -> simbolosProd factor .)
-
-
-state 55
-
-    (25) factor -> SR ( expresion . , expresion )
-    ,               shift and go to state 64
-
-
-state 56
-
-    (26) factor -> LATCH ( expresion . , expresion )
-    ,               shift and go to state 65
-
-
-state 57
-
-    (27) factor -> REG ( expresionComa2 . expresion
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (23) selector -> [ . expresion ]
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -1211,210 +1120,181 @@ state 57
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
+state 50
+
+    (24) selector -> . . INTEGER
+    (25) selector -> . . ID
+    INTEGER         shift and go to state 67
+    ID              shift and go to state 68
+
+
+state 51
+
+    (34) factor -> ( expresion ) .
+    MOD             reduce using rule 34 (factor -> ( expresion ) .)
+    DIV             reduce using rule 34 (factor -> ( expresion ) .)
+    /               reduce using rule 34 (factor -> ( expresion ) .)
+    *               reduce using rule 34 (factor -> ( expresion ) .)
+    -               reduce using rule 34 (factor -> ( expresion ) .)
+    +               reduce using rule 34 (factor -> ( expresion ) .)
+    ,               reduce using rule 34 (factor -> ( expresion ) .)
+    )               reduce using rule 34 (factor -> ( expresion ) .)
+    :               reduce using rule 34 (factor -> ( expresion ) .)
+    ]               reduce using rule 34 (factor -> ( expresion ) .)
+
+
+state 52
+
+    (11) expresionComa -> expresionComa , . expresion
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 69
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 53
+
+    (10) expresionComa -> , expresion .
+    ,               reduce using rule 10 (expresionComa -> , expresion .)
+    )               reduce using rule 10 (expresionComa -> , expresion .)
+
+
+state 54
+
+    (53) terminoMasMenos -> terminoMasMenos simbolosMasMenos . termino
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    termino                        shift and go to state 70
+    factor                         shift and go to state 14
+
+state 55
+
+    (52) terminoMasMenos -> simbolosMasMenos termino .
+    -               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    +               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    ,               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    )               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    :               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    ]               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    MOD             reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    DIV             reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    /               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+    *               reduce using rule 52 (terminoMasMenos -> simbolosMasMenos termino .)
+
+
+state 56
+
+    (45) terminoOperadores -> terminoOperadores simbolosProd . factor
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    factor                         shift and go to state 71
+
+state 57
+
+    (44) terminoOperadores -> simbolosProd factor .
+    -               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    +               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    ,               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    )               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    :               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    ]               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    MOD             reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    DIV             reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    /               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+    *               reduce using rule 44 (terminoOperadores -> simbolosProd factor .)
+
+
 state 58
 
-    (36) expresionComa2 -> expresion . ,
-    ,               shift and go to state 67
+    (29) factor -> SR ( expresion . , expresion )
+    ,               shift and go to state 72
 
 
 state 59
 
-    (37) expresionComa2 -> empty .
-    SR              reduce using rule 37 (expresionComa2 -> empty .)
-    LATCH           reduce using rule 37 (expresionComa2 -> empty .)
-    REG             reduce using rule 37 (expresionComa2 -> empty .)
-    MUX             reduce using rule 37 (expresionComa2 -> empty .)
-    (               reduce using rule 37 (expresionComa2 -> empty .)
-    ?               reduce using rule 37 (expresionComa2 -> empty .)
-    ~               reduce using rule 37 (expresionComa2 -> empty .)
-    INTEGER         reduce using rule 37 (expresionComa2 -> empty .)
-    LOGICVALUE      reduce using rule 37 (expresionComa2 -> empty .)
-    ID              reduce using rule 37 (expresionComa2 -> empty .)
+    (30) factor -> LATCH ( expresion . , expresion )
+    ,               shift and go to state 73
 
 
 state 60
 
-    (28) factor -> MUX ( expresion . , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> MUX ( expresion . : expresion , expresion )
-    ,               shift and go to state 68
-    :               shift and go to state 69
-
-
-state 61
-
-    (12) expresionCorchete -> [ expresion . ]
-    ]               shift and go to state 70
-
-
-state 62
-
-    (23) integerPunto -> . INTEGER .
-    MOD             reduce using rule 23 (integerPunto -> . INTEGER .)
-    DIV             reduce using rule 23 (integerPunto -> . INTEGER .)
-    /               reduce using rule 23 (integerPunto -> . INTEGER .)
-    *               reduce using rule 23 (integerPunto -> . INTEGER .)
-    ,               reduce using rule 23 (integerPunto -> . INTEGER .)
-    )               reduce using rule 23 (integerPunto -> . INTEGER .)
-    :               reduce using rule 23 (integerPunto -> . INTEGER .)
-    ]               reduce using rule 23 (integerPunto -> . INTEGER .)
-    -               reduce using rule 23 (integerPunto -> . INTEGER .)
-    +               reduce using rule 23 (integerPunto -> . INTEGER .)
-
-
-state 63
-
-    (17) IDComa -> , ID .
-    MOD             reduce using rule 17 (IDComa -> , ID .)
-    DIV             reduce using rule 17 (IDComa -> , ID .)
-    /               reduce using rule 17 (IDComa -> , ID .)
-    *               reduce using rule 17 (IDComa -> , ID .)
-    ,               reduce using rule 17 (IDComa -> , ID .)
-    )               reduce using rule 17 (IDComa -> , ID .)
-    :               reduce using rule 17 (IDComa -> , ID .)
-    ]               reduce using rule 17 (IDComa -> , ID .)
-    -               reduce using rule 17 (IDComa -> , ID .)
-    +               reduce using rule 17 (IDComa -> , ID .)
-
-
-state 64
-
-    (25) factor -> SR ( expresion , . expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
-
-    expresion                      shift and go to state 71
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
-
-state 65
-
-    (26) factor -> LATCH ( expresion , . expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
-
-    expresion                      shift and go to state 72
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
-
-state 66
-
-    (27) factor -> REG ( expresionComa2 expresion .
-    MOD             reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    DIV             reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    /               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    *               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    ,               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    )               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    :               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    ]               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    -               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-    +               reduce using rule 27 (factor -> REG ( expresionComa2 expresion .)
-
-
-state 67
-
-    (36) expresionComa2 -> expresion , .
-    SR              reduce using rule 36 (expresionComa2 -> expresion , .)
-    LATCH           reduce using rule 36 (expresionComa2 -> expresion , .)
-    REG             reduce using rule 36 (expresionComa2 -> expresion , .)
-    MUX             reduce using rule 36 (expresionComa2 -> expresion , .)
-    (               reduce using rule 36 (expresionComa2 -> expresion , .)
-    ?               reduce using rule 36 (expresionComa2 -> expresion , .)
-    ~               reduce using rule 36 (expresionComa2 -> expresion , .)
-    INTEGER         reduce using rule 36 (expresionComa2 -> expresion , .)
-    LOGICVALUE      reduce using rule 36 (expresionComa2 -> expresion , .)
-    ID              reduce using rule 36 (expresionComa2 -> expresion , .)
-
-
-state 68
-
-    (28) factor -> MUX ( expresion , . expresion : expresion , expresion , expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
-
-    expresion                      shift and go to state 73
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
-
-state 69
-
-    (29) factor -> MUX ( expresion : . expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (31) factor -> REG ( expresionComa2 . expresion
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -1430,165 +1310,198 @@ state 69
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
+state 61
+
+    (41) expresionComa2 -> expresion . ,
+    ,               shift and go to state 75
+
+
+state 62
+
+    (40) expresionComa2 -> empty .
+    SR              reduce using rule 40 (expresionComa2 -> empty .)
+    LATCH           reduce using rule 40 (expresionComa2 -> empty .)
+    REG             reduce using rule 40 (expresionComa2 -> empty .)
+    MUX             reduce using rule 40 (expresionComa2 -> empty .)
+    (               reduce using rule 40 (expresionComa2 -> empty .)
+    ?               reduce using rule 40 (expresionComa2 -> empty .)
+    ~               reduce using rule 40 (expresionComa2 -> empty .)
+    INTEGER         reduce using rule 40 (expresionComa2 -> empty .)
+    LOGICVALUE      reduce using rule 40 (expresionComa2 -> empty .)
+    ID              reduce using rule 40 (expresionComa2 -> empty .)
+
+
+state 63
+
+    (32) factor -> MUX ( expresion . , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> MUX ( expresion . : expresion , expresion )
+    ,               shift and go to state 76
+    :               shift and go to state 77
+
+
+state 64
+
+    (26) selector -> selector [ . expresion ]
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 78
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 65
+
+    (27) selector -> selector . . INTEGER
+    (28) selector -> selector . . ID
+    INTEGER         shift and go to state 79
+    ID              shift and go to state 80
+
+
+state 66
+
+    (23) selector -> [ expresion . ]
+    ]               shift and go to state 81
+
+
+state 67
+
+    (24) selector -> . INTEGER .
+    [               reduce using rule 24 (selector -> . INTEGER .)
+    .               reduce using rule 24 (selector -> . INTEGER .)
+    MOD             reduce using rule 24 (selector -> . INTEGER .)
+    DIV             reduce using rule 24 (selector -> . INTEGER .)
+    /               reduce using rule 24 (selector -> . INTEGER .)
+    *               reduce using rule 24 (selector -> . INTEGER .)
+    -               reduce using rule 24 (selector -> . INTEGER .)
+    +               reduce using rule 24 (selector -> . INTEGER .)
+    ,               reduce using rule 24 (selector -> . INTEGER .)
+    )               reduce using rule 24 (selector -> . INTEGER .)
+    :               reduce using rule 24 (selector -> . INTEGER .)
+    ]               reduce using rule 24 (selector -> . INTEGER .)
+
+
+state 68
+
+    (25) selector -> . ID .
+    [               reduce using rule 25 (selector -> . ID .)
+    .               reduce using rule 25 (selector -> . ID .)
+    MOD             reduce using rule 25 (selector -> . ID .)
+    DIV             reduce using rule 25 (selector -> . ID .)
+    /               reduce using rule 25 (selector -> . ID .)
+    *               reduce using rule 25 (selector -> . ID .)
+    -               reduce using rule 25 (selector -> . ID .)
+    +               reduce using rule 25 (selector -> . ID .)
+    ,               reduce using rule 25 (selector -> . ID .)
+    )               reduce using rule 25 (selector -> . ID .)
+    :               reduce using rule 25 (selector -> . ID .)
+    ]               reduce using rule 25 (selector -> . ID .)
+
+
+state 69
+
+    (11) expresionComa -> expresionComa , expresion .
+    ,               reduce using rule 11 (expresionComa -> expresionComa , expresion .)
+    )               reduce using rule 11 (expresionComa -> expresionComa , expresion .)
+
+
 state 70
 
-    (12) expresionCorchete -> [ expresion ] .
-    MOD             reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    DIV             reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    /               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    *               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    ,               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    )               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    :               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    ]               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    -               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
-    +               reduce using rule 12 (expresionCorchete -> [ expresion ] .)
+    (53) terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .
+    -               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    +               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    ,               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    )               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    :               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    ]               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    MOD             reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    DIV             reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    /               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
+    *               reduce using rule 53 (terminoMasMenos -> terminoMasMenos simbolosMasMenos termino .)
 
 
 state 71
 
-    (25) factor -> SR ( expresion , expresion . )
-    )               shift and go to state 75
+    (45) terminoOperadores -> terminoOperadores simbolosProd factor .
+    -               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    +               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    ,               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    )               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    :               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    ]               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    MOD             reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    DIV             reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    /               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
+    *               reduce using rule 45 (terminoOperadores -> terminoOperadores simbolosProd factor .)
 
 
 state 72
 
-    (26) factor -> LATCH ( expresion , expresion . )
-    )               shift and go to state 76
+    (29) factor -> SR ( expresion , . expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
 
+    expresion                      shift and go to state 82
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
 
 state 73
 
-    (28) factor -> MUX ( expresion , expresion . : expresion , expresion , expresion , expresion )
-    :               shift and go to state 77
-
-
-state 74
-
-    (29) factor -> MUX ( expresion : expresion . , expresion )
-    ,               shift and go to state 78
-
-
-state 75
-
-    (25) factor -> SR ( expresion , expresion ) .
-    MOD             reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    DIV             reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    /               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    *               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    ,               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    )               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    :               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    ]               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    -               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-    +               reduce using rule 25 (factor -> SR ( expresion , expresion ) .)
-
-
-state 76
-
-    (26) factor -> LATCH ( expresion , expresion ) .
-    MOD             reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    DIV             reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    /               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    *               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    ,               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    )               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    :               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    ]               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    -               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-    +               reduce using rule 26 (factor -> LATCH ( expresion , expresion ) .)
-
-
-state 77
-
-    (28) factor -> MUX ( expresion , expresion : . expresion , expresion , expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
-
-    expresion                      shift and go to state 79
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
-
-state 78
-
-    (29) factor -> MUX ( expresion : expresion , . expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
-    SR              shift and go to state 15
-    LATCH           shift and go to state 16
-    REG             shift and go to state 17
-    MUX             shift and go to state 18
-    (               shift and go to state 10
-    ?               shift and go to state 19
-    ~               shift and go to state 20
-    INTEGER         shift and go to state 21
-    LOGICVALUE      shift and go to state 22
-    ID              shift and go to state 23
-
-    expresion                      shift and go to state 80
-    termino                        shift and go to state 13
-    factor                         shift and go to state 14
-
-state 79
-
-    (28) factor -> MUX ( expresion , expresion : expresion . , expresion , expresion , expresion )
-    ,               shift and go to state 81
-
-
-state 80
-
-    (29) factor -> MUX ( expresion : expresion , expresion . )
-    )               shift and go to state 82
-
-
-state 81
-
-    (28) factor -> MUX ( expresion , expresion : expresion , . expresion , expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (30) factor -> LATCH ( expresion , . expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -1604,43 +1517,83 @@ state 81
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 82
+state 74
 
-    (29) factor -> MUX ( expresion : expresion , expresion ) .
-    MOD             reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    DIV             reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    /               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    *               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    ,               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    )               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    :               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    ]               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    -               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-    +               reduce using rule 29 (factor -> MUX ( expresion : expresion , expresion ) .)
-
-
-state 83
-
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion . , expresion , expresion )
-    ,               shift and go to state 84
+    (31) factor -> REG ( expresionComa2 expresion .
+    MOD             reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    DIV             reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    /               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    *               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    -               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    +               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    ,               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    )               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    :               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    ]               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
 
 
-state 84
+state 75
 
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion , . expresion , expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (41) expresionComa2 -> expresion , .
+    SR              reduce using rule 41 (expresionComa2 -> expresion , .)
+    LATCH           reduce using rule 41 (expresionComa2 -> expresion , .)
+    REG             reduce using rule 41 (expresionComa2 -> expresion , .)
+    MUX             reduce using rule 41 (expresionComa2 -> expresion , .)
+    (               reduce using rule 41 (expresionComa2 -> expresion , .)
+    ?               reduce using rule 41 (expresionComa2 -> expresion , .)
+    ~               reduce using rule 41 (expresionComa2 -> expresion , .)
+    INTEGER         reduce using rule 41 (expresionComa2 -> expresion , .)
+    LOGICVALUE      reduce using rule 41 (expresionComa2 -> expresion , .)
+    ID              reduce using rule 41 (expresionComa2 -> expresion , .)
+
+
+state 76
+
+    (32) factor -> MUX ( expresion , . expresion : expresion , expresion , expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 84
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 77
+
+    (33) factor -> MUX ( expresion : . expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -1656,28 +1609,150 @@ state 84
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
+state 78
+
+    (26) selector -> selector [ expresion . ]
+    ]               shift and go to state 86
+
+
+state 79
+
+    (27) selector -> selector . INTEGER .
+    [               reduce using rule 27 (selector -> selector . INTEGER .)
+    .               reduce using rule 27 (selector -> selector . INTEGER .)
+    MOD             reduce using rule 27 (selector -> selector . INTEGER .)
+    DIV             reduce using rule 27 (selector -> selector . INTEGER .)
+    /               reduce using rule 27 (selector -> selector . INTEGER .)
+    *               reduce using rule 27 (selector -> selector . INTEGER .)
+    -               reduce using rule 27 (selector -> selector . INTEGER .)
+    +               reduce using rule 27 (selector -> selector . INTEGER .)
+    ,               reduce using rule 27 (selector -> selector . INTEGER .)
+    )               reduce using rule 27 (selector -> selector . INTEGER .)
+    :               reduce using rule 27 (selector -> selector . INTEGER .)
+    ]               reduce using rule 27 (selector -> selector . INTEGER .)
+
+
+state 80
+
+    (28) selector -> selector . ID .
+    [               reduce using rule 28 (selector -> selector . ID .)
+    .               reduce using rule 28 (selector -> selector . ID .)
+    MOD             reduce using rule 28 (selector -> selector . ID .)
+    DIV             reduce using rule 28 (selector -> selector . ID .)
+    /               reduce using rule 28 (selector -> selector . ID .)
+    *               reduce using rule 28 (selector -> selector . ID .)
+    -               reduce using rule 28 (selector -> selector . ID .)
+    +               reduce using rule 28 (selector -> selector . ID .)
+    ,               reduce using rule 28 (selector -> selector . ID .)
+    )               reduce using rule 28 (selector -> selector . ID .)
+    :               reduce using rule 28 (selector -> selector . ID .)
+    ]               reduce using rule 28 (selector -> selector . ID .)
+
+
+state 81
+
+    (23) selector -> [ expresion ] .
+    [               reduce using rule 23 (selector -> [ expresion ] .)
+    .               reduce using rule 23 (selector -> [ expresion ] .)
+    MOD             reduce using rule 23 (selector -> [ expresion ] .)
+    DIV             reduce using rule 23 (selector -> [ expresion ] .)
+    /               reduce using rule 23 (selector -> [ expresion ] .)
+    *               reduce using rule 23 (selector -> [ expresion ] .)
+    -               reduce using rule 23 (selector -> [ expresion ] .)
+    +               reduce using rule 23 (selector -> [ expresion ] .)
+    ,               reduce using rule 23 (selector -> [ expresion ] .)
+    )               reduce using rule 23 (selector -> [ expresion ] .)
+    :               reduce using rule 23 (selector -> [ expresion ] .)
+    ]               reduce using rule 23 (selector -> [ expresion ] .)
+
+
+state 82
+
+    (29) factor -> SR ( expresion , expresion . )
+    )               shift and go to state 87
+
+
+state 83
+
+    (30) factor -> LATCH ( expresion , expresion . )
+    )               shift and go to state 88
+
+
+state 84
+
+    (32) factor -> MUX ( expresion , expresion . : expresion , expresion , expresion , expresion )
+    :               shift and go to state 89
+
+
 state 85
 
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion , expresion . , expresion )
-    ,               shift and go to state 86
+    (33) factor -> MUX ( expresion : expresion . , expresion )
+    ,               shift and go to state 90
 
 
 state 86
 
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , . expresion )
-    (45) expresion -> . termino terminoMasMenos
-    (38) termino -> . factor terminoOperadores
-    (25) factor -> . SR ( expresion , expresion )
-    (26) factor -> . LATCH ( expresion , expresion )
-    (27) factor -> . REG ( expresionComa2 expresion
-    (28) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
-    (29) factor -> . MUX ( expresion : expresion , expresion )
-    (30) factor -> . ( expresion )
-    (31) factor -> . ? factor
-    (32) factor -> . ~ factor
-    (33) factor -> . INTEGER
-    (34) factor -> . LOGICVALUE
-    (35) factor -> . ID selector
+    (26) selector -> selector [ expresion ] .
+    [               reduce using rule 26 (selector -> selector [ expresion ] .)
+    .               reduce using rule 26 (selector -> selector [ expresion ] .)
+    MOD             reduce using rule 26 (selector -> selector [ expresion ] .)
+    DIV             reduce using rule 26 (selector -> selector [ expresion ] .)
+    /               reduce using rule 26 (selector -> selector [ expresion ] .)
+    *               reduce using rule 26 (selector -> selector [ expresion ] .)
+    -               reduce using rule 26 (selector -> selector [ expresion ] .)
+    +               reduce using rule 26 (selector -> selector [ expresion ] .)
+    ,               reduce using rule 26 (selector -> selector [ expresion ] .)
+    )               reduce using rule 26 (selector -> selector [ expresion ] .)
+    :               reduce using rule 26 (selector -> selector [ expresion ] .)
+    ]               reduce using rule 26 (selector -> selector [ expresion ] .)
+
+
+state 87
+
+    (29) factor -> SR ( expresion , expresion ) .
+    MOD             reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    DIV             reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    /               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    *               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    -               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    +               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    ,               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    )               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    :               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+    ]               reduce using rule 29 (factor -> SR ( expresion , expresion ) .)
+
+
+state 88
+
+    (30) factor -> LATCH ( expresion , expresion ) .
+    MOD             reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    DIV             reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    /               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    *               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    -               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    +               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    ,               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    )               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    :               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+    ]               reduce using rule 30 (factor -> LATCH ( expresion , expresion ) .)
+
+
+state 89
+
+    (32) factor -> MUX ( expresion , expresion : . expresion , expresion , expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
     SR              shift and go to state 15
     LATCH           shift and go to state 16
     REG             shift and go to state 17
@@ -1689,61 +1764,218 @@ state 86
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    expresion                      shift and go to state 87
+    expresion                      shift and go to state 91
     termino                        shift and go to state 13
     factor                         shift and go to state 14
 
-state 87
+state 90
 
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion . )
-    )               shift and go to state 88
+    (33) factor -> MUX ( expresion : expresion , . expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 92
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 91
+
+    (32) factor -> MUX ( expresion , expresion : expresion . , expresion , expresion , expresion )
+    ,               shift and go to state 93
 
 
-state 88
+state 92
 
-    (28) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .
-    MOD             reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    DIV             reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    /               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    *               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    ,               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    )               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    :               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    ]               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    -               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    +               reduce using rule 28 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    (33) factor -> MUX ( expresion : expresion , expresion . )
+    )               shift and go to state 94
+
+
+state 93
+
+    (32) factor -> MUX ( expresion , expresion : expresion , . expresion , expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 95
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 94
+
+    (33) factor -> MUX ( expresion : expresion , expresion ) .
+    MOD             reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    DIV             reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    /               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    *               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    -               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    +               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    ,               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    )               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    :               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+    ]               reduce using rule 33 (factor -> MUX ( expresion : expresion , expresion ) .)
+
+
+state 95
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion . , expresion , expresion )
+    ,               shift and go to state 96
+
+
+state 96
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion , . expresion , expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 97
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 97
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion , expresion . , expresion )
+    ,               shift and go to state 98
+
+
+state 98
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , . expresion )
+    (50) expresion -> . termino terminoMasMenos
+    (42) termino -> . factor terminoOperadores
+    (29) factor -> . SR ( expresion , expresion )
+    (30) factor -> . LATCH ( expresion , expresion )
+    (31) factor -> . REG ( expresionComa2 expresion
+    (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
+    (33) factor -> . MUX ( expresion : expresion , expresion )
+    (34) factor -> . ( expresion )
+    (35) factor -> . ? factor
+    (36) factor -> . ~ factor
+    (37) factor -> . INTEGER
+    (38) factor -> . LOGICVALUE
+    (39) factor -> . ID selector
+    SR              shift and go to state 15
+    LATCH           shift and go to state 16
+    REG             shift and go to state 17
+    MUX             shift and go to state 18
+    (               shift and go to state 10
+    ?               shift and go to state 19
+    ~               shift and go to state 20
+    INTEGER         shift and go to state 21
+    LOGICVALUE      shift and go to state 22
+    ID              shift and go to state 23
+
+    expresion                      shift and go to state 99
+    termino                        shift and go to state 13
+    factor                         shift and go to state 14
+
+state 99
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion . )
+    )               shift and go to state 100
+
+
+state 100
+
+    (32) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .
+    MOD             reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    DIV             reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    /               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    *               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    -               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    +               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    ,               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    )               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    :               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    ]               reduce using rule 32 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
 
 
 Conflicts:
 
-shift/reduce conflict for SR in state 40 resolved as shift
-shift/reduce conflict for LATCH in state 40 resolved as shift
-shift/reduce conflict for REG in state 40 resolved as shift
-shift/reduce conflict for MUX in state 40 resolved as shift
-shift/reduce conflict for ( in state 40 resolved as shift
-shift/reduce conflict for ? in state 40 resolved as shift
-shift/reduce conflict for ~ in state 40 resolved as shift
-shift/reduce conflict for INTEGER in state 40 resolved as shift
-shift/reduce conflict for LOGICVALUE in state 40 resolved as shift
-shift/reduce conflict for ID in state 40 resolved as shift
-reduce/reduce conflict in state 26 resolved using rule (listaExpresiones -> expresion expresionComa)
-rejected rule (expresionComa -> expresionComa) in state 26
-reduce/reduce conflict in state 28 resolved using rule (expresion -> termino terminoMasMenos)
-rejected rule (terminoMasMenos -> terminoMasMenos) in state 28
-reduce/reduce conflict in state 32 resolved using rule (termino -> factor terminoOperadores)
-rejected rule (terminoOperadores -> terminoOperadores) in state 32
-reduce/reduce conflict in state 44 resolved using rule (selector -> selector)
-rejected rule (factor -> ID selector) in state 44
-reduce/reduce conflict in state 45 resolved using rule (expresionCorchete -> expresionCorchete)
-rejected rule (selector -> expresionCorchete) in state 45
-reduce/reduce conflict in state 46 resolved using rule (selector -> integerPunto)
-rejected rule (integerPunto -> integerPunto) in state 46
-reduce/reduce conflict in state 47 resolved using rule (IDComa -> IDComa)
-rejected rule (selector -> IDComa) in state 47
-Rule (expresionComa -> expresionComa) is never reduced
-Rule (terminoMasMenos -> terminoMasMenos) is never reduced
-Rule (terminoOperadores -> terminoOperadores) is never reduced
-Rule (factor -> ID selector) is never reduced
-Rule (selector -> expresionCorchete) is never reduced
-Rule (integerPunto -> integerPunto) is never reduced
-Rule (selector -> IDComa) is never reduced
+shift/reduce conflict for , in state 12 resolved as shift
+shift/reduce conflict for - in state 13 resolved as shift
+shift/reduce conflict for + in state 13 resolved as shift
+shift/reduce conflict for MOD in state 14 resolved as shift
+shift/reduce conflict for DIV in state 14 resolved as shift
+shift/reduce conflict for / in state 14 resolved as shift
+shift/reduce conflict for * in state 14 resolved as shift
+shift/reduce conflict for [ in state 23 resolved as shift
+shift/reduce conflict for . in state 23 resolved as shift
+shift/reduce conflict for - in state 29 resolved as shift
+shift/reduce conflict for + in state 29 resolved as shift
+shift/reduce conflict for MOD in state 34 resolved as shift
+shift/reduce conflict for DIV in state 34 resolved as shift
+shift/reduce conflict for / in state 34 resolved as shift
+shift/reduce conflict for * in state 34 resolved as shift
+shift/reduce conflict for SR in state 43 resolved as shift
+shift/reduce conflict for LATCH in state 43 resolved as shift
+shift/reduce conflict for REG in state 43 resolved as shift
+shift/reduce conflict for MUX in state 43 resolved as shift
+shift/reduce conflict for ( in state 43 resolved as shift
+shift/reduce conflict for ? in state 43 resolved as shift
+shift/reduce conflict for ~ in state 43 resolved as shift
+shift/reduce conflict for INTEGER in state 43 resolved as shift
+shift/reduce conflict for LOGICVALUE in state 43 resolved as shift
+shift/reduce conflict for ID in state 43 resolved as shift

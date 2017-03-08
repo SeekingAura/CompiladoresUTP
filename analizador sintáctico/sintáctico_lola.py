@@ -8,7 +8,9 @@ from léxico_lola import CalcLexer
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
 	
+
 	tokens = CalcLexer.tokens
+
 	
 	'''
 	tipoSimple : tipoBasico
@@ -16,8 +18,8 @@ class CalcParser(Parser):
 		;
 	'''
 	
-	@_('tipoBasico',
-		'ID conjuntoExpresiones')
+	@_('tipoBasico', 
+	'ID conjuntoExpresiones')
 	def tipoSimple(self, p):
 		pass
 		
@@ -27,17 +29,21 @@ class CalcParser(Parser):
 		| 'OC'
 		;
 	'''
-	@_('BIT', 'TS', 'OC')
+	@_('BIT', 
+	'TS', 
+	'OC')
 	def tipoBasico(self, p):
 		pass
 	
 	'''
-	conjuntoExpresiones :
-	|	'(' listaExpresiones ')'
+	conjuntoExpresiones : '(' listaExpresiones ')'
+	|	
 	;
 	'''
 	
-	@_('empty', '"(" listaExpresiones ")"')
+
+	@_('"(" listaExpresiones ")"', 
+	'empty')
 	def conjuntoExpresiones(self, p):
 		pass
 		
@@ -51,11 +57,15 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	expresionComa :  expresionComa
-	|	',' expresion
+	expresionComa :  expresionComa "," expresion
+	|	"," expresion
+	|
 	;
 	'''
-	@_('expresionComa', '"," expresion')
+
+	@_('expresionComa "," expresion', 
+	'"," expresion', 
+	'empty')
 	def expresionComa(self, p):
 		pass
 		
@@ -68,11 +78,14 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	expresionCorchete : expresionCorchete
-	|	"[" expresion "]"
+	expresionCorchete : expresionCorchete "[" expresion "]"
+	| "[" expresion "]"
+	|
 	;
 	'''
-	@_('expresionCorchete', '"[" expresion "]"')
+	@_('expresionCorchete "[" expresion "]"', 
+	'"[" expresion "]"',
+	'empty')
 	def expresionCorchete(self, p):
 		pass
 		
@@ -101,38 +114,41 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	IDComa : IDComa
-	|	',' ID
+	IDComa : IDComa "," ID
+	|	"," ID
+	|
 	;
 	'''
-	@_('IDComa', '"," ID')
+
+	@_('IDComa "," ID', 
+	'"," ID',
+	'empty')
 	def IDComa(self, p):
 		pass
 	
 	'''
-	selector : selector
-	|	IDComa
-	|	integerPunto
-	|	expresionCorchete
-	;
-	'''
-	@_('selector', 'IDComa', 'integerPunto', 'expresionCorchete')
-	def selector(self, p):
-		pass
-		
-	'''
-	integerPunto : integerPunto
+	selector : selector "." ID
+	|	selector "." INTEGER
+	|	selector "[" expresion "]"
+	|	"." ID
 	|	"." INTEGER
+	|	"[" expresion "]"
+	|
 	;
 	'''
-	
-	@_('integerPunto', '"." INTEGER')
-	def integerPunto(self, p):
+	@_('selector "." ID', 
+	'selector "." INTEGER', 
+	'selector "[" expresion "]"', 
+	'"." ID',
+	'"." INTEGER',
+	'"[" expresion "]"',
+	'empty')
+	def selector(self, p):
 		pass
 	
 	'''
 	factor : ID selector
-	|	LOGICVALUE
+	|	valorLogico
 	|	INTEGER
 	|	"~" factor
 	|	"?" factor
@@ -144,16 +160,26 @@ class CalcParser(Parser):
 	|	"SR" "(" expresion "," expresion ")"
 	;
 	'''
-	@_('ID selector', 'LOGICVALUE', 'INTEGER', '"~" factor', '"?" factor', '"(" expresion ")"', 'MUX "(" expresion ":" expresion "," expresion ")"', 'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"', 'REG "(" expresionComa2 expresion', 'LATCH "(" expresion "," expresion ")"', 'SR "(" expresion , expresion ")"')
+	@_('ID selector', 
+	'LOGICVALUE', 
+	'INTEGER', 
+	'"~" factor', 
+	'"?" factor', 
+	'"(" expresion ")"', 
+	'MUX "(" expresion ":" expresion "," expresion ")"', 
+	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"', 
+	'REG "(" expresionComa2 expresion', 
+	'LATCH "(" expresion "," expresion ")"', 
+	'SR "(" expresion , expresion ")"')
 	def factor(self, p):
 		pass
 		
 	'''
-	expresionComa2 : 
-	|	expresion ','
+	expresionComa2 : expresion ","
+	|	
 	;
 	'''
-	@_('empty', 'expresion ","')
+	@_('expresion ","', 'empty')
 	def expresionComa2(self, p):
 		pass
 		
@@ -166,11 +192,14 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	terminoOperadores : terminoOperadores
+	terminoOperadores : terminoOperadores simbolosProd factor
 	|	simbolosProd factor
+	|
 	;
 	'''
-	@_('terminoOperadores', 'simbolosProd factor')
+	@_('terminoOperadores simbolosProd factor', 
+	'simbolosProd factor',
+	'empty')
 	def terminoOperadores(self, p):
 		pass
 	
@@ -181,7 +210,10 @@ class CalcParser(Parser):
 	|	"MOD"
 	;
 	'''
-	@_('"*"','"/"', 'DIV', 'MOD')
+	@_('"*"',
+	'"/"',
+	'DIV',
+	'MOD')
 	def simbolosProd(self, p):
 		pass
 		
@@ -194,11 +226,14 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	terminoMasMenos : terminoMasMenos
+	terminoMasMenos : terminoMasMenos simbolosMasMenos termino
 	|	simbolosMasMenos termino
+	|
 	;
 	'''
-	@_('terminoMasMenos', 'simbolosMasMenos termino')
+	@_('terminoMasMenos simbolosMasMenos termino', 
+	'simbolosMasMenos termino',
+	'empty')
 	def terminoMasMenos(self, p):
 		pass
 		
@@ -207,7 +242,8 @@ class CalcParser(Parser):
 	|	"-"
 	;
 	'''
-	@_('"+"', '"-"')
+	@_('"+"', 
+	'"-"')
 	def simbolosMasMenos(self, p):
 		pass
 		
@@ -220,11 +256,12 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	condicionOr : 
-	|	condicion "|"
+	condicionOr : condicion "|"
+	|	
 	;
 	'''
-	@_('empty', 'condicion "|"')
+	@_('condicion "|"',
+	'empty')
 	def condicionOr(self, p):
 		pass
 		
@@ -253,7 +290,12 @@ class CalcParser(Parser):
 	|	">="
 	;
 	'''
-	@_('"="', '"#"', '"<"', 'MENORIGUAL', '">"', 'MAYORIGUAL')
+	@_('"="', 
+	'"#"', 
+	'"<"', 
+	'MENORIGUAL', 
+	'">"', 
+	'MAYORIGUAL')
 	def simbolosRelacion(self, p):
 		pass
 		
@@ -266,19 +308,24 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	sentenciaSiSino : sentenciaSiSino
+	sentenciaSiSino : sentenciaSiSino "ELSIF" relacion "THEN" sentenciaSecuencia
 	|	"ELSIF" relacion "THEN" sentenciaSecuencia
+	|
 	;
 	'''
-	@_('sentenciaSiSino', 'ELSIF relacion THEN sentenciaSecuencia')
+	@_('sentenciaSiSino ELSIF relacion THEN sentenciaSecuencia',
+	'ELSIF relacion THEN sentenciaSecuencia',
+	'empty')
 	def sentenciaSiSino(self, p):
 		pass
 		
 	'''
-	sentenciaSiEntonces : 
-	|	"ELSE" sentenciaSecuencia
+	sentenciaSiEntonces : "ELSE" sentenciaSecuencia
+	|
+	;
 	'''
-	@_('empty', 'ELSE sentenciaSecuencia')
+	@_('ELSE sentenciaSecuencia',
+	'empty')
 	def sentenciaSiEntonces(self, p):
 		pass
 		
@@ -291,14 +338,18 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	sentencia : 
-	|	asignacion
+	sentencia : asignacion
 	|	asignacionUnidad
 	|	sentenciaSi
 	|	sentenciaPara
+	|
 	;
 	'''
-	@_('empty', 'asignacion', 'asignacionUnidad', 'sentenciaSi', 'sentenciaPara')
+	@_('asignacion', 
+	'asignacionUnidad', 
+	'sentenciaSi', 
+	'sentenciaPara',
+	'empty')
 	def sentencia(self, p):
 		pass
 	
@@ -311,11 +362,14 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	sentenciaPuntoComa | sentenciaPuntoComa
+	sentenciaPuntoComa : sentenciaPuntoComa ";" sentencia
 	|	";" sentencia
+	|
 	;
 	'''
-	@_('sentenciaPuntoComa', '";" sentencia')
+	@_('sentenciaPuntoComa ";" sentencia', 
+	'";" sentencia',
+	'empty')
 	def sentenciaPuntoComa(self, p):
 		pass
 		
@@ -331,88 +385,101 @@ class CalcParser(Parser):
 	END ID "."
 	;
 	'''
-	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID')
+	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
 	def modulo(self, p):
 		pass
 		
 	'''
-	declaracionTipoPuntoComa : declaracionTipoPuntoComa
+	declaracionTipoPuntoComa : declaracionTipoPuntoComa declaracionTipo ";"
 	|	declaracionTipo ";"
+	|
 	;
 	'''
-	@_('declaracionTipoPuntoComa', 'declaracionTipo ";"')
+	@_('declaracionTipoPuntoComa declaracionTipo ";"',
+	'declaracionTipo ";"',
+	'empty')
 	def declaracionTipoPuntoComa(self, p):
 		pass
 		
 	'''
-	declaracionConstanteCONST : 
-	|	"CONST" declaracionConstanteRecursivo
+	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
+	|	
 	;
 	'''
-	@_('empty', 'CONST declaracionConstanteRecursivo')
+	@_('CONST declaracionConstanteRecursivo',
+	'empty')
 	def declaracionConstanteCONST(self, p):
 		pass
 		
 	'''
-	declaracionConstanteRecursivo : declaracionConstanteRecursivo
+	declaracionConstanteRecursivo : declaracionConstanteRecursivo declaracionConstante
 	|	declaracionConstante
+	|
 	;
 	'''
-	@_('declaracionConstanteRecursivo', 'declaracionConstante')
+	@_('declaracionConstanteRecursivo declaracionConstante',
+	'declaracionConstante',
+	'empty')
 	def declaracionConstanteRecursivo(self, p):
 		pass
 		
 	'''
-	declaracionVariableIN : 
-	|	"IN" declaracionVariableRecursivo
+	declaracionVariableIN : "IN" declaracionVariableRecursivo
+	|	
 	;
 	'''
-	@_('empty', 'IN declaracionVariableRecursivo')
+	@_('IN declaracionVariableRecursivo',
+	'empty')
 	def declaracionVariableIN(self, p):
 		pass
 		
 	'''
-	declaracionVariableINOUT : 
-	|	"INOUT" declaracionVariableRecursivo
+	declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
+	|	
 	;
 	'''
-	@_('empty', 'INOUT declaracionVariableRecursivo')
+	@_('INOUT declaracionVariableRecursivo',
+	'empty')
 	def declaracionVariableINOUT(self, p):
 		pass
 		
 	'''
-	declaracionVariableOUT : 
-	|	"OUT" declaracionVariableRecursivo
+	declaracionVariableOUT : "OUT" declaracionVariableRecursivo
+	|	
 	;
 	'''
-	@_('empty', 'OUT declaracionConstanteRecursivo')
+	@_('OUT declaracionConstanteRecursivo',
+	'empty')
 	def declaracionVariableOUT(self, p):
 		pass
 	
 	'''
-	declaracionVariableVAR : 
-	|	"VAR" declaracionVariableRecursivo
+	declaracionVariableVAR : "VAR" declaracionVariableRecursivo
+	|	
 	;
 	'''
-	@_('empty', 'VAR declaracionVariableRecursivo')
+	@_('VAR declaracionVariableRecursivo', 'empty')
 	def declaracionVariableVAR(self, p):
 		pass
 		
 	'''
-	sentenciaSecuenciaBEGIN : 
-	|	"BEGIN" sentenciaSecuencia
+	sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
+	|	
 	;
 	'''
-	@_('empty', 'BEGIN sentenciaSecuencia')
+	@_('BEGIN sentenciaSecuencia', 'empty')
 	def sentenciaSecuenciaBEGIN(self, p):
 		pass
 		
 	'''
-	declaracionVariableRecursivo : declaracionVariableRecursivo
+	declaracionVariableRecursivo : declaracionVariableRecursivo declaracionVariable
 	|	declaracionVariable
+	|
 	;
 	'''
-	@_('declaracionVariableRecursivo', 'declaracionVariable')
+	@_('declaracionVariableRecursivo declaracionVariable',
+	'declaracionVariable',
+	'empty')
 	def declaracionVariableRecursivo(self, p):
 		pass
 		
@@ -425,20 +492,24 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	expresionCorchete2 : expresionCorchete2
+	expresionCorchete2 : expresionCorchete2 "[" expresionOpcional "]"
 	|	"[" expresionOpcional "]"
+	|
 	;
 	'''
-	@_('expresionCorchete2', '"[" expresionOpcional "]"')
+	@_('expresionCorchete2 "[" expresionOpcional "]"',
+	'"[" expresionOpcional "]"',
+	'empty')
 	def expresionCorchete2(self, p):
 		pass
 		
 	'''
-	expresionOpcional : 
-	|	expresion
+	expresionOpcional : expresion
+	|	
 	;
 	'''
-	@_('empty', 'expresion')
+	@_('expresion',
+	'empty')
 	def expresionOpcional(self, p):
 		pass
 		
@@ -459,64 +530,74 @@ class CalcParser(Parser):
 	declaracionVariableOUT 
 	declaracionVariableVAR 
 	sentenciaSecuenciaBEGIN 
-	END ID "."
+	END ID
 	;
 	'''
-	@_('TYPE ID simboloPor listaIdParentesis ";" declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
+	@_('TYPE ID simboloPor listaIdParentesis ";" declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID')
 	def declaracionTipo(self, p):
 		pass
 		
 	'''
-	simboloPor : 
-	|	"*"
+	simboloPor : "*"
+	|	
 	;
 	'''
-	@_('empty', '"*"')
+	@_('"*"',
+	'empty')
 	def simboloPor(self, p):
 		pass
 		
 	'''
-	listaIdParentesis :
-	|	"(" listaId ")"
+	listaIdParentesis : "(" listaId ")"
+	|	
 	;
 	'''
-	@_('empty', '"(" listaId ")"')
+	@_('"(" listaId ")"',
+	'empty')
 	def listaIdParentesis(self, p):
 		pass
 		
 	'''
-	tipoFormalIN : 
-	|	IN tipoFormallistaId
+	tipoFormalIN : IN tipoFormallistaId
+	|	
 	;
 	'''
-	@_('empty', 'IN tipoFormallistaId')
+	@_('IN tipoFormallistaId',
+	'empty')
 	def tipoFormalIN(self, p):
 		pass
 		
 	'''
-	tipoFormallistaId : tipoFormallistaId
+	tipoFormallistaId : tipoFormallistaId listaId ":" tipoFormal ";"
 	|	listaId ":" tipoFormal ";"
+	|
 	;
 	'''
-	@_('tipoFormallistaId', 'listaId ":" tipoFormal ";"')
+	@_('tipoFormallistaId listaId ":" tipoFormal ";"',
+	'listaId ":" tipoFormal ";"',
+	'empty')
 	def tipoFormallistaId(self, p):
 		pass
 		
 	'''
-	tipoFormnalINOUT : 
-	|	INOUT tipoFormlBuslistaId
+	tipoFormnalINOUT : INOUT tipoFormlBuslistaId
+	|	
 	;
 	'''
-	@_('empty', 'INOUT tipoFormallistaId')
+	@_('INOUT tipoFormallistaId',
+	'empty')
 	def tipoFormlINOUT(self, p):
 		pass
 		
 	'''
-	tipoFormlBuslistaId : tipoFormlBuslistaId
+	tipoFormlBuslistaId : tipoFormlBuslistaId listaId ":" tipoFormalBus ";"
 	|	listaId ":" tipoFormalBus ";"
+	|
 	;
 	'''
-	@_('tipoFormlBuslistaId', 'listaId ":" tipoFormalBus ";"')
+	@_('tipoFormlBuslistaId listaId ":" tipoFormalBus ";"',
+	'listaId ":" tipoFormalBus ";"',
+	'empty')
 	def tipoFormlBuslistaId(self, p):
 		pass
 		
@@ -532,9 +613,6 @@ class CalcParser(Parser):
 	@_('')
 	def empty(self, p):
 		pass
-		
-		
-		
 		
 if __name__ == '__main__':
 	import sys
