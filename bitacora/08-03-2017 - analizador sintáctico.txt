@@ -1,0 +1,1 @@
+En la consulta se resuelvne las dudas sobre la interpretación de la grámatica en lola, lo cual se procede a corregir y actualziarlo en el parser y lexer
