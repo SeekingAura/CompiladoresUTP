@@ -179,7 +179,8 @@ class CalcParser(Parser):
 	|	
 	;
 	'''
-	@_('expresion ","', 'empty')
+	@_('expresion ","', 
+	'empty')
 	def expresionComa2(self, p):
 		pass
 		
@@ -264,7 +265,7 @@ class CalcParser(Parser):
 	'empty')
 	def condicionOr(self, p):
 		pass
-		
+
 	'''
 	condicion : expresion
 	;
