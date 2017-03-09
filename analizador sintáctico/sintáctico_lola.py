@@ -42,12 +42,8 @@ class CalcParser(Parser):
 	'''
 	
 
-<<<<<<< HEAD
 	@_('"(" listaExpresiones ")"', 
 	'empty')
-=======
-	@_('empty', '"(" listaExpresiones ")"')
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	def conjuntoExpresiones(self, p):
 		pass
 		
@@ -67,13 +63,9 @@ class CalcParser(Parser):
 	;
 	'''
 
-<<<<<<< HEAD
 	@_('expresionComa "," expresion', 
 	'"," expresion', 
 	'empty')
-=======
-	@_('expresionComa', '"," expresion')
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	def expresionComa(self, p):
 		pass
 		
@@ -82,7 +74,6 @@ class CalcParser(Parser):
 	;
 	'''
 	@_('expresionCorchete tipoSimple')
-
 	def tipo(self, p):
 		pass
 		
@@ -99,7 +90,6 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-
 	declaracionConstante : ID ":=" expresion ";"'
 	;
 	'''
@@ -116,7 +106,6 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-
 	listaId : ID IDComa
 		;
 	'''
@@ -131,13 +120,9 @@ class CalcParser(Parser):
 	;
 	'''
 
-<<<<<<< HEAD
 	@_('IDComa "," ID', 
 	'"," ID',
 	'empty')
-=======
-	@_('IDComa', '"," ID')
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	def IDComa(self, p):
 		pass
 	

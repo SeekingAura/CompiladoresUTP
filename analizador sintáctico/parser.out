@@ -133,10 +133,10 @@ Rule 129   empty -> <empty>
 
 Unused terminals:
 
-    FLECHADERECHA
     HEXA
-    RETURN
     WHILE
+    RETURN
+    FLECHADERECHA
 
 Terminals, with rules where they appear:
 
