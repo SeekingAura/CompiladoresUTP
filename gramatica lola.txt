@@ -5,14 +5,15 @@ ID : letra letraRecursivo
 letraRecursivo : letraRecursivo
 	|	letra
 	|	digito
+	|
 	;
 
 INTEGER : digito digitoRecursivo
-	|
 	;
 	
 digitoRecursivo : digitoRecursivo
 	|	digito
+	|
 	;
 
 LOGICVALUE : "'0"
@@ -28,23 +29,25 @@ tipoBasico : "BIT"
 		| "OC"
 		;
 		
-conjuntoExpresiones :
-	|	"(" listaExpresiones ")"
+conjuntoExpresiones : "(" listaExpresiones ")"
+	|	
 	;
 	
 		
 listaExpresiones : expresion expresionComa
 		;
 		
-expresionComa :  expresionComa
+expresionComa :  expresionComa "," expresion
 	|	"," expresion
+	|
 	;
 	
 tipo : expresionCorchete tipoSimple
 	;
 	
-expresionCorchete : expresionCorchete
+expresionCorchete : expresionCorchete "[" expresion "]"
 	|	"[" expresion "]"
+	|
 	;
 
 declaracionConstante : ID ":=" expresion ";"
@@ -56,25 +59,25 @@ declaracionVariable : listaId ":" tipo ";"
 listaId : ID IDComa
 	;
 	
-IDComa : IDComa
+IDComa : IDComa "," ID
 	|	"," ID
+	|
 	;
 	
-selector : selector
-	|	IDComa
-	|	integerPunto
-	|	expresionCorchete
-	;
-	
-integerPunto : integerPunto
+selector : selector "." ID
+	|	selector "." INTEGER
+	|	selector "[" expresion "]"
+	|	"." ID
 	|	"." INTEGER
+	|	"[" expresion "]"
+	|
 	;
 	
 factor : ID selector
 	|	valorLogico
 	|	INTEGER
 	|	"~" factor
-	|	"?" factor
+	|	"↑" factor
 	|	"(" expresion ")"
 	|	"MUX" "(" expresion ":" expresion "," expresion ")"
 	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
@@ -83,15 +86,16 @@ factor : ID selector
 	|	"SR" "(" expresion "," expresion ")"
 	;
 
-expresionComa2 : 
-	|	expresion ","
+expresionComa2 : expresion ","
+	|	
 	;
 	
 termino : factor terminoOperadores
 	;
 	
-terminoOperadores : terminoOperadores
+terminoOperadores : terminoOperadores simbolosProd factor
 	|	simbolosProd factor
+	|
 	;
 	
 simbolosProd : "*"
@@ -103,8 +107,9 @@ simbolosProd : "*"
 expresion : termino terminoMasMenos
 	;
 	
-terminoMasMenos : terminoMasMenos
+terminoMasMenos : terminoMasMenos simbolosMasMenos termino
 	|	simbolosMasMenos termino
+	|
 	;
 	
 simbolosMasMenos : "+"
@@ -114,8 +119,8 @@ simbolosMasMenos : "+"
 asignacion : ID selector ":=" condicionOr expresion
 	;
 	
-condicionOr : 
-	|	condicion "|"
+condicionOr : condicion "|"
+	|	
 	;
 	
 condicion : expresion
@@ -135,35 +140,37 @@ simbolosRelacion : "="
 sentenciaSi : "IF" relacion "THEN" sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces "END"
 	;
 
-sentenciaSiSino : sentenciaSiSino
+sentenciaSiSino : sentenciaSiSino "ELSIF" relacion "THEN" sentenciaSecuencia
 	|	"ELSIF" relacion "THEN" sentenciaSecuencia
+	|
 	;
 	
-sentenciaSiEntonces : 
-	|	"ELSE" sentenciaSecuencia
+sentenciaSiEntonces : "ELSE" sentenciaSecuencia
+	|	
 	;
 	
 sentenciaPara : "FOR" ID ":=" expresion ".." expresion "DO" sentenciaSecuencia "END"
 	;
 	
-sentencia : 
-	|	asignacion
+sentencia : asignacion
 	|	asignacionUnidad
 	|	sentenciaSi
 	|	sentenciaPara
+	|
 	;
 	
 sentenciaSecuencia : sentencia sentenciaPuntoComa
 	;
 	
-sentenciaPuntoComa | sentenciaPuntoComa
+sentenciaPuntoComa : sentenciaPuntoComa ";" sentencia
 	|	";" sentencia
+	|
 	;
 	
 modulo : "MODULE" ID ";" 
-declaracionTipoPuntoComa 
-declaracionConstanteCONST 
-declaracionVariableIN 
+declaracionTipoPuntoComa
+declaracionConstanteCONST
+declaracionVariableIN
 declaracionVariableINOUT 
 declaracionVariableOUT 
 declaracionVariableVAR 
@@ -171,51 +178,55 @@ sentenciaSecuenciaBEGIN
 END ID "."
 	;
 	
-declaracionTipoPuntoComa : declaracionTipoPuntoComa
+declaracionTipoPuntoComa : declaracionTipoPuntoComa declaracionTipo ";"
 	|	declaracionTipo ";"
+	|
 	;
 	
-declaracionConstanteCONST : 
-	|	"CONST" declaracionConstanteRecursivo
+declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
+	|	
 	;
 
-declaracionConstanteRecursivo : declaracionConstanteRecursivo
+declaracionConstanteRecursivo : declaracionConstanteRecursivo declaracionConstante
 	|	declaracionConstante
+	|
 	;
 	
-declaracionVariableIN : 
-	|	"IN" declaracionVariableRecursivo
+declaracionVariableIN : "IN" declaracionVariableRecursivo
+	|	
 	;
 
-declaracionVariableINOUT : 
-	|	"INOUT" declaracionVariableRecursivo
+declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
+	|	
 	;
 	
-declaracionVariableOUT : 
-	|	"OUT" declaracionVariableRecursivo
+declaracionVariableOUT : "OUT" declaracionVariableRecursivo
+	|	
 	;
 	
-declaracionVariableVAR : 
-	|	"VAR" declaracionVariableRecursivo
+declaracionVariableVAR : "VAR" declaracionVariableRecursivo
+	|	
 	;
 	
-sentenciaSecuenciaBEGIN : 
-	|	"BEGIN" sentenciaSecuencia
+sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
+	|	
 	;
 	
-declaracionVariableRecursivo : declaracionVariableRecursivo
+declaracionVariableRecursivo : declaracionVariableRecursivo declaracionVariable
 	|	declaracionVariable
+	|
 	;
 	
 tipoFormal : expresionCorchete2 "BIT"
 	;
 	
-expresionCorchete2 : expresionCorchete2
+expresionCorchete2 : expresionCorchete2 "[" expresionOpcional "]"
 	|	"[" expresionOpcional "]"
+	|
 	;
 	
-expresionOpcional : 
-	|	expresion
+expresionOpcional : expresion
+	|	
 	;
 	
 tipoFormalBus : expresionCorchete2 "TS"
@@ -229,31 +240,33 @@ tipoFormlINOUT
 declaracionVariableOUT 
 declaracionVariableVAR 
 sentenciaSecuenciaBEGIN 
-END ID "."
+END ID
 	;
 	
-simboloPor : 
-	|	"*"
+simboloPor : "*"
+	|	
 	;
 
-listaIdParentesis :
-	|	"(" listaId ")"
+listaIdParentesis : "(" listaId ")"
+	|	
 	;
 	
-tipoFormalIN : 
-	|	IN tipoFormallistaId
+tipoFormalIN : IN tipoFormallistaId
+	|	
 	;
 
-tipoFormallistaId : tipoFormallistaId
+tipoFormallistaId : tipoFormallistaId listaId ":" tipoFormal ";"
 	|	listaId ":" tipoFormal ";"
+	|
 	;
 	
-tipoFormnalINOUT : 
-	|	INOUT tipoFormlBuslistaId
+tipoFormnalINOUT : INOUT tipoFormlBuslistaId
+	|
 	;
 	
-tipoFormlBuslistaId : tipoFormlBuslistaId
+tipoFormlBuslistaId : tipoFormlBuslistaId listaId ":" tipoFormalBus ";"
 	|	listaId ":" tipoFormalBus ";"
+	|
 	;
 
 assinacionUnidad : ID selector "(" listaExpresiones ")"
