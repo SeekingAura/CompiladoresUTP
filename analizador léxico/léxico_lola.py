@@ -20,15 +20,10 @@ class CalcLexer(Lexer):
 	}
 	ignore = ' \t'
 	
-<<<<<<< HEAD
 
 	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
 
 
-=======
-
-	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	
 	#Tokens - valores
 	@_(r"[a-zA-Z_][a-zA-Z0-9_]*'?")
@@ -76,12 +71,7 @@ class CalcLexer(Lexer):
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r':='
-<<<<<<< HEAD
 
-=======
-	
-	
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
 	@_(r'\+')

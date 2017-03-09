@@ -15,13 +15,8 @@ digitoRecursivo : digitoRecursivo
 	|	digito
 	;
 
-<<<<<<< HEAD
 LOGICVALUE : "'0"
 	|	"'1"
-=======
-valorLogico : " '0"
-	|	" '1"
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 	;
 	
 tipoSimple : tipoBasico
@@ -64,11 +59,7 @@ listaId : ID IDComa
 IDComa : IDComa
 	|	"," ID
 	;
-<<<<<<< HEAD
 	
-=======
-
->>>>>>> 49d3f0bb3a047edb074af39cdb8dd6edcf835b42
 selector : selector
 	|	IDComa
 	|	integerPunto
