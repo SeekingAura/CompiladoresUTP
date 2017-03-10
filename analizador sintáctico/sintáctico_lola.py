@@ -8,20 +8,41 @@ from léxico_lola import CalcLexer
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
 	
-
 	tokens = CalcLexer.tokens
-
+	
+	#def __init__(self):
+	#	self.error=0
+	
+	"""
+	Se debe modificar las gramaticas tipo
+	a: a b
+	|	b
+	|
+	;
+	
+	modificarlo a
+	a: list_b
+	|	
+	
+	listb: listb b
+	|	b
+	"""
 	
 	'''
 	tipoSimple : tipoBasico
 		|	ID conjuntoExpresiones
 		;
 	'''
-	
-	@_('tipoBasico', 
-	'ID conjuntoExpresiones')
+	@_('tipoBasico') 
 	def tipoSimple(self, p):
-		pass
+		return p.tipoBasico
+	@_('ID conjuntoExpresiones')
+	def tipoSimple(self, p):
+		conjunto=[]
+		for i in p:
+			conjunto.append(i)
+		return conjunto#verificar
+		#para referir al contenido de los tokens se puede con p.tipoBasico p.ID p.conjuntoExpresiones
 		
 	'''
 	tipoBasico : 'BIT'
@@ -155,7 +176,7 @@ class CalcParser(Parser):
 	|	"(" expresion ")"
 	|	"MUX" "(" expresion ":" expresion "," expresion ")"
 	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
-	|	"REG" "(" expresionComa2 expresion ")"
+	|	"REG" "(" expresionComaO expresion ")"
 	|	"LATCH" "(" expresion "," expresion ")"
 	|	"SR" "(" expresion "," expresion ")"
 	;
@@ -168,20 +189,21 @@ class CalcParser(Parser):
 	'"(" expresion ")"', 
 	'MUX "(" expresion ":" expresion "," expresion ")"', 
 	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"', 
-	'REG "(" expresionComa2 expresion', 
+	'REG "(" expresionComaO expresion', 
 	'LATCH "(" expresion "," expresion ")"', 
 	'SR "(" expresion , expresion ")"')
 	def factor(self, p):
 		pass
+		#cuando se tiene tokens del mismo en lo largo de la gramatica, se puede referir con p.expresion0, p.expresion1
 		
 	'''
-	expresionComa2 : expresion ","
+	expresionComaO : expresion ","
 	|	
 	;
 	'''
 	@_('expresion ","', 
 	'empty')
-	def expresionComa2(self, p):
+	def expresionComaO(self, p):
 		pass
 		
 	'''
@@ -396,6 +418,8 @@ class CalcParser(Parser):
 	|
 	;
 	'''
+	
+	
 	@_('declaracionTipoPuntoComa declaracionTipo ";"',
 	'declaracionTipo ";"',
 	'empty')
@@ -485,23 +509,23 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	tipoFormal : expresionCorchete2 "BIT"
+	tipoFormal : expresionCorcheteR "BIT"
 	;
 	'''
-	@_('expresionCorchete2 BIT')
+	@_('expresionCorcheteR BIT')
 	def tipoFormal(self, p):
 		pass
 		
 	'''
-	expresionCorchete2 : expresionCorchete2 "[" expresionOpcional "]"
+	expresionCorcheteR : expresionCorcheteR "[" expresionOpcional "]"
 	|	"[" expresionOpcional "]"
 	|
 	;
 	'''
-	@_('expresionCorchete2 "[" expresionOpcional "]"',
+	@_('expresionCorcheteR "[" expresionOpcional "]"',
 	'"[" expresionOpcional "]"',
 	'empty')
-	def expresionCorchete2(self, p):
+	def expresionCorcheteR(self, p):
 		pass
 		
 	'''
@@ -515,11 +539,11 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	tipoFormalBus : expresionCorchete2 "TS"
-	|	expresionCorchete2 "OC"
+	tipoFormalBus : expresionCorcheteR "TS"
+	|	expresionCorcheteR "OC"
 	;
 	'''
-	@_('expresionCorchete2 TS', 'expresionCorchete2 OC')
+	@_('expresionCorcheteR TS', 'expresionCorcheteR OC')
 	def tipoFormalBus(self, p):
 		pass
 		

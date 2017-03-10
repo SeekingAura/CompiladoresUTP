@@ -81,12 +81,12 @@ factor : ID selector
 	|	"(" expresion ")"
 	|	"MUX" "(" expresion ":" expresion "," expresion ")"
 	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
-	|	"REG" "(" expresionComa2 expresion ")"
+	|	"REG" "(" expresionComaO expresion ")"
 	|	"LATCH" "(" expresion "," expresion ")"
 	|	"SR" "(" expresion "," expresion ")"
 	;
 
-expresionComa2 : expresion ","
+expresionComaO : expresion ","
 	|	
 	;
 	
@@ -217,10 +217,10 @@ declaracionVariableRecursivo : declaracionVariableRecursivo declaracionVariable
 	|
 	;
 	
-tipoFormal : expresionCorchete2 "BIT"
+tipoFormal : expresionCorcheteP "BIT"
 	;
 	
-expresionCorchete2 : expresionCorchete2 "[" expresionOpcional "]"
+expresionCorcheteP : expresionCorcheteP "[" expresionOpcional "]"
 	|	"[" expresionOpcional "]"
 	|
 	;
@@ -229,8 +229,8 @@ expresionOpcional : expresion
 	|	
 	;
 	
-tipoFormalBus : expresionCorchete2 "TS"
-	|	expresionCorchete2 "OC"
+tipoFormalBus : expresionCorcheteP "TS"
+	|	expresionCorcheteP "OC"
 	;
 	
 declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 

@@ -31,7 +31,7 @@ Rule 27    selector -> selector . INTEGER
 Rule 28    selector -> selector . ID
 Rule 29    factor -> SR ( expresion , expresion )
 Rule 30    factor -> LATCH ( expresion , expresion )
-Rule 31    factor -> REG ( expresionComa2 expresion
+Rule 31    factor -> REG ( expresionComaO expresion
 Rule 32    factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
 Rule 33    factor -> MUX ( expresion : expresion , expresion )
 Rule 34    factor -> ( expresion )
@@ -40,8 +40,8 @@ Rule 36    factor -> ~ factor
 Rule 37    factor -> INTEGER
 Rule 38    factor -> LOGICVALUE
 Rule 39    factor -> ID selector
-Rule 40    expresionComa2 -> empty
-Rule 41    expresionComa2 -> expresion ,
+Rule 40    expresionComaO -> empty
+Rule 41    expresionComaO -> expresion ,
 Rule 42    termino -> factor terminoOperadores
 Rule 43    terminoOperadores -> empty
 Rule 44    terminoOperadores -> simbolosProd factor
@@ -105,14 +105,14 @@ Rule 101   sentenciaSecuenciaBEGIN -> BEGIN sentenciaSecuencia
 Rule 102   declaracionVariableRecursivo -> empty
 Rule 103   declaracionVariableRecursivo -> declaracionVariable
 Rule 104   declaracionVariableRecursivo -> declaracionVariableRecursivo declaracionVariable
-Rule 105   tipoFormal -> expresionCorchete2 BIT
-Rule 106   expresionCorchete2 -> empty
-Rule 107   expresionCorchete2 -> [ expresionOpcional ]
-Rule 108   expresionCorchete2 -> expresionCorchete2 [ expresionOpcional ]
+Rule 105   tipoFormal -> expresionCorcheteR BIT
+Rule 106   expresionCorcheteR -> empty
+Rule 107   expresionCorcheteR -> [ expresionOpcional ]
+Rule 108   expresionCorcheteR -> expresionCorcheteR [ expresionOpcional ]
 Rule 109   expresionOpcional -> empty
 Rule 110   expresionOpcional -> expresion
-Rule 111   tipoFormalBus -> expresionCorchete2 OC
-Rule 112   tipoFormalBus -> expresionCorchete2 TS
+Rule 111   tipoFormalBus -> expresionCorcheteR OC
+Rule 112   tipoFormalBus -> expresionCorcheteR TS
 Rule 113   declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID
 Rule 114   simboloPor -> empty
 Rule 115   simboloPor -> *
@@ -133,10 +133,10 @@ Rule 129   empty -> <empty>
 
 Unused terminals:
 
-    FLECHADERECHA
+    RETURN
     WHILE
     HEXA
-    RETURN
+    FLECHADERECHA
 
 Terminals, with rules where they appear:
 
@@ -218,9 +218,9 @@ declaracionVariableVAR : 83 113
 empty                : 6 9 13 19 22 40 43 51 57 68 71 74 80 84 87 89 92 94 96 98 100 102 106 109 114 116 118 120 123 125
 expresion            : 8 10 11 14 15 16 23 26 29 29 30 30 31 32 32 32 32 32 32 33 33 33 34 41 56 59 60 60 73 73 110
 expresionComa        : 8 11
-expresionComa2       : 31
+expresionComaO       : 31
 expresionCorchete    : 12 15
-expresionCorchete2   : 105 108 111 112
+expresionCorcheteR   : 105 108 111 112
 expresionOpcional    : 107 108
 factor               : 35 36 42 44 45
 listaExpresiones     : 7 128
@@ -332,7 +332,7 @@ state 9
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -364,7 +364,7 @@ state 10
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -478,7 +478,7 @@ state 16
 
 state 17
 
-    (31) factor -> REG . ( expresionComa2 expresion
+    (31) factor -> REG . ( expresionComaO expresion
     (               shift and go to state 43
 
 
@@ -494,7 +494,7 @@ state 19
     (35) factor -> ? . factor
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -521,7 +521,7 @@ state 20
     (36) factor -> ~ . factor
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -636,7 +636,7 @@ state 28
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -702,7 +702,7 @@ state 31
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -800,7 +800,7 @@ state 36
     (44) terminoOperadores -> simbolosProd . factor
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -889,7 +889,7 @@ state 41
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -920,7 +920,7 @@ state 42
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -946,15 +946,15 @@ state 42
 
 state 43
 
-    (31) factor -> REG ( . expresionComa2 expresion
-    (40) expresionComa2 -> . empty
-    (41) expresionComa2 -> . expresion ,
+    (31) factor -> REG ( . expresionComaO expresion
+    (40) expresionComaO -> . empty
+    (41) expresionComaO -> . expresion ,
     (129) empty -> .
     (50) expresion -> . termino terminoMasMenos
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -984,7 +984,7 @@ state 43
     LOGICVALUE      shift and go to state 22
     ID              shift and go to state 23
 
-    expresionComa2                 shift and go to state 60
+    expresionComaO                 shift and go to state 60
     expresion                      shift and go to state 61
     empty                          shift and go to state 62
     termino                        shift and go to state 13
@@ -998,7 +998,7 @@ state 44
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1096,7 +1096,7 @@ state 49
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1150,7 +1150,7 @@ state 52
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1187,7 +1187,7 @@ state 54
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1230,7 +1230,7 @@ state 56
     (45) terminoOperadores -> terminoOperadores simbolosProd . factor
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1281,12 +1281,12 @@ state 59
 
 state 60
 
-    (31) factor -> REG ( expresionComa2 . expresion
+    (31) factor -> REG ( expresionComaO . expresion
     (50) expresion -> . termino terminoMasMenos
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1312,23 +1312,23 @@ state 60
 
 state 61
 
-    (41) expresionComa2 -> expresion . ,
+    (41) expresionComaO -> expresion . ,
     ,               shift and go to state 75
 
 
 state 62
 
-    (40) expresionComa2 -> empty .
-    SR              reduce using rule 40 (expresionComa2 -> empty .)
-    LATCH           reduce using rule 40 (expresionComa2 -> empty .)
-    REG             reduce using rule 40 (expresionComa2 -> empty .)
-    MUX             reduce using rule 40 (expresionComa2 -> empty .)
-    (               reduce using rule 40 (expresionComa2 -> empty .)
-    ?               reduce using rule 40 (expresionComa2 -> empty .)
-    ~               reduce using rule 40 (expresionComa2 -> empty .)
-    INTEGER         reduce using rule 40 (expresionComa2 -> empty .)
-    LOGICVALUE      reduce using rule 40 (expresionComa2 -> empty .)
-    ID              reduce using rule 40 (expresionComa2 -> empty .)
+    (40) expresionComaO -> empty .
+    SR              reduce using rule 40 (expresionComaO -> empty .)
+    LATCH           reduce using rule 40 (expresionComaO -> empty .)
+    REG             reduce using rule 40 (expresionComaO -> empty .)
+    MUX             reduce using rule 40 (expresionComaO -> empty .)
+    (               reduce using rule 40 (expresionComaO -> empty .)
+    ?               reduce using rule 40 (expresionComaO -> empty .)
+    ~               reduce using rule 40 (expresionComaO -> empty .)
+    INTEGER         reduce using rule 40 (expresionComaO -> empty .)
+    LOGICVALUE      reduce using rule 40 (expresionComaO -> empty .)
+    ID              reduce using rule 40 (expresionComaO -> empty .)
 
 
 state 63
@@ -1346,7 +1346,7 @@ state 64
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1462,7 +1462,7 @@ state 72
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1493,7 +1493,7 @@ state 73
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1519,32 +1519,32 @@ state 73
 
 state 74
 
-    (31) factor -> REG ( expresionComa2 expresion .
-    MOD             reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    DIV             reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    /               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    *               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    -               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    +               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    ,               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    )               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    :               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
-    ]               reduce using rule 31 (factor -> REG ( expresionComa2 expresion .)
+    (31) factor -> REG ( expresionComaO expresion .
+    MOD             reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    DIV             reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    /               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    *               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    -               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    +               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    ,               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    )               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    :               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
+    ]               reduce using rule 31 (factor -> REG ( expresionComaO expresion .)
 
 
 state 75
 
-    (41) expresionComa2 -> expresion , .
-    SR              reduce using rule 41 (expresionComa2 -> expresion , .)
-    LATCH           reduce using rule 41 (expresionComa2 -> expresion , .)
-    REG             reduce using rule 41 (expresionComa2 -> expresion , .)
-    MUX             reduce using rule 41 (expresionComa2 -> expresion , .)
-    (               reduce using rule 41 (expresionComa2 -> expresion , .)
-    ?               reduce using rule 41 (expresionComa2 -> expresion , .)
-    ~               reduce using rule 41 (expresionComa2 -> expresion , .)
-    INTEGER         reduce using rule 41 (expresionComa2 -> expresion , .)
-    LOGICVALUE      reduce using rule 41 (expresionComa2 -> expresion , .)
-    ID              reduce using rule 41 (expresionComa2 -> expresion , .)
+    (41) expresionComaO -> expresion , .
+    SR              reduce using rule 41 (expresionComaO -> expresion , .)
+    LATCH           reduce using rule 41 (expresionComaO -> expresion , .)
+    REG             reduce using rule 41 (expresionComaO -> expresion , .)
+    MUX             reduce using rule 41 (expresionComaO -> expresion , .)
+    (               reduce using rule 41 (expresionComaO -> expresion , .)
+    ?               reduce using rule 41 (expresionComaO -> expresion , .)
+    ~               reduce using rule 41 (expresionComaO -> expresion , .)
+    INTEGER         reduce using rule 41 (expresionComaO -> expresion , .)
+    LOGICVALUE      reduce using rule 41 (expresionComaO -> expresion , .)
+    ID              reduce using rule 41 (expresionComaO -> expresion , .)
 
 
 state 76
@@ -1554,7 +1554,7 @@ state 76
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1585,7 +1585,7 @@ state 77
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1744,7 +1744,7 @@ state 89
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1775,7 +1775,7 @@ state 90
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1818,7 +1818,7 @@ state 93
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1870,7 +1870,7 @@ state 96
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
@@ -1907,7 +1907,7 @@ state 98
     (42) termino -> . factor terminoOperadores
     (29) factor -> . SR ( expresion , expresion )
     (30) factor -> . LATCH ( expresion , expresion )
-    (31) factor -> . REG ( expresionComa2 expresion
+    (31) factor -> . REG ( expresionComaO expresion
     (32) factor -> . MUX ( expresion , expresion : expresion , expresion , expresion , expresion )
     (33) factor -> . MUX ( expresion : expresion , expresion )
     (34) factor -> . ( expresion )
