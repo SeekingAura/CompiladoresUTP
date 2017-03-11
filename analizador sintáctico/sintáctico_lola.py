@@ -13,7 +13,21 @@ class CalcParser(Parser):
 	#def __init__(self):
 	#	self.error=0
 	
-	
+	'''
+	modulo : "MODULE" ID ";" 
+	declaracionTipoPuntoComa 
+	declaracionConstanteCONST 
+	declaracionVariableIN 
+	declaracionVariableINOUT 
+	declaracionVariableOUT 
+	declaracionVariableVAR 
+	sentenciaSecuenciaBEGIN 
+	END ID "."
+	;
+	'''
+	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
+	def modulo(self, p):
+		pass
 	'''
 	tipoSimple : tipoBasico
 		|	ID conjuntoExpresiones
@@ -447,21 +461,7 @@ class CalcParser(Parser):
 	def sentenciaPuntoComaR(self, p):
 		pass
 
-	'''
-	modulo : "MODULE" ID ";" 
-	declaracionTipoPuntoComa 
-	declaracionConstanteCONST 
-	declaracionVariableIN 
-	declaracionVariableINOUT 
-	declaracionVariableOUT 
-	declaracionVariableVAR 
-	sentenciaSecuenciaBEGIN 
-	END ID "."
-	;
-	'''
-	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
-	def modulo(self, p):
-		pass
+	
 		
 	'''
 	declaracionTipoPuntoComa : declaracionTipoPuntoComaR
@@ -550,7 +550,8 @@ class CalcParser(Parser):
 	|	
 	;
 	'''
-	@_('VAR declaracionVariableRecursivo', 'empty')
+	@_('VAR declaracionVariableRecursivo', 
+	'empty')
 	def declaracionVariableVAR(self, p):
 		pass
 		
@@ -559,7 +560,8 @@ class CalcParser(Parser):
 	|	
 	;
 	'''
-	@_('BEGIN sentenciaSecuencia', 'empty')
+	@_('BEGIN sentenciaSecuencia', 
+	'empty')
 	def sentenciaSecuenciaBEGIN(self, p):
 		pass
 		
@@ -627,7 +629,8 @@ class CalcParser(Parser):
 	|	expresionCorcheteO "OC"
 	;
 	'''
-	@_('expresionCorcheteO TS', 'expresionCorcheteO OC')
+	@_('expresionCorcheteO TS', 
+	'expresionCorcheteO OC')
 	def tipoFormalBus(self, p):
 		pass
 		
