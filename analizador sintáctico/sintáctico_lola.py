@@ -13,35 +13,15 @@ class CalcParser(Parser):
 	#def __init__(self):
 	#	self.error=0
 	
-	"""
-	Se debe modificar las gramaticas tipo
-	a: a b
-	|	b
-	|
-	;
-	
-	modificarlo a
-	a: list_b
-	|	
-	
-	listb: listb b
-	|	b
-	"""
 	
 	'''
 	tipoSimple : tipoBasico
 		|	ID conjuntoExpresiones
 		;
 	'''
-	@_('tipoBasico') 
+	@_('tipoBasico', 'ID conjuntoExpresiones') 
 	def tipoSimple(self, p):
-		return p.tipoBasico
-	@_('ID conjuntoExpresiones')
-	def tipoSimple(self, p):
-		conjunto=[]
-		for i in p:
-			conjunto.append(i)
-		return conjunto#verificar
+		pass
 		#para referir al contenido de los tokens se puede con p.tipoBasico p.ID p.conjuntoExpresiones
 		
 	'''
@@ -72,23 +52,32 @@ class CalcParser(Parser):
 	listaExpresiones : expresion expresionComa
 		;
 	'''
-	
 	@_('expresion expresionComa')
 	def listaExpresiones(self, p):
 		pass
 		
 	'''
-	expresionComa :  expresionComa "," expresion
-	|	"," expresion
+	expresionComa :  expresionComaR 
 	|
 	;
 	'''
 
-	@_('expresionComa "," expresion', 
-	'"," expresion', 
+	@_('expresionComaR',  
 	'empty')
 	def expresionComa(self, p):
 		pass
+		
+	'''
+	expresionComaR : expresionComaR "," expresion
+	|	"," expresion
+	;
+	'''
+	
+	@_('expresionComaR "," expresion',
+	'"," expresion')
+	def expresionComaR(self, p):
+		pass
+		
 		
 	'''
 	tipo : expresionCorchete tipoSimple
@@ -99,17 +88,26 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	expresionCorchete : expresionCorchete "[" expresion "]"
-	| "[" expresion "]"
+	expresionCorchete : expresionCorcheteR
 	|
 	;
 	'''
-	@_('expresionCorchete "[" expresion "]"', 
-	'"[" expresion "]"',
+	@_('expresionCorcheteR', 
 	'empty')
 	def expresionCorchete(self, p):
 		pass
-		
+	
+	'''
+	expresionCorcheteR : expresionCorcheteR "[" expresion "]"
+	|	"[" expresion "]"
+	;
+	'''
+	@_('expresionCorcheteR "[" expresion "]"',
+	'"[" expresion "]"')
+	def expresionCorcheteR(self, p):
+		pass
+	
+	
 	'''
 	declaracionConstante : ID ":=" expresion ";"'
 	;
@@ -135,38 +133,57 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	IDComa : IDComa "," ID
-	|	"," ID
+	IDComa : IDComaR
 	|
 	;
 	'''
 
-	@_('IDComa "," ID', 
-	'"," ID',
+	@_('IDComaR',
 	'empty')
 	def IDComa(self, p):
 		pass
 	
 	'''
-	selector : selector "." ID
-	|	selector "." INTEGER
-	|	selector "[" expresion "]"
-	|	"." ID
-	|	"." INTEGER
-	|	"[" expresion "]"
+	IDComaR : IDComaR "," ID
+	|	"," ID
+	;
+	'''
+	@_('IDComaR "," ID',
+	'"," ID')
+	def IDComaR(self, p):
+		pass
+	'''
+	selector : selectorR
 	|
 	;
 	'''
-	@_('selector "." ID', 
-	'selector "." INTEGER', 
-	'selector "[" expresion "]"', 
-	'"." ID',
-	'"." INTEGER',
-	'"[" expresion "]"',
+	@_('selectorR', 
 	'empty')
 	def selector(self, p):
 		pass
 	
+	'''
+	selectoR : selectorR selectorRR
+	|	selectorRR
+	;
+	'''
+	@_('selectorR selectorRR',
+	'selectorRR')
+	def selectorR(self, p):
+		pass
+		
+	'''
+	selectorRR : "." ID
+	|	"." INTEGER
+	|	"[" expresion "]"
+	;
+	'''
+	@_('"." ID',
+	'"." INTEGER',
+	'"[" expresion "]"')
+	def selectorRR(self, p):
+		pass
+		
 	'''
 	factor : ID selector
 	|	valorLogico
@@ -201,7 +218,7 @@ class CalcParser(Parser):
 	|	
 	;
 	'''
-	@_('expresion ","', 
+	@_('expresion ","',
 	'empty')
 	def expresionComaO(self, p):
 		pass
@@ -215,17 +232,26 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	terminoOperadores : terminoOperadores simbolosProd factor
-	|	simbolosProd factor
+	terminoOperadores : terminoOperadoresR 
 	|
 	;
 	'''
-	@_('terminoOperadores simbolosProd factor', 
-	'simbolosProd factor',
+	@_('terminoOperadoresR', 
 	'empty')
 	def terminoOperadores(self, p):
 		pass
 	
+	'''
+	terminoOperadoresR : terminoOperadoresR simbolosProd factor
+	|	simbolosProd factor
+	;
+	'''
+	@_('terminoOperadoresR simbolosProd factor',
+	'simbolosProd factor')
+	def terminoOperadoresR(self, p):
+		pass
+
+
 	'''
 	simbolosProd : "*"
 	|	"/"
@@ -249,17 +275,25 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	terminoMasMenos : terminoMasMenos simbolosMasMenos termino
-	|	simbolosMasMenos termino
+	terminoMasMenos : terminoMasMenosR
 	|
 	;
 	'''
-	@_('terminoMasMenos simbolosMasMenos termino', 
-	'simbolosMasMenos termino',
+	@_('terminoMasMenosR',
 	'empty')
 	def terminoMasMenos(self, p):
 		pass
-		
+	
+	'''
+	terminoMasMenosR : terminoMasMenosR simbolosMasMenos termino
+	|	simbolosMasMenos termino
+	;
+	'''
+	@_('terminoMasMenosR simbolosMasMenos termino',
+	'simbolosMasMenos termino')
+	def terminoMasMenosR(self, p):
+		pass
+	
 	'''
 	simbolosMasMenos : "+"
 	|	"-"
@@ -331,17 +365,26 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	sentenciaSiSino : sentenciaSiSino "ELSIF" relacion "THEN" sentenciaSecuencia
-	|	"ELSIF" relacion "THEN" sentenciaSecuencia
+	sentenciaSiSino : sentenciaSiSinoR
 	|
 	;
 	'''
-	@_('sentenciaSiSino ELSIF relacion THEN sentenciaSecuencia',
-	'ELSIF relacion THEN sentenciaSecuencia',
+	@_('sentenciaSiSinoR',
 	'empty')
 	def sentenciaSiSino(self, p):
 		pass
-		
+	
+	'''
+	sentenciaSiSinoR : sentenciaSiSinoR "ELSIF" relacion "THEN" sentenciaSecuencia
+	|	"ELSIF" relacion "THEN" sentenciaSecuencia
+	;
+	'''
+	
+	@_('sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia',
+	'ELSIF relacion THEN sentenciaSecuencia')
+	def sentenciaSiSinoR(self, p):
+		pass
+
 	'''
 	sentenciaSiEntonces : "ELSE" sentenciaSecuencia
 	|
@@ -385,17 +428,25 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	sentenciaPuntoComa : sentenciaPuntoComa ";" sentencia
-	|	";" sentencia
+	sentenciaPuntoComa : sentenciaPuntoComaR
 	|
 	;
 	'''
-	@_('sentenciaPuntoComa ";" sentencia', 
-	'";" sentencia',
+	@_('sentenciaPuntoComaR', 
 	'empty')
 	def sentenciaPuntoComa(self, p):
 		pass
-		
+	
+	'''
+	sentenciaPuntoComaR : sentenciaPuntoComaR ";" sentencia
+	|	";" sentencia
+	;
+	'''
+	@_('sentenciaPuntoComaR ";" sentencia',
+	'";" sentencia')
+	def sentenciaPuntoComaR(self, p):
+		pass
+
 	'''
 	modulo : "MODULE" ID ";" 
 	declaracionTipoPuntoComa 
@@ -413,19 +464,25 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	declaracionTipoPuntoComa : declaracionTipoPuntoComa declaracionTipo ";"
-	|	declaracionTipo ";"
+	declaracionTipoPuntoComa : declaracionTipoPuntoComaR
 	|
 	;
-	'''
-	
-	
-	@_('declaracionTipoPuntoComa declaracionTipo ";"',
-	'declaracionTipo ";"',
+	'''	
+	@_('declaracionTipoPuntoComaR',
 	'empty')
 	def declaracionTipoPuntoComa(self, p):
 		pass
-		
+	
+	'''
+	declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
+	|	declaracionTipo ";"
+	;
+	'''
+	@_('declaracionTipoPuntoComaR declaracionTipo ";"',
+	'declaracionTipo ";"')
+	def declaracionTipoPuntoComaR(self, p):
+		pass
+
 	'''
 	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
 	|	
@@ -437,17 +494,27 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	declaracionConstanteRecursivo : declaracionConstanteRecursivo declaracionConstante
-	|	declaracionConstante
+	declaracionConstanteRecursivo : declaracionConstanteRecursivoR
 	|
 	;
 	'''
-	@_('declaracionConstanteRecursivo declaracionConstante',
-	'declaracionConstante',
+	@_('declaracionConstanteRecursivoR',
 	'empty')
 	def declaracionConstanteRecursivo(self, p):
 		pass
-		
+	
+	'''
+	declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConstante
+	|	declaracionConstante
+	;
+	'''
+	@_('declaracionConstanteRecursivoR declaracionConstante',
+	'declaracionConstante')
+	def declaracionConstanteRecursivoR(self, p):
+		pass
+
+
+	
 	'''
 	declaracionVariableIN : "IN" declaracionVariableRecursivo
 	|	
@@ -497,37 +564,54 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	declaracionVariableRecursivo : declaracionVariableRecursivo declaracionVariable
-	|	declaracionVariable
+	declaracionVariableRecursivo : declaracionVariableRecursivoR
 	|
 	;
 	'''
-	@_('declaracionVariableRecursivo declaracionVariable',
-	'declaracionVariable',
+	@_('declaracionVariableRecursivoR',
 	'empty')
 	def declaracionVariableRecursivo(self, p):
 		pass
-		
+	
 	'''
-	tipoFormal : expresionCorcheteR "BIT"
+	declaracionVariableRecursivoR : declaracionVariableRecursivoR declaracionVariable
+	|	declaracionVariable
 	;
 	'''
-	@_('expresionCorcheteR BIT')
+	@_('declaracionVariableRecursivoR declaracionVariable',
+	'declaracionVariable')
+	def declaracionVariableRecursivoR(self, p):
+		pass
+
+	
+	'''
+	tipoFormal : expresionCorcheteO "BIT"
+	;
+	'''
+	@_('expresionCorcheteO BIT')
 	def tipoFormal(self, p):
 		pass
 		
 	'''
-	expresionCorcheteR : expresionCorcheteR "[" expresionOpcional "]"
-	|	"[" expresionOpcional "]"
+	expresionCorcheteO : expresionCorcheteOR
 	|
 	;
 	'''
-	@_('expresionCorcheteR "[" expresionOpcional "]"',
-	'"[" expresionOpcional "]"',
+	@_('expresionCorcheteOR',
 	'empty')
-	def expresionCorcheteR(self, p):
+	def expresionCorcheteO(self, p):
 		pass
-		
+	
+	'''
+	expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
+	|	"[" expresionOpcional "]"
+	;
+	'''
+	@_('expresionCorcheteOR "[" expresionOpcional "]"',
+	'"[" expresionOpcional "]"')
+	def expresionCorcheteOR(self, p):
+		pass
+	
 	'''
 	expresionOpcional : expresion
 	|	
@@ -539,11 +623,11 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	tipoFormalBus : expresionCorcheteR "TS"
-	|	expresionCorcheteR "OC"
+	tipoFormalBus : expresionCorcheteO "TS"
+	|	expresionCorcheteO "OC"
 	;
 	'''
-	@_('expresionCorcheteR TS', 'expresionCorcheteR OC')
+	@_('expresionCorcheteO TS', 'expresionCorcheteO OC')
 	def tipoFormalBus(self, p):
 		pass
 		
@@ -593,39 +677,59 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	tipoFormallistaId : tipoFormallistaId listaId ":" tipoFormal ";"
-	|	listaId ":" tipoFormal ";"
+	tipoFormallistaId : tipoFormallistaIdR 
 	|
 	;
 	'''
-	@_('tipoFormallistaId listaId ":" tipoFormal ";"',
-	'listaId ":" tipoFormal ";"',
+	@_('tipoFormallistaIdR',
 	'empty')
 	def tipoFormallistaId(self, p):
 		pass
 		
 	'''
+	tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
+	|	listaId ":" tipoFormal ";"
+	;
+	'''
+	@_('tipoFormallistaIdR listaId ":" tipoFormal ";"',
+	'listaId ":" tipoFormal ";"')
+	def tipoFormallistaIdR(self, p):
+		pass
+
+
+
+	'''
 	tipoFormnalINOUT : INOUT tipoFormlBuslistaId
 	|	
 	;
 	'''
-	@_('INOUT tipoFormallistaId',
+	@_('INOUT tipoFormlBuslistaId',
 	'empty')
 	def tipoFormlINOUT(self, p):
 		pass
 		
 	'''
-	tipoFormlBuslistaId : tipoFormlBuslistaId listaId ":" tipoFormalBus ";"
-	|	listaId ":" tipoFormalBus ";"
+	tipoFormlBuslistaId : tipoFormlBuslistaIdR
 	|
 	;
 	'''
-	@_('tipoFormlBuslistaId listaId ":" tipoFormalBus ";"',
-	'listaId ":" tipoFormalBus ";"',
+	@_('tipoFormlBuslistaIdR',
 	'empty')
 	def tipoFormlBuslistaId(self, p):
 		pass
-		
+	
+	'''
+	tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
+	|	listaId ":" tipoFormalBus ";"
+	;
+	'''
+	@_('tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"',
+	'listaId ":" tipoFormalBus ";"')
+	def tipoFormlBuslistaIdR(self, p):
+		pass
+
+
+
 	'''
 	assinacionUnidad : ID selector "(" listaExpresiones ")"
 	'''
