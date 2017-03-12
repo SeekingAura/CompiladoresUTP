@@ -70,7 +70,7 @@ class CalcLexer(Lexer):
 	FLECHADERECHA = r'->'
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
-	DOSPUNTOSIGUAL = r':='
+	DOSPUNTOSIGUAL = r'\:\='
 
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales

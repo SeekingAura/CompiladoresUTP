@@ -63,7 +63,7 @@ Rule 59    terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino
 Rule 60    simbolosMasMenos -> -
 Rule 61    simbolosMasMenos -> +
 Rule 62    asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion
-Rule 63    condicionOr -> empty
+Rule 63    asignacion -> ID selector DOSPUNTOSIGUAL expresion
 Rule 64    condicionOr -> condicion |
 Rule 65    condicion -> expresion
 Rule 66    relacion -> expresion simbolosRelacion expresion
@@ -106,7 +106,7 @@ Rule 102   declaracionVariableIN -> IN declaracionVariableRecursivo
 Rule 103   declaracionVariableINOUT -> empty
 Rule 104   declaracionVariableINOUT -> INOUT declaracionVariableRecursivo
 Rule 105   declaracionVariableOUT -> empty
-Rule 106   declaracionVariableOUT -> OUT declaracionConstanteRecursivo
+Rule 106   declaracionVariableOUT -> OUT declaracionVariableRecursivo
 Rule 107   declaracionVariableVAR -> empty
 Rule 108   declaracionVariableVAR -> VAR declaracionVariableRecursivo
 Rule 109   sentenciaSecuenciaBEGIN -> empty
@@ -146,10 +146,10 @@ Rule 142   empty -> <empty>
 
 Unused terminals:
 
-    RETURN
-    HEXA
-    WHILE
     FLECHADERECHA
+    RETURN
+    WHILE
+    HEXA
 
 Terminals, with rules where they appear:
 
@@ -174,14 +174,14 @@ CONST                : 96
 DIV                  : 52
 DO                   : 80
 DOBLEPUNTO           : 80
-DOSPUNTOSIGUAL       : 19 62 80
+DOSPUNTOSIGUAL       : 19 62 63 80
 ELSE                 : 79
 ELSIF                : 76 77
 END                  : 1 73 80 124
 FLECHADERECHA        : 
 FOR                  : 80
 HEXA                 : 
-ID                   : 1 1 2 19 21 24 25 32 43 62 80 124 124 141
+ID                   : 1 1 2 19 21 24 25 32 43 62 63 80 124 124 141
 IF                   : 73
 IN                   : 102 130
 INOUT                : 104 136
@@ -220,7 +220,7 @@ condicionOr          : 62
 conjuntoExpresiones  : 2
 declaracionConstante : 99 100
 declaracionConstanteCONST : 1 124
-declaracionConstanteRecursivo : 96 106
+declaracionConstanteRecursivo : 96
 declaracionConstanteRecursivoR : 98 100
 declaracionTipo      : 93 94
 declaracionTipoPuntoComa : 1
@@ -229,11 +229,11 @@ declaracionVariable  : 113 114
 declaracionVariableIN : 1
 declaracionVariableINOUT : 1
 declaracionVariableOUT : 1 124
-declaracionVariableRecursivo : 102 104 108
+declaracionVariableRecursivo : 102 104 106 108
 declaracionVariableRecursivoR : 112 114
 declaracionVariableVAR : 1 124
-empty                : 7 10 15 22 26 44 47 56 63 74 78 81 87 91 95 97 101 103 105 107 109 111 116 120 125 127 129 131 135 137
-expresion            : 9 12 13 17 18 19 30 33 33 34 34 35 36 36 36 36 36 36 37 37 37 38 45 62 65 66 66 80 80 121
+empty                : 7 10 15 22 26 44 47 56 74 78 81 87 91 95 97 101 103 105 107 109 111 116 120 125 127 129 131 135 137
+expresion            : 9 12 13 17 18 19 30 33 33 34 34 35 36 36 36 36 36 36 37 37 37 38 45 62 63 65 66 66 80 80 121
 expresionComa        : 9
 expresionComaO       : 35
 expresionComaR       : 11 13
@@ -248,7 +248,7 @@ listaId              : 20 128 133 134 139 140
 listaIdParentesis    : 124
 modulo               : 0
 relacion             : 73 76 77
-selector             : 43 62 141
+selector             : 43 62 63 141
 selectorR            : 27 29
 selectorRR           : 28 29
 sentencia            : 86 89 90
@@ -615,7 +615,7 @@ state 28
 
     (1) modulo -> MODULE ID ; declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT . declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID .
     (105) declaracionVariableOUT -> . empty
-    (106) declaracionVariableOUT -> . OUT declaracionConstanteRecursivo
+    (106) declaracionVariableOUT -> . OUT declaracionVariableRecursivo
     (142) empty -> .
     OUT             shift and go to state 44
     VAR             reduce using rule 142 (empty -> .)
@@ -811,22 +811,24 @@ state 43
 
 state 44
 
-    (106) declaracionVariableOUT -> OUT . declaracionConstanteRecursivo
-    (97) declaracionConstanteRecursivo -> . empty
-    (98) declaracionConstanteRecursivo -> . declaracionConstanteRecursivoR
+    (106) declaracionVariableOUT -> OUT . declaracionVariableRecursivo
+    (111) declaracionVariableRecursivo -> . empty
+    (112) declaracionVariableRecursivo -> . declaracionVariableRecursivoR
     (142) empty -> .
-    (99) declaracionConstanteRecursivoR -> . declaracionConstante
-    (100) declaracionConstanteRecursivoR -> . declaracionConstanteRecursivoR declaracionConstante
-    (19) declaracionConstante -> . ID DOSPUNTOSIGUAL expresion ;
+    (113) declaracionVariableRecursivoR -> . declaracionVariable
+    (114) declaracionVariableRecursivoR -> . declaracionVariableRecursivoR declaracionVariable
+    (20) declaracionVariable -> . listaId : tipo ;
+    (21) listaId -> . ID IDComa
     VAR             reduce using rule 142 (empty -> .)
     BEGIN           reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
-    ID              shift and go to state 23
+    ID              shift and go to state 36
 
-    declaracionConstanteRecursivo  shift and go to state 70
-    empty                          shift and go to state 20
-    declaracionConstanteRecursivoR shift and go to state 21
-    declaracionConstante           shift and go to state 22
+    declaracionVariableRecursivo   shift and go to state 70
+    empty                          shift and go to state 32
+    declaracionVariableRecursivoR  shift and go to state 33
+    declaracionVariable            shift and go to state 34
+    listaId                        shift and go to state 35
 
 state 45
 
@@ -926,11 +928,11 @@ state 52
     #               reduce using rule 142 (empty -> .)
     =               reduce using rule 142 (empty -> .)
     DOBLEPUNTO      reduce using rule 142 (empty -> .)
-    |               reduce using rule 142 (empty -> .)
-    THEN            reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
+    |               reduce using rule 142 (empty -> .)
+    THEN            reduce using rule 142 (empty -> .)
     DO              reduce using rule 142 (empty -> .)
     [               shift and go to state 82
     .               shift and go to state 83
@@ -974,11 +976,11 @@ state 54
     #               reduce using rule 142 (empty -> .)
     =               reduce using rule 142 (empty -> .)
     DOBLEPUNTO      reduce using rule 142 (empty -> .)
-    |               reduce using rule 142 (empty -> .)
-    THEN            reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
+    |               reduce using rule 142 (empty -> .)
+    THEN            reduce using rule 142 (empty -> .)
     DO              reduce using rule 142 (empty -> .)
     -               shift and go to state 89
     +               shift and go to state 90
@@ -1018,11 +1020,11 @@ state 55
     #               reduce using rule 142 (empty -> .)
     =               reduce using rule 142 (empty -> .)
     DOBLEPUNTO      reduce using rule 142 (empty -> .)
-    |               reduce using rule 142 (empty -> .)
-    THEN            reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
+    |               reduce using rule 142 (empty -> .)
+    THEN            reduce using rule 142 (empty -> .)
     DO              reduce using rule 142 (empty -> .)
     MOD             shift and go to state 95
     DIV             shift and go to state 96
@@ -1165,11 +1167,11 @@ state 63
     #               reduce using rule 41 (factor -> INTEGER .)
     =               reduce using rule 41 (factor -> INTEGER .)
     DOBLEPUNTO      reduce using rule 41 (factor -> INTEGER .)
-    |               reduce using rule 41 (factor -> INTEGER .)
-    THEN            reduce using rule 41 (factor -> INTEGER .)
     END             reduce using rule 41 (factor -> INTEGER .)
     ELSIF           reduce using rule 41 (factor -> INTEGER .)
     ELSE            reduce using rule 41 (factor -> INTEGER .)
+    |               reduce using rule 41 (factor -> INTEGER .)
+    THEN            reduce using rule 41 (factor -> INTEGER .)
     DO              reduce using rule 41 (factor -> INTEGER .)
 
 
@@ -1194,11 +1196,11 @@ state 64
     #               reduce using rule 42 (factor -> LOGICVALUE .)
     =               reduce using rule 42 (factor -> LOGICVALUE .)
     DOBLEPUNTO      reduce using rule 42 (factor -> LOGICVALUE .)
-    |               reduce using rule 42 (factor -> LOGICVALUE .)
-    THEN            reduce using rule 42 (factor -> LOGICVALUE .)
     END             reduce using rule 42 (factor -> LOGICVALUE .)
     ELSIF           reduce using rule 42 (factor -> LOGICVALUE .)
     ELSE            reduce using rule 42 (factor -> LOGICVALUE .)
+    |               reduce using rule 42 (factor -> LOGICVALUE .)
+    THEN            reduce using rule 42 (factor -> LOGICVALUE .)
     DO              reduce using rule 42 (factor -> LOGICVALUE .)
 
 
@@ -1266,10 +1268,10 @@ state 69
 
 state 70
 
-    (106) declaracionVariableOUT -> OUT declaracionConstanteRecursivo .
-    VAR             reduce using rule 106 (declaracionVariableOUT -> OUT declaracionConstanteRecursivo .)
-    BEGIN           reduce using rule 106 (declaracionVariableOUT -> OUT declaracionConstanteRecursivo .)
-    END             reduce using rule 106 (declaracionVariableOUT -> OUT declaracionConstanteRecursivo .)
+    (106) declaracionVariableOUT -> OUT declaracionVariableRecursivo .
+    VAR             reduce using rule 106 (declaracionVariableOUT -> OUT declaracionVariableRecursivo .)
+    BEGIN           reduce using rule 106 (declaracionVariableOUT -> OUT declaracionVariableRecursivo .)
+    END             reduce using rule 106 (declaracionVariableOUT -> OUT declaracionVariableRecursivo .)
 
 
 state 71
@@ -1380,11 +1382,11 @@ state 78
     #               reduce using rule 43 (factor -> ID selector .)
     =               reduce using rule 43 (factor -> ID selector .)
     DOBLEPUNTO      reduce using rule 43 (factor -> ID selector .)
-    |               reduce using rule 43 (factor -> ID selector .)
-    THEN            reduce using rule 43 (factor -> ID selector .)
     END             reduce using rule 43 (factor -> ID selector .)
     ELSIF           reduce using rule 43 (factor -> ID selector .)
     ELSE            reduce using rule 43 (factor -> ID selector .)
+    |               reduce using rule 43 (factor -> ID selector .)
+    THEN            reduce using rule 43 (factor -> ID selector .)
     DO              reduce using rule 43 (factor -> ID selector .)
 
 
@@ -1409,11 +1411,11 @@ state 79
     #               reduce using rule 26 (selector -> empty .)
     =               reduce using rule 26 (selector -> empty .)
     DOBLEPUNTO      reduce using rule 26 (selector -> empty .)
-    |               reduce using rule 26 (selector -> empty .)
-    THEN            reduce using rule 26 (selector -> empty .)
     END             reduce using rule 26 (selector -> empty .)
     ELSIF           reduce using rule 26 (selector -> empty .)
     ELSE            reduce using rule 26 (selector -> empty .)
+    |               reduce using rule 26 (selector -> empty .)
+    THEN            reduce using rule 26 (selector -> empty .)
     DO              reduce using rule 26 (selector -> empty .)
     (               reduce using rule 26 (selector -> empty .)
     DOSPUNTOSIGUAL  reduce using rule 26 (selector -> empty .)
@@ -1444,11 +1446,11 @@ state 80
     #               reduce using rule 27 (selector -> selectorR .)
     =               reduce using rule 27 (selector -> selectorR .)
     DOBLEPUNTO      reduce using rule 27 (selector -> selectorR .)
-    |               reduce using rule 27 (selector -> selectorR .)
-    THEN            reduce using rule 27 (selector -> selectorR .)
     END             reduce using rule 27 (selector -> selectorR .)
     ELSIF           reduce using rule 27 (selector -> selectorR .)
     ELSE            reduce using rule 27 (selector -> selectorR .)
+    |               reduce using rule 27 (selector -> selectorR .)
+    THEN            reduce using rule 27 (selector -> selectorR .)
     DO              reduce using rule 27 (selector -> selectorR .)
     (               reduce using rule 27 (selector -> selectorR .)
     DOSPUNTOSIGUAL  reduce using rule 27 (selector -> selectorR .)
@@ -1480,11 +1482,11 @@ state 81
     #               reduce using rule 28 (selectorR -> selectorRR .)
     =               reduce using rule 28 (selectorR -> selectorRR .)
     DOBLEPUNTO      reduce using rule 28 (selectorR -> selectorRR .)
-    |               reduce using rule 28 (selectorR -> selectorRR .)
-    THEN            reduce using rule 28 (selectorR -> selectorRR .)
     END             reduce using rule 28 (selectorR -> selectorRR .)
     ELSIF           reduce using rule 28 (selectorR -> selectorRR .)
     ELSE            reduce using rule 28 (selectorR -> selectorRR .)
+    |               reduce using rule 28 (selectorR -> selectorRR .)
+    THEN            reduce using rule 28 (selectorR -> selectorRR .)
     DO              reduce using rule 28 (selectorR -> selectorRR .)
     (               reduce using rule 28 (selectorR -> selectorRR .)
     DOSPUNTOSIGUAL  reduce using rule 28 (selectorR -> selectorRR .)
@@ -1562,11 +1564,11 @@ state 85
     #               reduce using rule 55 (expresion -> termino terminoMasMenos .)
     =               reduce using rule 55 (expresion -> termino terminoMasMenos .)
     DOBLEPUNTO      reduce using rule 55 (expresion -> termino terminoMasMenos .)
-    |               reduce using rule 55 (expresion -> termino terminoMasMenos .)
-    THEN            reduce using rule 55 (expresion -> termino terminoMasMenos .)
     END             reduce using rule 55 (expresion -> termino terminoMasMenos .)
     ELSIF           reduce using rule 55 (expresion -> termino terminoMasMenos .)
     ELSE            reduce using rule 55 (expresion -> termino terminoMasMenos .)
+    |               reduce using rule 55 (expresion -> termino terminoMasMenos .)
+    THEN            reduce using rule 55 (expresion -> termino terminoMasMenos .)
     DO              reduce using rule 55 (expresion -> termino terminoMasMenos .)
 
 
@@ -1591,11 +1593,11 @@ state 86
     #               reduce using rule 56 (terminoMasMenos -> empty .)
     =               reduce using rule 56 (terminoMasMenos -> empty .)
     DOBLEPUNTO      reduce using rule 56 (terminoMasMenos -> empty .)
-    |               reduce using rule 56 (terminoMasMenos -> empty .)
-    THEN            reduce using rule 56 (terminoMasMenos -> empty .)
     END             reduce using rule 56 (terminoMasMenos -> empty .)
     ELSIF           reduce using rule 56 (terminoMasMenos -> empty .)
     ELSE            reduce using rule 56 (terminoMasMenos -> empty .)
+    |               reduce using rule 56 (terminoMasMenos -> empty .)
+    THEN            reduce using rule 56 (terminoMasMenos -> empty .)
     DO              reduce using rule 56 (terminoMasMenos -> empty .)
 
 
@@ -1623,11 +1625,11 @@ state 87
     #               reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     =               reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     DOBLEPUNTO      reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
-    |               reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
-    THEN            reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     END             reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     ELSIF           reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     ELSE            reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
+    |               reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
+    THEN            reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     DO              reduce using rule 57 (terminoMasMenos -> terminoMasMenosR .)
     -               shift and go to state 89
     +               shift and go to state 90
@@ -1714,11 +1716,11 @@ state 91
     #               reduce using rule 46 (termino -> factor terminoOperadores .)
     =               reduce using rule 46 (termino -> factor terminoOperadores .)
     DOBLEPUNTO      reduce using rule 46 (termino -> factor terminoOperadores .)
-    |               reduce using rule 46 (termino -> factor terminoOperadores .)
-    THEN            reduce using rule 46 (termino -> factor terminoOperadores .)
     END             reduce using rule 46 (termino -> factor terminoOperadores .)
     ELSIF           reduce using rule 46 (termino -> factor terminoOperadores .)
     ELSE            reduce using rule 46 (termino -> factor terminoOperadores .)
+    |               reduce using rule 46 (termino -> factor terminoOperadores .)
+    THEN            reduce using rule 46 (termino -> factor terminoOperadores .)
     DO              reduce using rule 46 (termino -> factor terminoOperadores .)
 
 
@@ -1743,11 +1745,11 @@ state 92
     #               reduce using rule 47 (terminoOperadores -> empty .)
     =               reduce using rule 47 (terminoOperadores -> empty .)
     DOBLEPUNTO      reduce using rule 47 (terminoOperadores -> empty .)
-    |               reduce using rule 47 (terminoOperadores -> empty .)
-    THEN            reduce using rule 47 (terminoOperadores -> empty .)
     END             reduce using rule 47 (terminoOperadores -> empty .)
     ELSIF           reduce using rule 47 (terminoOperadores -> empty .)
     ELSE            reduce using rule 47 (terminoOperadores -> empty .)
+    |               reduce using rule 47 (terminoOperadores -> empty .)
+    THEN            reduce using rule 47 (terminoOperadores -> empty .)
     DO              reduce using rule 47 (terminoOperadores -> empty .)
 
 
@@ -1777,11 +1779,11 @@ state 93
     #               reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     =               reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     DOBLEPUNTO      reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
-    |               reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
-    THEN            reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     END             reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     ELSIF           reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     ELSE            reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
+    |               reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
+    THEN            reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     DO              reduce using rule 48 (terminoOperadores -> terminoOperadoresR .)
     MOD             shift and go to state 95
     DIV             shift and go to state 96
@@ -2044,11 +2046,11 @@ state 104
     #               reduce using rule 39 (factor -> ? factor .)
     =               reduce using rule 39 (factor -> ? factor .)
     DOBLEPUNTO      reduce using rule 39 (factor -> ? factor .)
-    |               reduce using rule 39 (factor -> ? factor .)
-    THEN            reduce using rule 39 (factor -> ? factor .)
     END             reduce using rule 39 (factor -> ? factor .)
     ELSIF           reduce using rule 39 (factor -> ? factor .)
     ELSE            reduce using rule 39 (factor -> ? factor .)
+    |               reduce using rule 39 (factor -> ? factor .)
+    THEN            reduce using rule 39 (factor -> ? factor .)
     DO              reduce using rule 39 (factor -> ? factor .)
 
 
@@ -2073,11 +2075,11 @@ state 105
     #               reduce using rule 40 (factor -> ~ factor .)
     =               reduce using rule 40 (factor -> ~ factor .)
     DOBLEPUNTO      reduce using rule 40 (factor -> ~ factor .)
-    |               reduce using rule 40 (factor -> ~ factor .)
-    THEN            reduce using rule 40 (factor -> ~ factor .)
     END             reduce using rule 40 (factor -> ~ factor .)
     ELSIF           reduce using rule 40 (factor -> ~ factor .)
     ELSE            reduce using rule 40 (factor -> ~ factor .)
+    |               reduce using rule 40 (factor -> ~ factor .)
+    THEN            reduce using rule 40 (factor -> ~ factor .)
     DO              reduce using rule 40 (factor -> ~ factor .)
 
 
@@ -2129,6 +2131,7 @@ state 110
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     FOR             shift and go to state 148
@@ -2271,11 +2274,11 @@ state 122
     #               reduce using rule 29 (selectorR -> selectorR selectorRR .)
     =               reduce using rule 29 (selectorR -> selectorR selectorRR .)
     DOBLEPUNTO      reduce using rule 29 (selectorR -> selectorR selectorRR .)
-    |               reduce using rule 29 (selectorR -> selectorR selectorRR .)
-    THEN            reduce using rule 29 (selectorR -> selectorR selectorRR .)
     END             reduce using rule 29 (selectorR -> selectorR selectorRR .)
     ELSIF           reduce using rule 29 (selectorR -> selectorR selectorRR .)
     ELSE            reduce using rule 29 (selectorR -> selectorR selectorRR .)
+    |               reduce using rule 29 (selectorR -> selectorR selectorRR .)
+    THEN            reduce using rule 29 (selectorR -> selectorR selectorRR .)
     DO              reduce using rule 29 (selectorR -> selectorR selectorRR .)
     (               reduce using rule 29 (selectorR -> selectorR selectorRR .)
     DOSPUNTOSIGUAL  reduce using rule 29 (selectorR -> selectorR selectorRR .)
@@ -2310,11 +2313,11 @@ state 124
     #               reduce using rule 31 (selectorRR -> . INTEGER .)
     =               reduce using rule 31 (selectorRR -> . INTEGER .)
     DOBLEPUNTO      reduce using rule 31 (selectorRR -> . INTEGER .)
-    |               reduce using rule 31 (selectorRR -> . INTEGER .)
-    THEN            reduce using rule 31 (selectorRR -> . INTEGER .)
     END             reduce using rule 31 (selectorRR -> . INTEGER .)
     ELSIF           reduce using rule 31 (selectorRR -> . INTEGER .)
     ELSE            reduce using rule 31 (selectorRR -> . INTEGER .)
+    |               reduce using rule 31 (selectorRR -> . INTEGER .)
+    THEN            reduce using rule 31 (selectorRR -> . INTEGER .)
     DO              reduce using rule 31 (selectorRR -> . INTEGER .)
     (               reduce using rule 31 (selectorRR -> . INTEGER .)
     DOSPUNTOSIGUAL  reduce using rule 31 (selectorRR -> . INTEGER .)
@@ -2343,11 +2346,11 @@ state 125
     #               reduce using rule 32 (selectorRR -> . ID .)
     =               reduce using rule 32 (selectorRR -> . ID .)
     DOBLEPUNTO      reduce using rule 32 (selectorRR -> . ID .)
-    |               reduce using rule 32 (selectorRR -> . ID .)
-    THEN            reduce using rule 32 (selectorRR -> . ID .)
     END             reduce using rule 32 (selectorRR -> . ID .)
     ELSIF           reduce using rule 32 (selectorRR -> . ID .)
     ELSE            reduce using rule 32 (selectorRR -> . ID .)
+    |               reduce using rule 32 (selectorRR -> . ID .)
+    THEN            reduce using rule 32 (selectorRR -> . ID .)
     DO              reduce using rule 32 (selectorRR -> . ID .)
     (               reduce using rule 32 (selectorRR -> . ID .)
     DOSPUNTOSIGUAL  reduce using rule 32 (selectorRR -> . ID .)
@@ -2403,11 +2406,11 @@ state 127
     #               reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     =               reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     DOBLEPUNTO      reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
-    |               reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
-    THEN            reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     END             reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     ELSIF           reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     ELSE            reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
+    |               reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
+    THEN            reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
     DO              reduce using rule 58 (terminoMasMenosR -> simbolosMasMenos termino .)
 
 
@@ -2459,11 +2462,11 @@ state 129
     #               reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     =               reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     DOBLEPUNTO      reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
-    |               reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
-    THEN            reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     END             reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     ELSIF           reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     ELSE            reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
+    |               reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
+    THEN            reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
     DO              reduce using rule 49 (terminoOperadoresR -> simbolosProd factor .)
 
 
@@ -2494,11 +2497,11 @@ state 131
     #               reduce using rule 38 (factor -> ( expresion ) .)
     =               reduce using rule 38 (factor -> ( expresion ) .)
     DOBLEPUNTO      reduce using rule 38 (factor -> ( expresion ) .)
-    |               reduce using rule 38 (factor -> ( expresion ) .)
-    THEN            reduce using rule 38 (factor -> ( expresion ) .)
     END             reduce using rule 38 (factor -> ( expresion ) .)
     ELSIF           reduce using rule 38 (factor -> ( expresion ) .)
     ELSE            reduce using rule 38 (factor -> ( expresion ) .)
+    |               reduce using rule 38 (factor -> ( expresion ) .)
+    THEN            reduce using rule 38 (factor -> ( expresion ) .)
     DO              reduce using rule 38 (factor -> ( expresion ) .)
 
 
@@ -2698,6 +2701,7 @@ state 149
 
     (141) asignacionUnidad -> ID . selector ( listaExpresiones )
     (62) asignacion -> ID . selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> ID . selector DOSPUNTOSIGUAL expresion
     (26) selector -> . empty
     (27) selector -> . selectorR
     (142) empty -> .
@@ -2833,11 +2837,11 @@ state 156
     #               reduce using rule 30 (selectorRR -> [ expresion ] .)
     =               reduce using rule 30 (selectorRR -> [ expresion ] .)
     DOBLEPUNTO      reduce using rule 30 (selectorRR -> [ expresion ] .)
-    |               reduce using rule 30 (selectorRR -> [ expresion ] .)
-    THEN            reduce using rule 30 (selectorRR -> [ expresion ] .)
     END             reduce using rule 30 (selectorRR -> [ expresion ] .)
     ELSIF           reduce using rule 30 (selectorRR -> [ expresion ] .)
     ELSE            reduce using rule 30 (selectorRR -> [ expresion ] .)
+    |               reduce using rule 30 (selectorRR -> [ expresion ] .)
+    THEN            reduce using rule 30 (selectorRR -> [ expresion ] .)
     DO              reduce using rule 30 (selectorRR -> [ expresion ] .)
     (               reduce using rule 30 (selectorRR -> [ expresion ] .)
     DOSPUNTOSIGUAL  reduce using rule 30 (selectorRR -> [ expresion ] .)
@@ -2864,11 +2868,11 @@ state 157
     #               reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     =               reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     DOBLEPUNTO      reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
-    |               reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
-    THEN            reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     END             reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     ELSIF           reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     ELSE            reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
+    |               reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
+    THEN            reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
     DO              reduce using rule 59 (terminoMasMenosR -> terminoMasMenosR simbolosMasMenos termino .)
 
 
@@ -2893,11 +2897,11 @@ state 158
     #               reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     =               reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     DOBLEPUNTO      reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
-    |               reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
-    THEN            reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     END             reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     ELSIF           reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     ELSE            reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
+    |               reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
+    THEN            reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
     DO              reduce using rule 50 (terminoOperadoresR -> terminoOperadoresR simbolosProd factor .)
 
 
@@ -2984,11 +2988,11 @@ state 161
     #               reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     =               reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     DOBLEPUNTO      reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
-    |               reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
-    THEN            reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     END             reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     ELSIF           reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     ELSE            reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
+    |               reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
+    THEN            reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
     DO              reduce using rule 35 (factor -> REG ( expresionComaO expresion .)
 
 
@@ -3073,7 +3077,7 @@ state 165
 
     (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT . declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID
     (105) declaracionVariableOUT -> . empty
-    (106) declaracionVariableOUT -> . OUT declaracionConstanteRecursivo
+    (106) declaracionVariableOUT -> . OUT declaracionVariableRecursivo
     (142) empty -> .
     OUT             shift and go to state 44
     VAR             reduce using rule 142 (empty -> .)
@@ -3197,6 +3201,7 @@ state 176
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
@@ -3222,6 +3227,7 @@ state 178
 
     (141) asignacionUnidad -> ID selector . ( listaExpresiones )
     (62) asignacion -> ID selector . DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> ID selector . DOSPUNTOSIGUAL expresion
     (               shift and go to state 199
     DOSPUNTOSIGUAL  shift and go to state 200
 
@@ -3397,6 +3403,7 @@ state 196
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
@@ -3488,11 +3495,10 @@ state 199
 state 200
 
     (62) asignacion -> ID selector DOSPUNTOSIGUAL . condicionOr expresion
-    (63) condicionOr -> . empty
+    (63) asignacion -> ID selector DOSPUNTOSIGUAL . expresion
     (64) condicionOr -> . condicion |
-    (142) empty -> .
-    (65) condicion -> . expresion
     (55) expresion -> . termino terminoMasMenos
+    (65) condicion -> . expresion
     (46) termino -> . factor terminoOperadores
     (33) factor -> . SR ( expresion , expresion )
     (34) factor -> . LATCH ( expresion , expresion )
@@ -3505,16 +3511,6 @@ state 200
     (41) factor -> . INTEGER
     (42) factor -> . LOGICVALUE
     (43) factor -> . ID selector
-  ! shift/reduce conflict for SR resolved as shift
-  ! shift/reduce conflict for LATCH resolved as shift
-  ! shift/reduce conflict for REG resolved as shift
-  ! shift/reduce conflict for MUX resolved as shift
-  ! shift/reduce conflict for ( resolved as shift
-  ! shift/reduce conflict for ? resolved as shift
-  ! shift/reduce conflict for ~ resolved as shift
-  ! shift/reduce conflict for INTEGER resolved as shift
-  ! shift/reduce conflict for LOGICVALUE resolved as shift
-  ! shift/reduce conflict for ID resolved as shift
     SR              shift and go to state 56
     LATCH           shift and go to state 58
     REG             shift and go to state 59
@@ -3528,8 +3524,7 @@ state 200
 
     condicionOr                    shift and go to state 230
     expresion                      shift and go to state 231
-    empty                          shift and go to state 232
-    condicion                      shift and go to state 233
+    condicion                      shift and go to state 232
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3547,6 +3542,7 @@ state 201
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
@@ -3555,7 +3551,7 @@ state 201
     IF              shift and go to state 150
     ID              shift and go to state 149
 
-    sentenciaSecuencia             shift and go to state 234
+    sentenciaSecuencia             shift and go to state 233
     sentencia                      shift and go to state 142
     empty                          shift and go to state 143
     sentenciaPara                  shift and go to state 144
@@ -3590,7 +3586,7 @@ state 202
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 235
+    expresion                      shift and go to state 234
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3707,7 +3703,7 @@ state 212
     (11) expresionComa -> expresionComaR .
     (13) expresionComaR -> expresionComaR . , expresion
     )               reduce using rule 11 (expresionComa -> expresionComaR .)
-    ,               shift and go to state 236
+    ,               shift and go to state 235
 
 
 state 213
@@ -3737,7 +3733,7 @@ state 213
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 237
+    expresion                      shift and go to state 236
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3762,11 +3758,11 @@ state 214
     #               reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     =               reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     DOBLEPUNTO      reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
-    |               reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
-    THEN            reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     END             reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     ELSIF           reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     ELSE            reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
+    |               reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
+    THEN            reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
     DO              reduce using rule 33 (factor -> SR ( expresion , expresion ) .)
 
 
@@ -3791,11 +3787,11 @@ state 215
     #               reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     =               reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     DOBLEPUNTO      reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
-    |               reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
-    THEN            reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     END             reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     ELSIF           reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     ELSE            reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
+    |               reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
+    THEN            reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
     DO              reduce using rule 34 (factor -> LATCH ( expresion , expresion ) .)
 
 
@@ -3826,7 +3822,7 @@ state 216
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 238
+    expresion                      shift and go to state 237
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3857,7 +3853,7 @@ state 217
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 239
+    expresion                      shift and go to state 238
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3870,13 +3866,13 @@ state 218
     BEGIN           shift and go to state 110
     END             reduce using rule 142 (empty -> .)
 
-    sentenciaSecuenciaBEGIN        shift and go to state 240
+    sentenciaSecuenciaBEGIN        shift and go to state 239
     empty                          shift and go to state 109
 
 state 219
 
     (140) tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId . : tipoFormalBus ;
-    :               shift and go to state 241
+    :               shift and go to state 240
 
 
 state 220
@@ -3893,8 +3889,8 @@ state 220
     TS              reduce using rule 142 (empty -> .)
     [               shift and go to state 226
 
-    tipoFormalBus                  shift and go to state 242
-    expresionCorcheteO             shift and go to state 243
+    tipoFormalBus                  shift and go to state 241
+    expresionCorcheteO             shift and go to state 242
     empty                          shift and go to state 224
     expresionCorcheteOR            shift and go to state 225
 
@@ -3910,7 +3906,7 @@ state 221
     BIT             reduce using rule 142 (empty -> .)
     [               shift and go to state 226
 
-    tipoFormal                     shift and go to state 244
+    tipoFormal                     shift and go to state 243
     expresionCorcheteO             shift and go to state 223
     empty                          shift and go to state 224
     expresionCorcheteOR            shift and go to state 225
@@ -3918,13 +3914,13 @@ state 221
 state 222
 
     (133) tipoFormallistaIdR -> listaId : tipoFormal . ;
-    ;               shift and go to state 245
+    ;               shift and go to state 244
 
 
 state 223
 
     (115) tipoFormal -> expresionCorcheteO . BIT
-    BIT             shift and go to state 246
+    BIT             shift and go to state 245
 
 
 state 224
@@ -3942,7 +3938,7 @@ state 225
     BIT             reduce using rule 117 (expresionCorcheteO -> expresionCorcheteOR .)
     OC              reduce using rule 117 (expresionCorcheteO -> expresionCorcheteOR .)
     TS              reduce using rule 117 (expresionCorcheteO -> expresionCorcheteOR .)
-    [               shift and go to state 247
+    [               shift and go to state 246
 
 
 state 226
@@ -3976,9 +3972,9 @@ state 226
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresionOpcional              shift and go to state 248
-    empty                          shift and go to state 249
-    expresion                      shift and go to state 250
+    expresionOpcional              shift and go to state 247
+    empty                          shift and go to state 248
+    expresion                      shift and go to state 249
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
@@ -3994,13 +3990,13 @@ state 227
 state 228
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion . DOBLEPUNTO expresion DO sentenciaSecuencia END
-    DOBLEPUNTO      shift and go to state 251
+    DOBLEPUNTO      shift and go to state 250
 
 
 state 229
 
     (141) asignacionUnidad -> ID selector ( listaExpresiones . )
-    )               shift and go to state 252
+    )               shift and go to state 251
 
 
 state 230
@@ -4030,38 +4026,28 @@ state 230
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 253
+    expresion                      shift and go to state 252
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
 state 231
 
+    (63) asignacion -> ID selector DOSPUNTOSIGUAL expresion .
     (65) condicion -> expresion .
+    ;               reduce using rule 63 (asignacion -> ID selector DOSPUNTOSIGUAL expresion .)
+    END             reduce using rule 63 (asignacion -> ID selector DOSPUNTOSIGUAL expresion .)
+    ELSIF           reduce using rule 63 (asignacion -> ID selector DOSPUNTOSIGUAL expresion .)
+    ELSE            reduce using rule 63 (asignacion -> ID selector DOSPUNTOSIGUAL expresion .)
     |               reduce using rule 65 (condicion -> expresion .)
 
 
 state 232
 
-    (63) condicionOr -> empty .
-    SR              reduce using rule 63 (condicionOr -> empty .)
-    LATCH           reduce using rule 63 (condicionOr -> empty .)
-    REG             reduce using rule 63 (condicionOr -> empty .)
-    MUX             reduce using rule 63 (condicionOr -> empty .)
-    (               reduce using rule 63 (condicionOr -> empty .)
-    ?               reduce using rule 63 (condicionOr -> empty .)
-    ~               reduce using rule 63 (condicionOr -> empty .)
-    INTEGER         reduce using rule 63 (condicionOr -> empty .)
-    LOGICVALUE      reduce using rule 63 (condicionOr -> empty .)
-    ID              reduce using rule 63 (condicionOr -> empty .)
+    (64) condicionOr -> condicion . |
+    |               shift and go to state 253
 
 
 state 233
-
-    (64) condicionOr -> condicion . |
-    |               shift and go to state 254
-
-
-state 234
 
     (73) sentenciaSi -> IF relacion THEN sentenciaSecuencia . sentenciaSiSino sentenciaSiEntonces END
     (74) sentenciaSiSino -> . empty
@@ -4071,19 +4057,19 @@ state 234
     (77) sentenciaSiSinoR -> . sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia
     ELSE            reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
-    ELSIF           shift and go to state 258
+    ELSIF           shift and go to state 257
 
-    sentenciaSiSino                shift and go to state 255
-    empty                          shift and go to state 256
-    sentenciaSiSinoR               shift and go to state 257
+    sentenciaSiSino                shift and go to state 254
+    empty                          shift and go to state 255
+    sentenciaSiSinoR               shift and go to state 256
 
-state 235
+state 234
 
     (66) relacion -> expresion simbolosRelacion expresion .
     THEN            reduce using rule 66 (relacion -> expresion simbolosRelacion expresion .)
 
 
-state 236
+state 235
 
     (13) expresionComaR -> expresionComaR , . expresion
     (55) expresion -> . termino terminoMasMenos
@@ -4110,36 +4096,36 @@ state 236
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 259
+    expresion                      shift and go to state 258
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 237
+state 236
 
     (12) expresionComaR -> , expresion .
     ,               reduce using rule 12 (expresionComaR -> , expresion .)
     )               reduce using rule 12 (expresionComaR -> , expresion .)
 
 
-state 238
+state 237
 
     (36) factor -> MUX ( expresion , expresion : expresion . , expresion , expresion , expresion )
-    ,               shift and go to state 260
+    ,               shift and go to state 259
+
+
+state 238
+
+    (37) factor -> MUX ( expresion : expresion , expresion . )
+    )               shift and go to state 260
 
 
 state 239
 
-    (37) factor -> MUX ( expresion : expresion , expresion . )
-    )               shift and go to state 261
+    (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN . END ID
+    END             shift and go to state 261
 
 
 state 240
-
-    (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN . END ID
-    END             shift and go to state 262
-
-
-state 241
 
     (140) tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : . tipoFormalBus ;
     (122) tipoFormalBus -> . expresionCorcheteO OC
@@ -4153,32 +4139,32 @@ state 241
     TS              reduce using rule 142 (empty -> .)
     [               shift and go to state 226
 
-    tipoFormalBus                  shift and go to state 263
-    expresionCorcheteO             shift and go to state 243
+    tipoFormalBus                  shift and go to state 262
+    expresionCorcheteO             shift and go to state 242
     empty                          shift and go to state 224
     expresionCorcheteOR            shift and go to state 225
 
-state 242
+state 241
 
     (139) tipoFormlBuslistaIdR -> listaId : tipoFormalBus . ;
-    ;               shift and go to state 264
+    ;               shift and go to state 263
+
+
+state 242
+
+    (122) tipoFormalBus -> expresionCorcheteO . OC
+    (123) tipoFormalBus -> expresionCorcheteO . TS
+    OC              shift and go to state 264
+    TS              shift and go to state 265
 
 
 state 243
 
-    (122) tipoFormalBus -> expresionCorcheteO . OC
-    (123) tipoFormalBus -> expresionCorcheteO . TS
-    OC              shift and go to state 265
-    TS              shift and go to state 266
+    (134) tipoFormallistaIdR -> tipoFormallistaIdR listaId : tipoFormal . ;
+    ;               shift and go to state 266
 
 
 state 244
-
-    (134) tipoFormallistaIdR -> tipoFormallistaIdR listaId : tipoFormal . ;
-    ;               shift and go to state 267
-
-
-state 245
 
     (133) tipoFormallistaIdR -> listaId : tipoFormal ; .
     ID              reduce using rule 133 (tipoFormallistaIdR -> listaId : tipoFormal ; .)
@@ -4189,13 +4175,13 @@ state 245
     END             reduce using rule 133 (tipoFormallistaIdR -> listaId : tipoFormal ; .)
 
 
-state 246
+state 245
 
     (115) tipoFormal -> expresionCorcheteO BIT .
     ;               reduce using rule 115 (tipoFormal -> expresionCorcheteO BIT .)
 
 
-state 247
+state 246
 
     (119) expresionCorcheteOR -> expresionCorcheteOR [ . expresionOpcional ]
     (120) expresionOpcional -> . empty
@@ -4226,31 +4212,31 @@ state 247
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresionOpcional              shift and go to state 268
-    empty                          shift and go to state 249
-    expresion                      shift and go to state 250
+    expresionOpcional              shift and go to state 267
+    empty                          shift and go to state 248
+    expresion                      shift and go to state 249
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 248
+state 247
 
     (118) expresionCorcheteOR -> [ expresionOpcional . ]
-    ]               shift and go to state 269
+    ]               shift and go to state 268
 
 
-state 249
+state 248
 
     (120) expresionOpcional -> empty .
     ]               reduce using rule 120 (expresionOpcional -> empty .)
 
 
-state 250
+state 249
 
     (121) expresionOpcional -> expresion .
     ]               reduce using rule 121 (expresionOpcional -> expresion .)
 
 
-state 251
+state 250
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO . expresion DO sentenciaSecuencia END
     (55) expresion -> . termino terminoMasMenos
@@ -4277,11 +4263,11 @@ state 251
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 270
+    expresion                      shift and go to state 269
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 252
+state 251
 
     (141) asignacionUnidad -> ID selector ( listaExpresiones ) .
     ;               reduce using rule 141 (asignacionUnidad -> ID selector ( listaExpresiones ) .)
@@ -4290,7 +4276,7 @@ state 252
     ELSE            reduce using rule 141 (asignacionUnidad -> ID selector ( listaExpresiones ) .)
 
 
-state 253
+state 252
 
     (62) asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion .
     ;               reduce using rule 62 (asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion .)
@@ -4299,7 +4285,7 @@ state 253
     ELSE            reduce using rule 62 (asignacion -> ID selector DOSPUNTOSIGUAL condicionOr expresion .)
 
 
-state 254
+state 253
 
     (64) condicionOr -> condicion | .
     SR              reduce using rule 64 (condicionOr -> condicion | .)
@@ -4314,35 +4300,35 @@ state 254
     ID              reduce using rule 64 (condicionOr -> condicion | .)
 
 
-state 255
+state 254
 
     (73) sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino . sentenciaSiEntonces END
     (78) sentenciaSiEntonces -> . empty
     (79) sentenciaSiEntonces -> . ELSE sentenciaSecuencia
     (142) empty -> .
-    ELSE            shift and go to state 273
+    ELSE            shift and go to state 272
     END             reduce using rule 142 (empty -> .)
 
-    sentenciaSiEntonces            shift and go to state 271
-    empty                          shift and go to state 272
+    sentenciaSiEntonces            shift and go to state 270
+    empty                          shift and go to state 271
 
-state 256
+state 255
 
     (74) sentenciaSiSino -> empty .
     ELSE            reduce using rule 74 (sentenciaSiSino -> empty .)
     END             reduce using rule 74 (sentenciaSiSino -> empty .)
 
 
-state 257
+state 256
 
     (75) sentenciaSiSino -> sentenciaSiSinoR .
     (77) sentenciaSiSinoR -> sentenciaSiSinoR . ELSIF relacion THEN sentenciaSecuencia
     ELSE            reduce using rule 75 (sentenciaSiSino -> sentenciaSiSinoR .)
     END             reduce using rule 75 (sentenciaSiSino -> sentenciaSiSinoR .)
-    ELSIF           shift and go to state 274
+    ELSIF           shift and go to state 273
 
 
-state 258
+state 257
 
     (76) sentenciaSiSinoR -> ELSIF . relacion THEN sentenciaSecuencia
     (66) relacion -> . expresion simbolosRelacion expresion
@@ -4370,19 +4356,19 @@ state 258
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    relacion                       shift and go to state 275
+    relacion                       shift and go to state 274
     expresion                      shift and go to state 180
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 259
+state 258
 
     (13) expresionComaR -> expresionComaR , expresion .
     ,               reduce using rule 13 (expresionComaR -> expresionComaR , expresion .)
     )               reduce using rule 13 (expresionComaR -> expresionComaR , expresion .)
 
 
-state 260
+state 259
 
     (36) factor -> MUX ( expresion , expresion : expresion , . expresion , expresion , expresion )
     (55) expresion -> . termino terminoMasMenos
@@ -4409,11 +4395,11 @@ state 260
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 276
+    expresion                      shift and go to state 275
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 261
+state 260
 
     (37) factor -> MUX ( expresion : expresion , expresion ) .
     MOD             reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
@@ -4434,27 +4420,27 @@ state 261
     #               reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     =               reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     DOBLEPUNTO      reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
-    |               reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
-    THEN            reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     END             reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     ELSIF           reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     ELSE            reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
+    |               reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
+    THEN            reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
     DO              reduce using rule 37 (factor -> MUX ( expresion : expresion , expresion ) .)
+
+
+state 261
+
+    (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END . ID
+    ID              shift and go to state 276
 
 
 state 262
 
-    (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END . ID
-    ID              shift and go to state 277
+    (140) tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : tipoFormalBus . ;
+    ;               shift and go to state 277
 
 
 state 263
-
-    (140) tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : tipoFormalBus . ;
-    ;               shift and go to state 278
-
-
-state 264
 
     (139) tipoFormlBuslistaIdR -> listaId : tipoFormalBus ; .
     ID              reduce using rule 139 (tipoFormlBuslistaIdR -> listaId : tipoFormalBus ; .)
@@ -4464,19 +4450,19 @@ state 264
     END             reduce using rule 139 (tipoFormlBuslistaIdR -> listaId : tipoFormalBus ; .)
 
 
-state 265
+state 264
 
     (122) tipoFormalBus -> expresionCorcheteO OC .
     ;               reduce using rule 122 (tipoFormalBus -> expresionCorcheteO OC .)
 
 
-state 266
+state 265
 
     (123) tipoFormalBus -> expresionCorcheteO TS .
     ;               reduce using rule 123 (tipoFormalBus -> expresionCorcheteO TS .)
 
 
-state 267
+state 266
 
     (134) tipoFormallistaIdR -> tipoFormallistaIdR listaId : tipoFormal ; .
     ID              reduce using rule 134 (tipoFormallistaIdR -> tipoFormallistaIdR listaId : tipoFormal ; .)
@@ -4487,13 +4473,13 @@ state 267
     END             reduce using rule 134 (tipoFormallistaIdR -> tipoFormallistaIdR listaId : tipoFormal ; .)
 
 
-state 268
+state 267
 
     (119) expresionCorcheteOR -> expresionCorcheteOR [ expresionOpcional . ]
-    ]               shift and go to state 279
+    ]               shift and go to state 278
 
 
-state 269
+state 268
 
     (118) expresionCorcheteOR -> [ expresionOpcional ] .
     [               reduce using rule 118 (expresionCorcheteOR -> [ expresionOpcional ] .)
@@ -4502,25 +4488,25 @@ state 269
     TS              reduce using rule 118 (expresionCorcheteOR -> [ expresionOpcional ] .)
 
 
-state 270
+state 269
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion . DO sentenciaSecuencia END
-    DO              shift and go to state 280
+    DO              shift and go to state 279
+
+
+state 270
+
+    (73) sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces . END
+    END             shift and go to state 280
 
 
 state 271
-
-    (73) sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces . END
-    END             shift and go to state 281
-
-
-state 272
 
     (78) sentenciaSiEntonces -> empty .
     END             reduce using rule 78 (sentenciaSiEntonces -> empty .)
 
 
-state 273
+state 272
 
     (79) sentenciaSiEntonces -> ELSE . sentenciaSecuencia
     (86) sentenciaSecuencia -> . sentencia sentenciaPuntoComa
@@ -4534,13 +4520,14 @@ state 273
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     FOR             shift and go to state 148
     IF              shift and go to state 150
     ID              shift and go to state 149
 
-    sentenciaSecuencia             shift and go to state 282
+    sentenciaSecuencia             shift and go to state 281
     sentencia                      shift and go to state 142
     empty                          shift and go to state 143
     sentenciaPara                  shift and go to state 144
@@ -4548,7 +4535,7 @@ state 273
     asignacionUnidad               shift and go to state 146
     asignacion                     shift and go to state 147
 
-state 274
+state 273
 
     (77) sentenciaSiSinoR -> sentenciaSiSinoR ELSIF . relacion THEN sentenciaSecuencia
     (66) relacion -> . expresion simbolosRelacion expresion
@@ -4576,30 +4563,30 @@ state 274
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    relacion                       shift and go to state 283
+    relacion                       shift and go to state 282
     expresion                      shift and go to state 180
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 275
+state 274
 
     (76) sentenciaSiSinoR -> ELSIF relacion . THEN sentenciaSecuencia
-    THEN            shift and go to state 284
+    THEN            shift and go to state 283
+
+
+state 275
+
+    (36) factor -> MUX ( expresion , expresion : expresion , expresion . , expresion , expresion )
+    ,               shift and go to state 284
 
 
 state 276
-
-    (36) factor -> MUX ( expresion , expresion : expresion , expresion . , expresion , expresion )
-    ,               shift and go to state 285
-
-
-state 277
 
     (124) declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID .
     ;               reduce using rule 124 (declaracionTipo -> TYPE ID simboloPor listaIdParentesis ; declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID .)
 
 
-state 278
+state 277
 
     (140) tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : tipoFormalBus ; .
     ID              reduce using rule 140 (tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : tipoFormalBus ; .)
@@ -4609,7 +4596,7 @@ state 278
     END             reduce using rule 140 (tipoFormlBuslistaIdR -> tipoFormlBuslistaIdR listaId : tipoFormalBus ; .)
 
 
-state 279
+state 278
 
     (119) expresionCorcheteOR -> expresionCorcheteOR [ expresionOpcional ] .
     [               reduce using rule 119 (expresionCorcheteOR -> expresionCorcheteOR [ expresionOpcional ] .)
@@ -4618,7 +4605,7 @@ state 279
     TS              reduce using rule 119 (expresionCorcheteOR -> expresionCorcheteOR [ expresionOpcional ] .)
 
 
-state 280
+state 279
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO . sentenciaSecuencia END
     (86) sentenciaSecuencia -> . sentencia sentenciaPuntoComa
@@ -4632,13 +4619,14 @@ state 280
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     END             reduce using rule 142 (empty -> .)
     FOR             shift and go to state 148
     IF              shift and go to state 150
     ID              shift and go to state 149
 
-    sentenciaSecuencia             shift and go to state 286
+    sentenciaSecuencia             shift and go to state 285
     sentencia                      shift and go to state 142
     empty                          shift and go to state 143
     sentenciaPara                  shift and go to state 144
@@ -4646,7 +4634,7 @@ state 280
     asignacionUnidad               shift and go to state 146
     asignacion                     shift and go to state 147
 
-state 281
+state 280
 
     (73) sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END .
     ;               reduce using rule 73 (sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END .)
@@ -4655,19 +4643,19 @@ state 281
     ELSE            reduce using rule 73 (sentenciaSi -> IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END .)
 
 
-state 282
+state 281
 
     (79) sentenciaSiEntonces -> ELSE sentenciaSecuencia .
     END             reduce using rule 79 (sentenciaSiEntonces -> ELSE sentenciaSecuencia .)
 
 
-state 283
+state 282
 
     (77) sentenciaSiSinoR -> sentenciaSiSinoR ELSIF relacion . THEN sentenciaSecuencia
-    THEN            shift and go to state 287
+    THEN            shift and go to state 286
 
 
-state 284
+state 283
 
     (76) sentenciaSiSinoR -> ELSIF relacion THEN . sentenciaSecuencia
     (86) sentenciaSecuencia -> . sentencia sentenciaPuntoComa
@@ -4681,6 +4669,7 @@ state 284
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
@@ -4689,7 +4678,7 @@ state 284
     IF              shift and go to state 150
     ID              shift and go to state 149
 
-    sentenciaSecuencia             shift and go to state 288
+    sentenciaSecuencia             shift and go to state 287
     sentencia                      shift and go to state 142
     empty                          shift and go to state 143
     sentenciaPara                  shift and go to state 144
@@ -4697,7 +4686,7 @@ state 284
     asignacionUnidad               shift and go to state 146
     asignacion                     shift and go to state 147
 
-state 285
+state 284
 
     (36) factor -> MUX ( expresion , expresion : expresion , expresion , . expresion , expresion )
     (55) expresion -> . termino terminoMasMenos
@@ -4724,17 +4713,17 @@ state 285
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 289
+    expresion                      shift and go to state 288
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 286
+state 285
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia . END
-    END             shift and go to state 290
+    END             shift and go to state 289
 
 
-state 287
+state 286
 
     (77) sentenciaSiSinoR -> sentenciaSiSinoR ELSIF relacion THEN . sentenciaSecuencia
     (86) sentenciaSecuencia -> . sentencia sentenciaPuntoComa
@@ -4748,6 +4737,7 @@ state 287
     (73) sentenciaSi -> . IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END
     (141) asignacionUnidad -> . ID selector ( listaExpresiones )
     (62) asignacion -> . ID selector DOSPUNTOSIGUAL condicionOr expresion
+    (63) asignacion -> . ID selector DOSPUNTOSIGUAL expresion
     ;               reduce using rule 142 (empty -> .)
     ELSIF           reduce using rule 142 (empty -> .)
     ELSE            reduce using rule 142 (empty -> .)
@@ -4756,7 +4746,7 @@ state 287
     IF              shift and go to state 150
     ID              shift and go to state 149
 
-    sentenciaSecuencia             shift and go to state 291
+    sentenciaSecuencia             shift and go to state 290
     sentencia                      shift and go to state 142
     empty                          shift and go to state 143
     sentenciaPara                  shift and go to state 144
@@ -4764,7 +4754,7 @@ state 287
     asignacionUnidad               shift and go to state 146
     asignacion                     shift and go to state 147
 
-state 288
+state 287
 
     (76) sentenciaSiSinoR -> ELSIF relacion THEN sentenciaSecuencia .
     ELSIF           reduce using rule 76 (sentenciaSiSinoR -> ELSIF relacion THEN sentenciaSecuencia .)
@@ -4772,13 +4762,13 @@ state 288
     END             reduce using rule 76 (sentenciaSiSinoR -> ELSIF relacion THEN sentenciaSecuencia .)
 
 
-state 289
+state 288
 
     (36) factor -> MUX ( expresion , expresion : expresion , expresion , expresion . , expresion )
-    ,               shift and go to state 292
+    ,               shift and go to state 291
 
 
-state 290
+state 289
 
     (80) sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END .
     ;               reduce using rule 80 (sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END .)
@@ -4787,7 +4777,7 @@ state 290
     ELSE            reduce using rule 80 (sentenciaPara -> FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END .)
 
 
-state 291
+state 290
 
     (77) sentenciaSiSinoR -> sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia .
     ELSIF           reduce using rule 77 (sentenciaSiSinoR -> sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia .)
@@ -4795,7 +4785,7 @@ state 291
     END             reduce using rule 77 (sentenciaSiSinoR -> sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia .)
 
 
-state 292
+state 291
 
     (36) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , . expresion )
     (55) expresion -> . termino terminoMasMenos
@@ -4822,17 +4812,17 @@ state 292
     LOGICVALUE      shift and go to state 64
     ID              shift and go to state 52
 
-    expresion                      shift and go to state 293
+    expresion                      shift and go to state 292
     termino                        shift and go to state 54
     factor                         shift and go to state 55
 
-state 293
+state 292
 
     (36) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion . )
-    )               shift and go to state 294
+    )               shift and go to state 293
 
 
-state 294
+state 293
 
     (36) factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .
     MOD             reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
@@ -4853,11 +4843,11 @@ state 294
     #               reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     =               reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     DOBLEPUNTO      reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    |               reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
-    THEN            reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     END             reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     ELSIF           reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     ELSE            reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    |               reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
+    THEN            reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
     DO              reduce using rule 36 (factor -> MUX ( expresion , expresion : expresion , expresion , expresion , expresion ) .)
 
 
@@ -4885,13 +4875,3 @@ shift/reduce conflict for ~ in state 102 resolved as shift
 shift/reduce conflict for INTEGER in state 102 resolved as shift
 shift/reduce conflict for LOGICVALUE in state 102 resolved as shift
 shift/reduce conflict for ID in state 102 resolved as shift
-shift/reduce conflict for SR in state 200 resolved as shift
-shift/reduce conflict for LATCH in state 200 resolved as shift
-shift/reduce conflict for REG in state 200 resolved as shift
-shift/reduce conflict for MUX in state 200 resolved as shift
-shift/reduce conflict for ( in state 200 resolved as shift
-shift/reduce conflict for ? in state 200 resolved as shift
-shift/reduce conflict for ~ in state 200 resolved as shift
-shift/reduce conflict for INTEGER in state 200 resolved as shift
-shift/reduce conflict for LOGICVALUE in state 200 resolved as shift
-shift/reduce conflict for ID in state 200 resolved as shift

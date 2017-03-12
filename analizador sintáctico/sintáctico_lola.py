@@ -322,17 +322,16 @@ class CalcParser(Parser):
 	asignacion : ID selector ":=" condicionOr expresion
 	;
 	'''
-	@_('ID selector DOSPUNTOSIGUAL condicionOr expresion')
+	@_('ID selector DOSPUNTOSIGUAL expresion',
+	'ID selector DOSPUNTOSIGUAL condicionOr expresion')
 	def asignacion(self, p):
 		pass
 		
 	'''
 	condicionOr : condicion "|"
-	|	
 	;
 	'''
-	@_('condicion "|"',
-	'empty')
+	@_('condicion "|"')
 	def condicionOr(self, p):
 		pass
 
@@ -540,7 +539,7 @@ class CalcParser(Parser):
 	|	
 	;
 	'''
-	@_('OUT declaracionConstanteRecursivo',
+	@_('OUT declaracionVariableRecursivo',
 	'empty')
 	def declaracionVariableOUT(self, p):
 		pass

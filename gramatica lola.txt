@@ -147,11 +147,11 @@ simbolosMasMenos : "+"
 	|	"-"
 	;
 	
-asignacion : ID selector ":=" condicionOr expresion
+asignacion : ID selector ":=" expresion
+	|	ID selector ":=" condicionOr expresion
 	;
 	
 condicionOr : condicion "|"
-	|	
 	;
 	
 condicion : expresion
