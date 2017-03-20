@@ -1,42 +1,63 @@
-# -----------------------------------------------------------------------------
-# calc.py
-# -----------------------------------------------------------------------------
-
-from sly import Parser
+﻿from sly import Parser
 from léxico_lola import CalcLexer
-
+#from ast_lola import *
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
-	
+	precedence = (
+        ('left', '+', '-'),            # Unary minus operator
+    )
 	tokens = CalcLexer.tokens
 	
-	#def __init__(self):
-	#	self.error=0
+	def __init__(self):
+		self.error=0
+		
+	"""	
+	lola : lola module
+	| module
+	;
+	"""
+	@_('lola modulo')
+	def lola(self, p):
+		pass
+		#p.lola.append(p.modulo)
+		#return lola
+	
+	@_('modulo')
+	def lola(self, p):
+		pass
+		#return Lola([p.modulo])
 	
 	'''
-	modulo : "MODULE" ID ";" 
-	declaracionTipoPuntoComa 
-	declaracionConstanteCONST 
-	declaracionVariableIN 
-	declaracionVariableINOUT 
-	declaracionVariableOUT 
-	declaracionVariableVAR 
-	sentenciaSecuenciaBEGIN 
+	modulo : "MODULE" ID ";"
+	declaracionTipoPuntoComa
+	declaracionConstanteCONST
+	declaracionVariableIN
+	declaracionVariableINOUT
+	declaracionVariableOUT
+	declaracionVariableVAR
+	sentenciaSecuenciaBEGIN
 	END ID "."
 	;
 	'''
 	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
 	def modulo(self, p):
 		pass
+		#return Modulo(p.declaracionTipoPuntoComa, p.declaracionConstanteCONST, p.declaracionVariableIN, p.declaracionVariableINOUT, p.declaracionVariableOUT, p.declaracionVariableVAR, p.sentenciaSecuenciaBEGIN, p.ID)
+		
+		
 	'''
 	tipoSimple : tipoBasico
 		|	ID conjuntoExpresiones
 		;
 	'''
-	@_('tipoBasico', 'ID conjuntoExpresiones') 
+	@_('tipoBasico') 
 	def tipoSimple(self, p):
 		pass
-		#para referir al contenido de los tokens se puede con p.tipoBasico p.ID p.conjuntoExpresiones
+		#return TipoSimple(p.tipoBasico)
+	@_('ID conjuntoExpresiones')
+	def tipoSimple(self, p):
+		pass
+		#return TipoSimpleID(p.ID, p.conjuntoExpresiones)
 		
 	'''
 	tipoBasico : 'BIT'
@@ -49,18 +70,21 @@ class CalcParser(Parser):
 	'OC')
 	def tipoBasico(self, p):
 		pass
+		#return p
 	
 	'''
 	conjuntoExpresiones : '(' listaExpresiones ')'
 	|	
 	;
 	'''
-	
-
-	@_('"(" listaExpresiones ")"', 
-	'empty')
+	@_('empty')
 	def conjuntoExpresiones(self, p):
 		pass
+	
+	@_('"(" listaExpresiones ")"')
+	def conjuntoExpresiones(self, p):
+		pass
+		#return ConjuntoExpresiones(p.listaExpresiones)
 		
 	'''
 	listaExpresiones : expresion expresionComa
@@ -69,29 +93,39 @@ class CalcParser(Parser):
 	@_('expresion expresionComa')
 	def listaExpresiones(self, p):
 		pass
-		
+		#ListaExpresiones(p.expresion, p.expresionComa)
 	'''
 	expresionComa :  expresionComaR 
 	|
 	;
 	'''
 
-	@_('expresionComaR',  
-	'empty')
+	@_('expresionComaR')
 	def expresionComa(self, p):
 		pass
-		
+		#return ExpresionComa(p.expresionComaR)
+	
+	@_('empty')
+	def expresionComa(self, p):
+		pass
+		#return None
+	
 	'''
 	expresionComaR : expresionComaR "," expresion
 	|	"," expresion
 	;
 	'''
 	
-	@_('expresionComaR "," expresion',
-	'"," expresion')
+	@_('expresionComaR "," expresion')
 	def expresionComaR(self, p):
 		pass
-		
+		#p.expresionComaR.append(p.expresion)
+		#return p.expresionComaR
+	
+	@_('"," expresion')
+	def expresionComaR(self, p):
+		pass
+		#return ExpresionComaR([p.expresion])
 		
 	'''
 	tipo : expresionCorchete tipoSimple
@@ -100,28 +134,37 @@ class CalcParser(Parser):
 	@_('expresionCorchete tipoSimple')
 	def tipo(self, p):
 		pass
-		
+		#return Tipo(p.expresionCorchete, p.tipoSimple)
 	'''
 	expresionCorchete : expresionCorcheteR
 	|
 	;
 	'''
-	@_('expresionCorcheteR', 
-	'empty')
+	@_('expresionCorcheteR')
 	def expresionCorchete(self, p):
 		pass
+		#return ExpresionCorchete(p.expresionCorchete)
+	
+	@_('empty')
+	def expresionCorchete(self, p):
+		pass
+		#return None
 	
 	'''
 	expresionCorcheteR : expresionCorcheteR "[" expresion "]"
 	|	"[" expresion "]"
 	;
 	'''
-	@_('expresionCorcheteR "[" expresion "]"',
-	'"[" expresion "]"')
+	@_('expresionCorcheteR "[" expresion "]"')
 	def expresionCorcheteR(self, p):
 		pass
+		#p.expresionCorcheteR.append(p.expresion)
+		#p.expresionCorcheteR
 	
-	
+	@_('"[" expresion "]"')
+	def expresionCorcheteR(self, p):
+		pass
+		#return ExpresionCorcheteR([p.expresion])
 	'''
 	declaracionConstante : ID ":=" expresion ";"'
 	;
@@ -129,7 +172,7 @@ class CalcParser(Parser):
 	@_('ID DOSPUNTOSIGUAL expresion ";"')
 	def declaracionConstante(self, p):
 		pass
-	
+		#return DeclaracionConstante(p.ID, p.expresion)
 	'''
 	declaracionVariable : listaId ":" tipo ";"
 	;
@@ -137,7 +180,7 @@ class CalcParser(Parser):
 	@_('listaId ":" tipo ";"')
 	def declaracionVariable(self, p):
 		pass
-		
+		#return DeclaracionVariable(p.listaId, p.tipo)
 	'''
 	listaId : ID IDComa
 		;
@@ -145,6 +188,7 @@ class CalcParser(Parser):
 	@_('ID IDComa')
 	def listaId(self, p):
 		pass
+		#return ListaId(p.ID, p.IDComa)
 		
 	'''
 	IDComa : IDComaR
@@ -212,11 +256,11 @@ class CalcParser(Parser):
 	|	"SR" "(" expresion "," expresion ")"
 	;
 	'''
+	#'"↑" factor', genera error de enconding
 	@_('ID selector', 
 	'LOGICVALUE', 
 	'INTEGER', 
 	'"~" factor', 
-	'"?" factor', 
 	'"(" expresion ")"', 
 	'MUX "(" expresion ":" expresion "," expresion ")"', 
 	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"', 
@@ -268,7 +312,7 @@ class CalcParser(Parser):
 
 	'''
 	simbolosProd : "*"
-	|	"/"
+	|	SLASH
 	|	"DIV"
 	|	"MOD"
 	;
@@ -319,21 +363,14 @@ class CalcParser(Parser):
 		pass
 		
 	'''
-	asignacion : ID selector ":=" condicionOr expresion
+	asignacion : ID selector DOSPUNTOSIGUAL condicionOr expresion
 	;
 	'''
 	@_('ID selector DOSPUNTOSIGUAL expresion',
-	'ID selector DOSPUNTOSIGUAL condicionOr expresion')
+	'ID selector DOSPUNTOSIGUAL condicion "|" expresion')
 	def asignacion(self, p):
 		pass
 		
-	'''
-	condicionOr : condicion "|"
-	;
-	'''
-	@_('condicion "|"')
-	def condicionOr(self, p):
-		pass
 
 	'''
 	condicion : expresion
@@ -739,11 +776,22 @@ class CalcParser(Parser):
 	def asignacionUnidad(self, p):
 		pass
 	
-	
+	@_('ID selector error listaExpresiones ")"')
+	def asignacionUnidad(self, p):
+		print ("ERROR 14 - ( expected")
+		self.error+=1
+		return "fatal"
 	
 	@_('')
 	def empty(self, p):
 		pass
+	
+	
+def parse(data, debug=0):
+	p = parser.parse(lexer.tokenize(data))
+	if parser.error:
+		return None
+	return p
 		
 if __name__ == '__main__':
 	import sys
@@ -753,6 +801,7 @@ if __name__ == '__main__':
 		sys.stderr.write('Usage: "{}" "filename"\n'.format(sys.argv[0]))#permite que al al compilar indique que debe de darse el archivo de la forma python.exe "fichero.py" "Archivo a abrir, como un simple print"
 		raise SystemExit(1)#termina el programa
 	file= open(sys.argv[1]).read()#en caso de que indique archivo tome el segundo string y abra el archivo y convierta con .read() a string
+	"""
 	maxLenthLine=0
 	for linea in open(sys.argv[1]):
 		if(maxLenthLine<len(linea)):
@@ -763,7 +812,7 @@ if __name__ == '__main__':
 	print(file)
 	print("-"*maxLenthLine)
 	print("{:{align}{width}}".format("Archivo recibido - contenido fin", align="^", width=maxLenthLine))
-	
+	"""
 	#print("aplicando tokenize")
 	lexer.fileName=sys.argv[1]
-	parser.parse(lexer.tokenize(file))
+	parse(file)

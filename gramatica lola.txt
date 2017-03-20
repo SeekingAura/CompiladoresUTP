@@ -34,6 +34,7 @@ LOGICVALUE : "'0"
 tipoSimple : tipoBasico
 	|	ID conjuntoExpresiones
 	;
+	
 
 tipoBasico : "BIT"
 		| "TS"
@@ -43,29 +44,34 @@ tipoBasico : "BIT"
 conjuntoExpresiones : "(" listaExpresiones ")"
 	|	
 	;
-
 		
 listaExpresiones : expresion expresionComa
 		;
+listaExpresiones(expresion, expresionComa)
 		
 expresionComa :  expresionComaR 
 	|
 	;
+expresionComa(expresionComaR)
 	
 expresionComaR : expresionComaR "," expresion
 	|	"," expresion
 	;
-	
+expresionComaR(expresiones)
+
 tipo : expresionCorchete tipoSimple
 	;
+tipo(expresionCorchete, tipoSimple)
 	
 expresionCorchete : expresionCorcheteR
 	|
 	;
+expresionCorchete(expresionCorcheteR)
 	
 expresionCorcheteR : expresionCorcheteR "[" expresion "]"
 	|	"[" expresion "]"
 	;
+expresionCorcheteR(expresion)
 
 declaracionConstante : ID ":=" expresion ";"
 	;
@@ -148,10 +154,7 @@ simbolosMasMenos : "+"
 	;
 	
 asignacion : ID selector ":=" expresion
-	|	ID selector ":=" condicionOr expresion
-	;
-	
-condicionOr : condicion "|"
+	|	ID selector ":=" condicion "|" expresion
 	;
 	
 condicion : expresion

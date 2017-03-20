@@ -7,33 +7,39 @@ from sly import Lexer
 class CalcLexer(Lexer):
 	fileName=""
 
-	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO', 'WHILE', 'RETURN' }
+	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO'}#, 'WHILE', 'RETURN'
 	
 	tokens = {
 		#valores
-		'ID', 'INTEGER', 'LOGICVALUE', 'HEXA',
+		'ID', 'INTEGER', 'LOGICVALUE', 
 		#simbolos
-		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'FLECHADERECHA', 'DOBLEPUNTO',
+		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'DOBLEPUNTO', 
 
 		#palabras reservadas
 		*reserved_words,
-	}
+	}#'HEXA',
+	#'FLECHADERECHA',
+	#'MAS', 'MENOS', 'ASTERISCO', 'SLASH',
 	ignore = ' \t'
 	
 
-	literals = { '+', '-', '*', '=', '^', '~', '&', '|', '/', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!', '↑'}
-
-
-	
+	literals = { '+', '-', '*', '/', '=', '^', '~', '&', '|', '#', '<', '>', '(', ')', '[', ']', '{', '}', '.', ',', ';', ':' , "'", '!'}
+	#'↑' genera error en parser
+	"""
+	MAS=r'\+'
+	MENOS=r'-'
+	ASTERISCO=r'\*'
+	SLASH=r'/'
+	"""
 	#Tokens - valores
-	@_(r"[a-zA-Z_][a-zA-Z0-9_]*'?")
+	@_(r"[a-zA-Z_][a-zA-Z0-9]*'?")
 	def ID(self, t):
 		#Control de palabras reservadas, o ma bien de priorizar check de expresión regular
 		# Chec	k if name matches a reserved word (change token type if true)
 		if t.value.upper() in self.reserved_words:
 			t.type = t.value.upper()
 		return t
-	
+	"""
 	@_(r'[0-9a-fA-F]+H')
 	def HEXA(self, t):
 		value=0
@@ -54,7 +60,7 @@ class CalcLexer(Lexer):
 				value+=(16**(enum-1))*int(i)
 		t.value=value
 		return t
-	
+	"""
 	@_(r'\d+')#expresión regular que trabaja [0-9]
 	def INTEGER(self, t):
 		t.value = int(t.value)
@@ -67,7 +73,7 @@ class CalcLexer(Lexer):
 		
 	#Tokens - simbolos compuestos, operadores
 	DOBLEPUNTO = r'\.\.'#r'[.][.]'
-	FLECHADERECHA = r'->'
+	#FLECHADERECHA = r'->'
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r'\:\='
@@ -86,24 +92,25 @@ class CalcLexer(Lexer):
 		self.lineno += t.value.count('\n')
 		
 	#r'\(\*([^*)]|\*[^*]\).*)*\*\)' expresion mejorada
-	ignore_COMMENT=r'\(\*([^*]|\*[^)]|\))*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
+	ignore_COMMENT=r'\(\*([^*]|\*[^)])*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
 	
 	#error control
-	@_(r'\(\*([^*]|\*[^)]|\))*')
+	@_(r'\(\*([^*]|\*[^)])*')
 	def error_COMMENT(self, t):
 		print('File "{}" Line {} Colum {}'.format(self.fileName, t.lineno, self.getColumn(t)))
 		print(t.value)
 		print("ERROR - No terminó comentario")
 		print("Se esperaba un *)")
-
+	
 	def error(self, value):
 		print("Illegal character {}".format(value[0]))
 		self.index += 1
-		
+	
 	#metodos funcionales
 	# Compute column.
 	#     input is the input text string
 	#     token is a token instance
+	
 	def getColumn(self, token):
 		last_cr = self.text.rfind('\n', 0, token.index)+1
 		#print("last_cr {}".format(last_cr))#verificando valor de indexados previos
@@ -111,7 +118,7 @@ class CalcLexer(Lexer):
 			last_cr = 0
 		column = (token.index - last_cr) + 1
 		return column
-		
+	
 if __name__ == '__main__':
 	import sys
 	lexer = CalcLexer()
