@@ -58,19 +58,6 @@ class CalcParser(Parser):
 	def tipoSimple(self, p):
 		pass
 		#return TipoSimpleID(p.ID, p.conjuntoExpresiones)
-		
-	'''
-	tipoBasico : 'BIT'
-		| 'TS'
-		| 'OC'
-		;
-	'''
-	@_('BIT', 
-	'TS', 
-	'OC')
-	def tipoBasico(self, p):
-		pass
-		#return p
 	
 	'''
 	conjuntoExpresiones : '(' listaExpresiones ')'
@@ -87,45 +74,34 @@ class CalcParser(Parser):
 		#return ConjuntoExpresiones(p.listaExpresiones)
 		
 	'''
-	listaExpresiones : expresion expresionComa
+	tipoBasico : 'BIT'
+		| 'TS'
+		| 'OC'
 		;
 	'''
-	@_('expresion expresionComa')
+	@_('BIT', 
+	'TS', 
+	'OC')
+	def tipoBasico(self, p):
+		pass
+		#return p
+	
+	
+		
+	'''
+	listaExpresiones : listaExpresiones "," expresion
+		| expresion
+		;
+	'''
+	@_('listaExpresiones "," expresion')
 	def listaExpresiones(self, p):
 		pass
 		#ListaExpresiones(p.expresion, p.expresionComa)
-	'''
-	expresionComa :  expresionComaR 
-	|
-	;
-	'''
 
-	@_('expresionComaR')
-	def expresionComa(self, p):
+	@_('expresion')
+	def listaExpresiones(self, p):
 		pass
 		#return ExpresionComa(p.expresionComaR)
-	
-	@_('empty')
-	def expresionComa(self, p):
-		pass
-		#return None
-	
-	'''
-	expresionComaR : expresionComaR "," expresion
-	|	"," expresion
-	;
-	'''
-	
-	@_('expresionComaR "," expresion')
-	def expresionComaR(self, p):
-		pass
-		#p.expresionComaR.append(p.expresion)
-		#return p.expresionComaR
-	
-	@_('"," expresion')
-	def expresionComaR(self, p):
-		pass
-		#return ExpresionComaR([p.expresion])
 		
 	'''
 	tipo : expresionCorchete tipoSimple
@@ -263,24 +239,35 @@ class CalcParser(Parser):
 	'"~" factor', 
 	'"(" expresion ")"', 
 	'MUX "(" expresion ":" expresion "," expresion ")"', 
-	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"', 
-	'REG "(" expresionComaO expresion', 
+	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"',
+	'REG "(" expresionComaO expresion ")"', 
 	'LATCH "(" expresion "," expresion ")"', 
 	'SR "(" expresion , expresion ")"')
 	def factor(self, p):
 		pass
 		#cuando se tiene tokens del mismo en lo largo de la gramatica, se puede referir con p.expresion0, p.expresion1
-		
+	
+	'''
+	! shift/reduce conflict for SR resolved as shift
+	! shift/reduce conflict for LATCH resolved as shift
+	! shift/reduce conflict for REG resolved as shift
+	! shift/reduce conflict for MUX resolved as shift
+	! shift/reduce conflict for ( resolved as shift
+	! shift/reduce conflict for ~ resolved as shift
+	! shift/reduce conflict for INTEGER resolved as shift
+	! shift/reduce conflict for LOGICVALUE resolved as shift
+	! shift/reduce conflict for ID resolved as shift
+	'''
+	
 	'''
 	expresionComaO : expresion ","
-	|	
+	|	empty
 	;
 	'''
-	@_('expresion ","',
-	'empty')
+	@_('expresion ","', 'empty')
 	def expresionComaO(self, p):
 		pass
-		
+	
 	'''
 	termino : factor terminoOperadores
 	;
@@ -384,26 +371,13 @@ class CalcParser(Parser):
 	relacion : expresion simbolosRelacion expresion
 	;
 	'''
-	@_('expresion simbolosRelacion expresion')
+	@_('expresion "=" expresion',
+	'expresion "#" expresion',
+	'expresion "<" expresion',
+	'expresion MENORIGUAL expresion',
+	'expresion ">" expresion',
+	'expresion MAYORIGUAL expresion')
 	def relacion(self, p):
-		pass
-		
-	'''
-	simbolosRelacion : "="
-	|	"#"
-	|	"<"
-	|	"<="
-	|	">"
-	|	">="
-	;
-	'''
-	@_('"="', 
-	'"#"', 
-	'"<"', 
-	'MENORIGUAL', 
-	'">"', 
-	'MAYORIGUAL')
-	def simbolosRelacion(self, p):
 		pass
 		
 	'''
@@ -775,13 +749,13 @@ class CalcParser(Parser):
 	@_('ID selector "(" listaExpresiones ")"')
 	def asignacionUnidad(self, p):
 		pass
-	
+	"""
 	@_('ID selector error listaExpresiones ")"')
 	def asignacionUnidad(self, p):
 		print ("ERROR 14 - ( expected")
 		self.error+=1
 		return "fatal"
-	
+	"""
 	@_('')
 	def empty(self, p):
 		pass
