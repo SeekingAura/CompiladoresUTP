@@ -236,6 +236,7 @@ class CalcParser(Parser):
 	@_('ID selector', 
 	'LOGICVALUE', 
 	'INTEGER', 
+	'FLECHAARRIBA factor',
 	'"~" factor', 
 	'"(" expresion ")"', 
 	'MUX "(" expresion ":" expresion "," expresion ")"', 
@@ -269,34 +270,15 @@ class CalcParser(Parser):
 		pass
 	
 	'''
-	termino : factor terminoOperadores
+	termino : factor
+	|	termino simbolosProd factor
 	;
 	'''	
-	@_('factor terminoOperadores')
+	@_('termino simbolosProd factor', 'factor')
 	def termino(self, p):
 		pass
 		
-	'''
-	terminoOperadores : terminoOperadoresR 
-	|
-	;
-	'''
-	@_('terminoOperadoresR', 
-	'empty')
-	def terminoOperadores(self, p):
-		pass
 	
-	'''
-	terminoOperadoresR : terminoOperadoresR simbolosProd factor
-	|	simbolosProd factor
-	;
-	'''
-	@_('terminoOperadoresR simbolosProd factor',
-	'simbolosProd factor')
-	def terminoOperadoresR(self, p):
-		pass
-
-
 	'''
 	simbolosProd : "*"
 	|	SLASH

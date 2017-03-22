@@ -13,7 +13,7 @@ class CalcLexer(Lexer):
 		#valores
 		'ID', 'INTEGER', 'LOGICVALUE', 
 		#simbolos
-		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'DOBLEPUNTO', 
+		'DOSPUNTOSIGUAL', 'MENORIGUAL', 'MAYORIGUAL', 'DOBLEPUNTO', 'FLECHAARRIBA',
 
 		#palabras reservadas
 		*reserved_words,
@@ -77,7 +77,7 @@ class CalcLexer(Lexer):
 	MAYORIGUAL = r'>='
 	MENORIGUAL = r'<='
 	DOSPUNTOSIGUAL = r'\:\='
-
+	FLECHAARRIBA=r'↑'
 	"""
 	#forma de sobre-escribir token apartir de solo una expresión regular, puede estar sin definirse el token o en literales
 	@_(r'\+')
