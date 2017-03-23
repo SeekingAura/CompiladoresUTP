@@ -32,7 +32,7 @@ class CalcLexer(Lexer):
 	SLASH=r'/'
 	"""
 	#Tokens - valores
-	@_(r"[a-zA-Z_][a-zA-Z0-9]*'?")
+	@_(r"[a-zA-Z][a-zA-Z0-9]*'?")
 	def ID(self, t):
 		#Control de palabras reservadas, o ma bien de priorizar check de expresión regular
 		# Chec	k if name matches a reserved word (change token type if true)
@@ -94,13 +94,20 @@ class CalcLexer(Lexer):
 	#r'\(\*([^*)]|\*[^*]\).*)*\*\)' expresion mejorada
 	ignore_COMMENT=r'\(\*([^*]|\*[^)])*\*\)'#\(\*[^*)\n]*\*\) sin saltos de linea, anterior \(\*[^*)]*\*\), 
 	
-	#error control
+	#error control (\(\*([^*]|\*[^)])*)|(.*\*\))
 	@_(r'\(\*([^*]|\*[^)])*')
-	def error_COMMENT(self, t):
+	def error_COMMENTRIGTH(self, t):
 		print('File "{}" Line {} Colum {}'.format(self.fileName, t.lineno, self.getColumn(t)))
 		print(t.value)
 		print("ERROR - No terminó comentario")
 		print("Se esperaba un *)")
+	
+	@_(r'(?!.*\(\*).*\*\)')
+	def error_COMMENTLEFT(self, t):
+		print('File "{}" Line {} Colum {}'.format(self.fileName, t.lineno, self.getColumn(t)))
+		print(t.value)
+		print("ERROR - No terminó comentario")
+		print("Se esperaba un (*")
 	
 	def error(self, value):
 		print("Illegal character {}".format(value[0]))

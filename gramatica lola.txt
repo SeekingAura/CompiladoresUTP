@@ -1,27 +1,18 @@
-ID : letra letraR
+ID : letra letraDigito
+	|	letra letraDigito "'"
 	;
 	
-letraR : letraR letraDigito
-	|	letraDigito
-	|
+letraDigito : letraDigitoR
+	|	empty
 	;
 
-letraDigito : letra comillaOp
-	|	digito comillaOp
+letraDigitoR : letraDigitoR letra
+	|	letraDigitoR digito
+	|	letra
+	|	digito
 	;
 	
-comillaOp : "'"
-	|
-	;
-	
-INTEGER : digito digitoR
-	;
-	
-digitoR : digitoRR
-	|
-	;
-	
-digitoRR : digitoRR digito
+INTEGER : INTEGER digito
 	|	digito
 	;
 
@@ -31,67 +22,40 @@ LOGICVALUE : "'0"
 
 #-- Aqui empieza la gramatica para sintactico --#
 	
-tipoSimple : tipoBasico
-	|	ID conjuntoExpresiones
+lola : lola modulo
+	|	modulo
 	;
 	
+tipoSimple : tipoBasico
+	|	ID "(" listaExpresiones ")"
+	|	ID
+	;
 
 tipoBasico : "BIT"
-		| "TS"
-		| "OC"
-		;
-		
-conjuntoExpresiones : "(" listaExpresiones ")"
-	|	
+	| "TS"
+	| "OC"
 	;
 		
-listaExpresiones : expresion expresionComa
-		;
-listaExpresiones(expresion, expresionComa)
-		
-expresionComa :  expresionComaR 
-	|
+listaExpresiones : listaExpresiones "," expresion
+	| expresion
 	;
-expresionComa(expresionComaR)
-	
-expresionComaR : expresionComaR "," expresion
-	|	"," expresion
-	;
-expresionComaR(expresiones)
 
-tipo : expresionCorchete tipoSimple
+tipo : "[" expresion "]" tipo
+	|	tipoSimple
 	;
-tipo(expresionCorchete, tipoSimple)
-	
-expresionCorchete : expresionCorcheteR
-	|
-	;
-expresionCorchete(expresionCorcheteR)
-	
-expresionCorcheteR : expresionCorcheteR "[" expresion "]"
-	|	"[" expresion "]"
-	;
-expresionCorcheteR(expresion)
 
-declaracionConstante : ID ":=" expresion ";"
+declaracionConstante : ID DOSPUNTOSIGUAL expresion ";"'
 	;
 	
 declaracionVariable : listaId ":" tipo ";"
 	;
 
-listaId : ID IDComa
-	;
-	
-IDComa : IDComaR
-	|
-	;
-	
-IDComaR : IDComaR "," ID
-	|	"," ID
-	;
+listaId : listaId "," ID
+		|	ID
+		;
 	
 selector : selectorR
-	|
+	|	empty
 	;
 	
 selectoR : selectorR selectorRR
@@ -112,24 +76,14 @@ factor : ID selector
 	|	"(" expresion ")"
 	|	"MUX" "(" expresion ":" expresion "," expresion ")"
 	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
-	|	"REG" "(" expresionComaO expresion ")"
+	|	"REG" "(" expresion ")"
+	|	"REG" "(" expresion "," expresion ")"
 	|	"LATCH" "(" expresion "," expresion ")"
 	|	"SR" "(" expresion "," expresion ")"
 	;
 
-expresionComaO : expresion ","
-	|	
-	;
-	
-termino : factor terminoOperadores
-	;
-	
-terminoOperadores : terminoOperadoresR 
-	|
-	;
-	
-terminoOperadoresR : terminoOperadoresR simbolosProd factor
-	|	simbolosProd factor
+termino : termino simbolosProd factor
+	|	factor
 	;
 	
 simbolosProd : "*"
@@ -138,44 +92,35 @@ simbolosProd : "*"
 	|	"MOD"
 	;
 	
-expresion : termino terminoMasMenos
+expresion : expresion simbolosMasMenos termino
+	|	termino
 	;
 	
-terminoMasMenos : terminoMasMenosR
-	|
-	;
-
-terminoMasMenosR : terminoMasMenosR simbolosMasMenos termino
-	|	simbolosMasMenos termino
+expresion : expresion "+" termino
+	|	expresion "-" termino
+	|	termino
 	;
 	
-simbolosMasMenos : "+"
-	|	"-"
-	;
-	
-asignacion : ID selector ":=" expresion
-	|	ID selector ":=" condicion "|" expresion
+asignacion : ID selector DOSPUNTOSIGUAL expresion
+	|	ID selector DOSPUNTOSIGUAL condicion "|" expresion
 	;
 	
 condicion : expresion
 	;
 	
-relacion : expresion simbolosRelacion expresion
-	;
-	
-simbolosRelacion : "="
-	|	"#"
-	|	"<"
-	|	"<="
-	|	">"
-	|	">="
+relacion : expresion "=" expresion
+	|	expresion "#" expresion
+	|	expresion "<" expresion
+	|	expresion MENORIGUAL expresion
+	|	expresion ">" expresion
+	|	expresion MAYORIGUAL expresion
 	;
 	
 sentenciaSi : "IF" relacion "THEN" sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces "END"
 	;
 
 sentenciaSiSino : sentenciaSiSinoR
-	|
+	|	empty
 	;
 	
 sentenciaSiSinoR : sentenciaSiSinoR "ELSIF" relacion "THEN" sentenciaSecuencia
@@ -183,28 +128,21 @@ sentenciaSiSinoR : sentenciaSiSinoR "ELSIF" relacion "THEN" sentenciaSecuencia
 	;
 
 sentenciaSiEntonces : "ELSE" sentenciaSecuencia
-	|	
+	|	empty
 	;
 	
-sentenciaPara : "FOR" ID ":=" expresion ".." expresion "DO" sentenciaSecuencia "END"
+sentenciaPara : "FOR" ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion "DO" sentenciaSecuencia "END"
 	;
 	
 sentencia : asignacion
 	|	asignacionUnidad
 	|	sentenciaSi
 	|	sentenciaPara
-	|
+	|	empty
 	;
 	
-sentenciaSecuencia : sentencia sentenciaPuntoComa
-	;
-	
-sentenciaPuntoComa : sentenciaPuntoComaR
-	|
-	;
-	
-sentenciaPuntoComaR : sentenciaPuntoComaR ";" sentencia
-	|	";" sentencia
+sentenciaSecuencia : sentenciaSecuencia ";" sentencia
+	|	sentencia
 	;
 	
 modulo : "MODULE" ID ";" 
@@ -219,7 +157,7 @@ END ID "."
 	;
 	
 declaracionTipoPuntoComa : declaracionTipoPuntoComaR
-	|
+	|	empty
 	;
 	
 declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
@@ -227,11 +165,11 @@ declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
 	;
 	
 declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
-	|	
+	|	empty
 	;
 
 declaracionConstanteRecursivo : declaracionConstanteRecursivoR
-	|
+	|	empty
 	;
 
 declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConstante
@@ -239,38 +177,38 @@ declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConst
 	;
 	
 declaracionVariableIN : "IN" declaracionVariableRecursivo
-	|	
+	|	empty
 	;
 
-declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
-	|	
-	;
-	
-declaracionVariableOUT : "OUT" declaracionVariableRecursivo
-	|	
-	;
-	
-declaracionVariableVAR : "VAR" declaracionVariableRecursivo
-	|	
-	;
-	
-sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
-	|	
-	;
-	
 declaracionVariableRecursivo : declaracionVariableRecursivoR
-	|
+	|	empty
 	;
 	
 declaracionVariableRecursivoR : declaracionVariableRecursivoR declaracionVariable
 	|	declaracionVariable
 	;
 	
+declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
+	|	empty
+	;
+	
+declaracionVariableOUT : "OUT" declaracionVariableRecursivo
+	|	empty
+	;
+	
+declaracionVariableVAR : "VAR" declaracionVariableRecursivo
+	|	empty
+	;
+	
+sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
+	|	empty
+	;
+	
 tipoFormal : expresionCorcheteO "BIT"
 	;
 	
 expresionCorcheteO : expresionCorcheteOR
-	|
+	|	empty
 	;
 	
 expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
@@ -278,7 +216,7 @@ expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
 	;
 	
 expresionOpcional : expresion
-	|	
+	|	empty
 	;
 	
 tipoFormalBus : expresionCorcheteO "TS"
@@ -296,19 +234,19 @@ END ID
 	;
 	
 simboloPor : "*"
-	|	
+	|	empty
 	;
 
 listaIdParentesis : "(" listaId ")"
-	|	
+	|	empty
 	;
 	
 tipoFormalIN : IN tipoFormallistaId
-	|	
+	|	empty
 	;
 
 tipoFormallistaId : tipoFormallistaIdR 
-	|
+	|	empty
 	;
 	
 tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
@@ -316,11 +254,11 @@ tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
 	;
 	
 tipoFormnalINOUT : INOUT tipoFormlBuslistaId
-	|
+	|	empty
 	;
 	
 tipoFormlBuslistaId : tipoFormlBuslistaIdR
-	|
+	|	empty
 	;
 
 tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
@@ -328,3 +266,5 @@ tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
 	;
 	
 asignacionUnidad : ID selector "(" listaExpresiones ")"
+
+empty :
