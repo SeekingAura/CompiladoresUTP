@@ -189,7 +189,6 @@ $RECYCLE.BIN/
 #############
 
 *.py[cod]
-*.cpython-36.pyc
 
 # Packages
 *.egg
@@ -216,7 +215,4 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-#############
-## Parser-compilator
-#############
 *.out
