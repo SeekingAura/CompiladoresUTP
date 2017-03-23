@@ -190,6 +190,8 @@ $RECYCLE.BIN/
 
 *.py[cod]
 
+*.pyc
+
 # Packages
 *.egg
 *.egg-info
@@ -214,7 +216,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-*.pyc
+
 #############
 ## Parser-compilator
 #############
