@@ -3,13 +3,10 @@ from léxico_lola import CalcLexer
 #from ast_lola import *
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
-	#precedence = (
-    #   ('left', '+', '-'),            # Unary minus operator
-    #)
 	tokens = CalcLexer.tokens
-	
-	def __init__(self):
-		self.error=0
+	start = 'lola'
+	#def __init__(self):
+	#	self.error=0
 		
 	'''
 	lola : lola module
@@ -331,8 +328,10 @@ class CalcParser(Parser):
 	END ID "."
 	;
 	'''
-	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID "."')
+	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR declaracionVariblePOS sentenciaSecuenciaBEGIN END ID "."')
 	def modulo(self, p):
+		if(p.ID0!=p.ID1):
+			print("error al definir modulo, no concuerda el ID {} {} con {} {} - Linea {}".format(p.MODULE, p.ID0, p.END, p.ID1, p.lineno))
 		pass
 		#return Modulo(p.declaracionTipoPuntoComa, p.declaracionConstanteCONST, p.declaracionVariableIN, p.declaracionVariableINOUT, p.declaracionVariableOUT, p.declaracionVariableVAR, p.sentenciaSecuenciaBEGIN, p.ID)
 		
@@ -356,6 +355,8 @@ class CalcParser(Parser):
 	def declaracionTipoPuntoComaR(self, p):
 		pass
 
+	
+	
 	'''
 	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
 	|	empty
@@ -445,6 +446,24 @@ class CalcParser(Parser):
 	'empty')
 	def declaracionVariableVAR(self, p):
 		pass
+	
+	'''
+	declaracionVariblePOS : POS declaracionRelacionRecursivo
+	|	empty
+	;
+	'''
+	@_('POS declaracionRelacionRecursivo', 'empty')
+	def declaracionVariblePOS(self, p):
+		pass
+	
+	'''
+	declaracionRelacionRecursivo :declaracionRelacionRecursivo relacion ";"
+	|	relacion ";"
+	;
+	'''
+	@_('declaracionRelacionRecursivo relacion ";"', 'relacion ";"')
+	def declaracionRelacionRecursivo(self, p):
+		pass
 		
 	'''
 	sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
@@ -518,7 +537,9 @@ class CalcParser(Parser):
 	@_('TYPE ID simboloPor listaIdParentesis ";" declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID')
 	def declaracionTipo(self, p):
 		pass
-		
+	
+	
+	
 	'''
 	simboloPor : "*"
 	|	empty
@@ -605,14 +626,6 @@ class CalcParser(Parser):
 	@_('ID selector "(" listaExpresiones ")"')
 	def asignacionUnidad(self, p):
 		pass
-	#prueba de errores
-	"""
-	@_('ID selector error listaExpresiones ")"')
-	def asignacionUnidad(self, p):
-		print ("ERROR 14 - ( expected")
-		self.error+=1
-		return "fatal"
-	"""
 	
 	'''
 	empty :
@@ -620,9 +633,82 @@ class CalcParser(Parser):
 	@_('')
 	def empty(self, p):
 		pass
+	#prueba de errores
+	'''
+	tipoSimple : tipoBasico
+		|	ID "(" listaExpresiones ")"
+		|	ID
+		;
+	'''
+	@_('error') 
+	def tipoSimple(self, p):
+		print("error al indicar tipo simple en {} - linea {}".format(p.error.value, p.error.lineno))
+		pass
+		#return TipoSimple(p.tipoBasico)
 	
 	
+	@_('ID selector error listaExpresiones ")"')
+	def asignacionUnidad(self, p):
+		print ("ERROR 14 - ( expected")
+		#self.error+=1
+		return "fatal"
+	
+	'''
+	modulo : MODULE ID ";"
+	declaracionTipoPuntoComa
+	declaracionConstanteCONST
+	declaracionVariableIN
+	declaracionVariableINOUT
+	declaracionVariableOUT
+	declaracionVariableVAR
+	sentenciaSecuenciaBEGIN
+	END ID "."
+	;
+	'''
+	@_('MODULE ID ";" error')
+	def modulo(self, p):
+		print("error al declarar MODULO {} en {} - Line {}".format(p.ID, p.error.value, p.error.lineno))
+		pass
+	
+	'''
+	declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 
+	declaracionConstanteCONST 
+	tipoFormalIN
+	tipoFormlINOUT
+	declaracionVariableOUT 
+	declaracionVariableVAR 
+	sentenciaSecuenciaBEGIN 
+	END ID
+	;
+	'''	
+	@_('error')
+	def declaracionTipo(self, p):
+		print("error al declarar tipo en {} - Linea {}".format(p.error.value, p.error.lineno))
+		pass
+	
+	"""
+	@_('MODULE ID ";" declaracionTipoPuntoComa error declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR declaracionVariblePOS sentenciaSecuenciaBEGIN END ID "."')
+	def modulo(self, p):
+		print("syntax error al declarar CONST - Line {}".format(p.error.lineno))
+		pass
+	"""
+	
+	
+	
+	
+	def error(self, p):
+		
+		if p:
+			
+			#print("Syntax error at token", p.type)
+			# Just discard the token and tell the parser it's okay.
+			self.errok()
+		else:
+			print("Syntax error at EOF")
+		
+		pass
 def parse(data, debug=0):
+	#print(parser.error)
 	p = parser.parse(lexer.tokenize(data))
 	if parser.error:
 		return None

@@ -1,7 +1,7 @@
 MODULE Adder;
 
 TYPE Cell; (* Composite Type *)
-  IN x,y,ci:BIT; (* input signals *)
+  Ik x,y,ci:BIT; (* input signals *)
   OUT z,co:BIT; (* output signals *) 
 BEGIN
   z:=x-y-ci;

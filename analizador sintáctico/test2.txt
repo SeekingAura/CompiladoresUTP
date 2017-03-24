@@ -1,0 +1,23 @@
+MODULE Example;
+	TYPE Counter (N); (* N-bit binary counter *)
+		IN incr : BIT; (* increment control signal *)
+		OUT z : [N] BIT; (* output bits *)
+		VAR c : [N] BIT; (* carry bits *)
+		BEGIN
+		z[0] := REG (z[0] - incr);
+		c[0] := z[0] * incr;
+		FOR i := 1 .. N-1 DO
+			z[i] := REG (z[i] - c[i-1]);
+			c[i] := z[i] * c[i-1]
+		END;
+		END Counter;
+	CONST N := 2;
+	IN RD' : BIT; (* bus read control *)
+	INOUT D : [N] TS; (* output bus *)
+	VAR cnt : Counter (N); (* counter *)
+	BEGIN
+		cnt (N, '1); (* build counter *)
+		FOR i := 0 .. N-1 DO
+			D[i] := ~RD' | cnt.z[i] (* assign counter output signals to bus D *)
+		END
+END Example.

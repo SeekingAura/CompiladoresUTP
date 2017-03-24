@@ -7,7 +7,7 @@ from sly import Lexer
 class CalcLexer(Lexer):
 	fileName=""
 
-	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO'}#, 'WHILE', 'RETURN'
+	reserved_words = { 'BEGIN', 'CONST', 'END', 'IN', 'INOUT', 'MODULE', 'OUT', 'REG', 'TS', 'OC', 'BIT', 'TYPE', 'VAR', 'DIV', 'MOD', 'MUX', 'LATCH', 'SR', 'IF', 'THEN', 'ELSE','ELSIF', 'FOR', 'DO', 'POS'}#, 'WHILE', 'RETURN'
 	
 	tokens = {
 		#valores

@@ -1,0 +1,11 @@
+MODULE M1;
+	TYPE T(N);
+		IN x: BIT;
+		OUT y: BIT;
+		VAR a: [N] BIT;
+		BEGIN y := a.1 + x
+	END T;
+	VAR u, v, w: BIT;
+	G: T(2); H: T(3);
+	BEGIN G(w); H(v); u := H.y
+END M1.

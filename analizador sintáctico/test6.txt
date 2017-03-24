@@ -1,0 +1,40 @@
+MODULE Adder;
+	IN x, y: [4] BIT; ci: BIT;
+	OUT s, c: [4] BIT;
+	POS x.0=3; x.1=4; x.2=5; x.3=6; y.0=7; y.1=9; y.2=10; y.3=11; ci=12;
+	s.0=27; s.1=26; s.2=25; s.3=24; c.0=23; c.1=21; c.2=20; c.3=19;
+	BEGIN s.0 := x.0 - y.0 - ci; c.0 := x.0*y.0 + (x.0 - y.0)*ci;
+	FOR i := 1 .. 3 DO 
+		s.i := x.i - y.i - c[i-1]; c.i := x.i*y.i + (x.i - y.i) * c[i-1] 
+	END
+END Adder.
+
+MODULE Barrel;
+	IN s: [3] BIT;
+	d: [8] BIT;
+	OUT q: [8] BIT;
+	POS d.0=3; d.1=4; d.2=5; d.3=6; d.4=7; d.5=9; d.6=10; d.7=11;
+	s.0 = 12; s.1=13; s.2=16;
+	q.0=27; q.1=26; q.2=25; q.3=24; q.4=23; q.5=21; q.6=20; q.7=19;
+	BEGIN
+	FOR i := 0 .. 7 DO
+		q.i := MUX(s.2:
+		MUX(s.1:
+		MUX(s.0: d[i], d[(i+1) MOD 8]),
+		MUX(s.0: d[(i+2) MOD 8], d[(i+3) MOD 8])),
+		MUX(s.1:
+		MUX(s.0: d[(i+4) MOD 8], d[(i+5) MOD 8]),
+		MUX(s.0: d[(i+6) MOD 8], d[(i+7) MOD 8])))
+	END
+END Barrel.
+
+MODULE Counter;
+	IN ci: BIT;
+	OUT q: [8] BIT;
+	VAR c: [8] BIT;
+	POS ci=3; q.0=27; q.1=26; q.2=25; q.3=24; q.4=23; q.5=21; q.6=20; q.7=19;
+	BEGIN q.0 := REG(q.0 - ci); c.0 := q.0 * ci;
+	FOR i := 1 .. 7 DO 
+		q.i := REG(q.i - c[i-1]); c.i := q.i * c[i-1] 
+	END
+END Counter.

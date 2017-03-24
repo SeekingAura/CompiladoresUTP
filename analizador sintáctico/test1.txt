@@ -1,0 +1,13 @@
+MODULE Adder;
+	CONST N := 8;
+	IN x, y: [N] BIT; ci: BIT;
+	OUT s: [N] BIT; co: BIT;
+	VAR c: [N] BIT;
+	BEGIN
+
+	s.0 := x.0 - y.0 - ci; c.0 := (x.0 * y.0) + (x.0 - y.0)*ci;
+	FOR i := 1 .. N-1 DO
+		s.i := x.i - y.i - c[i-1]; c.i := (x.i - y.i) + (x.i - y.i) * c[i-1]
+	END ;
+	co := c[N-1]
+END Adder.
