@@ -1,12 +1,13 @@
 ﻿from sly import Parser
 from léxico_lola import CalcLexer
-#from ast_lola import *
+from ast_lola import *
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
 	tokens = CalcLexer.tokens
 	start = 'lola'
-	#def __init__(self):
-	#	self.error=0
+	#errorValue = '$#error#$'
+	def __init__(self):
+		self.errorStatus=False
 		
 	'''
 	lola : lola module
@@ -15,14 +16,18 @@ class CalcParser(Parser):
 	'''
 	@_('lola modulo')
 	def lola(self, p):
-		pass
-		#p.lola.append(p.modulo)
-		#return p.lola
+		if(self.errorStatus):
+			return
+		else:
+			p.lola.append(p.modulo)
+			return p.lola
 	
 	@_('modulo')
 	def lola(self, p):
-		pass
-		#return Lola([p.modulo])
+		if(self.errorStatus):
+			return
+		else:
+			return Lola([p.modulo])
 			
 	'''
 	tipoSimple : tipoBasico
@@ -32,13 +37,24 @@ class CalcParser(Parser):
 	'''
 	@_('tipoBasico') 
 	def tipoSimple(self, p):
-		pass
-		#return TipoSimple(p.tipoBasico)
+		if(self.errorStatus):
+			return
+		else:
+			return TipoSimpleBasico(p.tipoBasico)#valor constante
 	
-	@_('ID "(" listaExpresiones ")"', 'ID')
+	@_('ID "(" listaExpresiones ")"')
 	def tipoSimple(self, p):
-		pass
-		#return TipoSimpleID(p.ID, p.conjuntoExpresiones)
+		if(self.errorStatus):
+			return
+		else:
+			return TipoSimpleIDListaExpresion(p.ID, p.listaExpresiones)
+	
+	@_('ID')
+	def tipoSimple(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoSimpleID(p.ID)
 		
 	'''
 	tipoBasico : 'BIT'
@@ -50,8 +66,10 @@ class CalcParser(Parser):
 	'TS', 
 	'OC')
 	def tipoBasico(self, p):
-		pass
-		#return p
+		if(self.errorStatus):
+			return
+		else:
+			return p[0]#valor constante
 		
 	'''
 	listaExpresiones : listaExpresiones "," expresion
@@ -60,23 +78,65 @@ class CalcParser(Parser):
 	'''
 	@_('listaExpresiones "," expresion')
 	def listaExpresiones(self, p):
-		pass
-		#ListaExpresiones(p.expresion, p.expresionComa)
+		if(self.errorStatus):
+			return
+		else:
+			p.listaExpresiones.append(p.expresion)
+			return p.listaExpresiones
 
 	@_('expresion')
 	def listaExpresiones(self, p):
-		pass
-		#return ExpresionComa(p.expresionComaR)
+		if(self.errorStatus):
+			return
+		else:
+			return ListaExpresiones([p.expresion])
 		
 	'''
-	tipo : "[" expresion "]" tipo
-		|	tipoSimple
-		;
+	tipo : tipoExpresiones tipoSimple
+	;
 	'''
-	@_('"[" expresion "]" tipo', 'tipoSimple')
+	@_('tipoExpresiones tipoSimple')
 	def tipo(self, p):
-		pass
-		#return Tipo(p.expresionCorchete, p.tipoSimple)
+		if(self.errorStatus):
+			return
+		else:
+			return Tipo(p.tipoExpresiones, p.tipoSimple)
+	
+	'''
+	tipoExpresiones : tipoExpresionesR
+	|	empty
+	;
+	'''
+	@_('tipoExpresionesR')
+	def tipoExpresiones(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoExpresiones(p.tipoExpresionesR)
+	
+	@_('empty')
+	def tipoExpresiones(self, p):
+		return None
+	
+	'''
+	tipoExpresionesR : tipoExpresionesR "[" expresion "]"
+	|	"[" expresion "]"
+	;
+	'''
+	@_('tipoExpresionesR "[" expresion "]"')
+	def tipoExpresionesR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.tipoExpresionesR.append(p.expresion)
+			return p.tipoExpresiones
+		
+	@_('"[" expresion "]"')
+	def tipoExpresionesR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoExpresionesR([p.expresion])
 	
 	'''
 	declaracionConstante : ID DOSPUNTOSIGUAL expresion ";"'
@@ -84,8 +144,10 @@ class CalcParser(Parser):
 	'''
 	@_('ID DOSPUNTOSIGUAL expresion ";"')
 	def declaracionConstante(self, p):
-		pass
-		#return DeclaracionConstante(p.ID, p.expresion)
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionConstante(p.ID, p.expresion)
 	
 	'''
 	declaracionVariable : listaId ":" tipo ";"
@@ -93,18 +155,30 @@ class CalcParser(Parser):
 	'''
 	@_('listaId ":" tipo ";"')
 	def declaracionVariable(self, p):
-		pass
-		#return DeclaracionVariable(p.listaId, p.tipo)
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariable(p.listaId, p.tipo)
 	
 	'''
 	listaId : listaId "," ID
 		|	ID
 		;
 	'''
-	@_('ID', 'listaId "," ID')
+	@_('listaId "," ID')
 	def listaId(self, p):
-		pass
-		#return ListaId(p.ID, p.IDComa)
+		if(self.errorStatus):
+			return
+		else:
+			p.listaId.append(p.ID)
+			return p.listaId
+	
+	@_('ID')
+	def listaId(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return ListaId([p.ID])
 	
 	'''
 	selector : selectorR
@@ -112,20 +186,36 @@ class CalcParser(Parser):
 	;
 	'''
 	
-	@_('selectorR', 
-	'empty')
+	@_('selectorR')
 	def selector(self, p):
-		pass
+		if(self.errorStatus):
+			return
+		else:
+			return Selector(p.selectorR)
+	
+	@_('empty')
+	def selector(self, p):
+		return None
 	
 	'''
 	selectoR : selectorR selectorRR
 	|	selectorRR
 	;
 	'''
-	@_('selectorR selectorRR',
-	'selectorRR')
+	@_('selectorR selectorRR')
 	def selectorR(self, p):
-		pass
+		if(self.errorStatus):
+			return
+		else:
+			p.selectorR.append(p.selectorRR)
+			return p.selectorR
+		
+	@_('selectorRR')
+	def selectorR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SelectorR([p.selectorRR])
 		
 	'''
 	selectorRR : "." ID
@@ -137,6 +227,949 @@ class CalcParser(Parser):
 	'"." INTEGER',
 	'"[" expresion "]"')
 	def selectorRR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return p[1]
+		
+	'''
+	factor : ID selector
+	|	valorLogico
+	|	INTEGER
+	|	"~" factor
+	|	'FLECHAARRIBA factor'
+	|	"(" expresion ")"
+	|	"MUX" "(" expresion ":" expresion "," expresion ")"
+	|	"MUX" "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion)
+	|	"REG" "(" expresion ")"
+	|	"REG" "(" expresion "," expresion ")"
+	|	"LATCH" "(" expresion "," expresion ")"
+	|	"SR" "(" expresion "," expresion ")"
+	;
+	'''
+	#'"↑" factor', genera error de enconding
+	@_('ID selector')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorSelector(p.ID, p.selector)
+		
+	
+	@_('LOGICVALUE')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorValor(p.LOGICVALUE)
+		
+	@_('INTEGER')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorValor(p.INTEGER)
+		
+	@_('FLECHAARRIBA factor')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:	
+			return FactorSimbolo(p.FLECHAARRIBA, p.factor)
+		
+	@_('"~" factor')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorSimbolo(p[0], p.factor)
+		
+	@_('"(" expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion((p[0], p[2]), [p.expresion])
+		
+	@_('MUX "(" expresion ":" expresion "," expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.MUX, [p.expresion0, p.expresion1, p.expresion2])
+		
+	@_('MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.MUX, [p.expresion0, p.expresion1, p.expresion2, p.expresion3, p.expresion4, p.expresion5])
+	
+	@_('REG "(" expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.REG, [p.expresion])
+	
+	@_('REG "(" expresion "," expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.MUX, [p.expresion0, p.expresion1])
+		
+	@_('LATCH "(" expresion "," expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.LATCH, [p.expresion0, p.expresion1])
+		
+	@_('SR "(" expresion , expresion ")"')
+	def factor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return FactorDeclaracion(p.SR, p.expresion0, p.expresion1)
+	
+	'''
+	termino : termino simbolosProd factor
+	|	factor
+	;
+	'''	
+	@_('termino simbolosProd factor')
+	def termino(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.termino.append(p.simbolosProd, p.factor)
+			return p.termino
+	
+	@_('factor')
+	def termino(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return	Termino([None],[p.factor])
+	
+	'''
+	simbolosProd : "*"
+	|	SLASH
+	|	"DIV"
+	|	"MOD"
+	;
+	'''
+	@_('"*"',
+	'"/"',
+	'DIV',
+	'MOD')
+	def simbolosProd(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return p[0]
+		
+	'''
+	expresion : expresion "+" termino
+	|	expresion "-" termino
+	|	termino
+	;
+	'''
+	@_('expresion "+" termino',
+	'expresion "-" termino')
+	def expresion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p[0].append(p[1], p[2])
+			return p[0]
+		
+	@_('termino')
+	def expresion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return Expresion([None], [p.termino])
+		
+	'''
+	asignacion : ID selector DOSPUNTOSIGUAL expresion
+	|	ID selector DOSPUNTOSIGUAL condicion "|" expresion
+	;
+	'''
+	@_('ID selector DOSPUNTOSIGUAL expresion')
+	def asignacion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return Asignacion(p.ID, p.selector, p.expresion)
+	
+	@_('ID selector DOSPUNTOSIGUAL condicion "|" expresion')
+	def asignacion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return AsignacionCondicion(p.ID, p.selector, p.condicion, p.expresion)
+	
+	'''
+	condicion : expresion
+	;
+	'''
+	@_('expresion')
+	def condicion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return Condicion(p.expresion)
+	
+	'''
+	relacion : expresion "=" expresion
+	|	expresion "#" expresion
+	|	expresion "<" expresion
+	|	expresion MENORIGUAL expresion
+	|	expresion ">" expresion
+	|	expresion MAYORIGUAL expresion
+	;
+	'''
+	@_('expresion "=" expresion',
+	'expresion "#" expresion',
+	'expresion "<" expresion',
+	'expresion MENORIGUAL expresion',
+	'expresion ">" expresion',
+	'expresion MAYORIGUAL expresion')
+	def relacion(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return Relacion(p[0], p[1], p[2])
+		
+	'''
+	sentenciaSi : "IF" relacion "THEN" sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces "END"
+	;
+	'''
+	@_('IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END')
+	def sentenciaSi(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSi(p.relacion, p.sentenciaSecuencia, p.sentenciaSiSino, p.sentenciaSiEntonces)
+		
+	'''
+	sentenciaSiSino : sentenciaSiSinoR
+	|	empty
+	;
+	'''
+	@_('sentenciaSiSinoR')
+	def sentenciaSiSino(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSiSino(p.sentenciaSiSinoR)
+		
+	@_('empty')
+	def sentenciaSiSino(self, p):
+		return None
+	
+	'''
+	sentenciaSiSinoR : sentenciaSiSinoR "ELSIF" relacion "THEN" sentenciaSecuencia
+	|	"ELSIF" relacion "THEN" sentenciaSecuencia
+	;
+	'''
+	
+	@_('sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia')
+	def sentenciaSiSinoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.sentenciaSiSinoR.append(p.relacion, p.sentenciaSecuencia)
+			return p.sentenciaSiSinoR
+	
+	@_('ELSIF relacion THEN sentenciaSecuencia')
+	def sentenciaSiSinoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSiSinoR([p.relacion], [p.sentenciaSecuencia])
+	
+	'''
+	sentenciaSiEntonces : "ELSE" sentenciaSecuencia
+	|	empty
+	;
+	'''
+	@_('ELSE sentenciaSecuencia')
+	def sentenciaSiEntonces(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSiEntonces(p.sentenciaSecuencia)
+	
+	@_('empty')
+	def sentenciaSiEntonces(self, p):
+		return None
+	
+	'''
+	sentenciaPara : "FOR" ID ":=" expresion DOBLEPUNTO expresion "DO" sentenciaSecuencia "END"
+	;
+	'''
+	@_('FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END')
+	def sentenciaPara(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaPara(p.ID, p.expresion0, p.expresion1, p.sentenciaSecuencia)
+		
+	'''
+	sentencia : asignacion
+	|	asignacionUnidad
+	|	sentenciaSi
+	|	sentenciaPara
+	|	empty
+	;
+	'''
+	@_('asignacion', 
+	'asignacionUnidad', 
+	'sentenciaSi', 
+	'sentenciaPara')
+	def sentencia(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return Sentencia(p[0])
+	
+	@_('empty')
+	def sentencia(self, p):
+		return None
+	
+	'''
+	sentenciaSecuencia : sentenciaSecuencia ";" sentencia
+	|	sentencia
+	;
+	'''
+	@_('sentenciaSecuencia ";" sentencia')
+	def sentenciaSecuencia(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.sentenciaSecuencia.append(p.sentencia)
+			return p.sentenciaSecuencia
+		
+	@_('sentencia')
+	def sentenciaSecuencia(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSecuencia([p.sentencia])
+
+	'''
+	modulo : "MODULE" ID ";"
+	declaracionTipoPuntoComa
+	declaracionConstanteCONST
+	declaracionVariableIN
+	declaracionVariableINOUT
+	declaracionVariableOUT
+	declaracionVariableVAR
+	declaracionRelacionPOS
+	sentenciaSecuenciaBEGIN
+	END ID "."
+	;
+	'''
+	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR declaracionRelacionPOS sentenciaSecuenciaBEGIN END ID "."')
+	def modulo(self, p):
+		if(p.ID0!=p.ID1):
+			print("error al definir modulo, no concuerda el ID {} {} con {} {} - Linea {}".format(p.MODULE, p.ID0, p.END, p.ID1, p.lineno))
+			self.errorStatus=True
+		elif(self.errorStatus):
+			return
+		else:
+			return Modulo(p.ID0, p.declaracionTipoPuntoComa, p.declaracionConstanteCONST, p.declaracionVariableIN, p.declaracionVariableINOUT, p.declaracionVariableOUT, p.declaracionVariableVAR, p.declaracionRelacionPOS, p.sentenciaSecuenciaBEGIN, p.ID1)
+		
+	'''
+	declaracionTipoPuntoComa : declaracionTipoPuntoComaR
+	|	empty
+	;
+	'''	
+	@_('declaracionTipoPuntoComaR')
+	def declaracionTipoPuntoComa(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionTipoPuntoComa(p.declaracionTipoPuntoComaR)
+	
+	@_('empty')
+	def declaracionTipoPuntoComa(self, p):
+		return None
+	'''
+	declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
+	|	declaracionTipo ";"
+	;
+	'''
+	@_('declaracionTipoPuntoComaR declaracionTipo ";"')
+	def declaracionTipoPuntoComaR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.declaracionTipoPuntoComaR.append(p.declaracionTipo)
+			return p.declaracionTipoPuntoComaR
+	
+	@_('declaracionTipo ";"')
+	def declaracionTipoPuntoComaR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionTipoPuntoComaR([p.declaracionTipo])
+	
+	'''
+	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
+	|	empty
+	;
+	'''
+	@_('CONST declaracionConstanteRecursivo')
+	def declaracionConstanteCONST(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionConstanteCONST(p.declaracionConstanteRecursivo)
+	
+	@_('empty')
+	def declaracionConstanteCONST(self, p):
+		return None
+	'''
+	declaracionConstanteRecursivo : declaracionConstanteRecursivoR
+	|	empty
+	;
+	'''
+	@_('declaracionConstanteRecursivoR')
+	def declaracionConstanteRecursivo(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionConstanteRecursivo(p.declaracionConstanteRecursivoR)
+	
+	@_('empty')
+	def declaracionConstanteRecursivo(self, p):
+		return None
+	
+	'''
+	declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConstante
+	|	declaracionConstante
+	;
+	'''
+	@_('declaracionConstanteRecursivoR declaracionConstante')
+	def declaracionConstanteRecursivoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.declaracionConstanteRecursivoR.append(p.declaracionConstante)
+			return p.declaracionConstanteRecursivoR
+		
+	@_('declaracionConstante')
+	def declaracionConstanteRecursivoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionConstanteRecursivoR([p.declaracionConstante])
+	
+	'''
+	declaracionVariableIN : "IN" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	@_('IN declaracionVariableRecursivo')
+	def declaracionVariableIN(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableIN(p.declaracionVariableRecursivo)
+	
+	@_('empty')
+	def declaracionVariableIN(self, p):
+		return None
+	
+	
+	'''
+	declaracionVariableRecursivo : declaracionVariableRecursivoR
+	|	empty
+	;
+	'''
+	@_('declaracionVariableRecursivoR')
+	def declaracionVariableRecursivo(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableRecursivo(p.declaracionVariableRecursivoR)
+		
+	@_('empty')
+	def declaracionVariableRecursivo(self, p):
+		return None
+	
+	'''
+	declaracionVariableRecursivoR : declaracionVariableRecursivoR declaracionVariable
+	|	declaracionVariable
+	;
+	'''
+	@_('declaracionVariableRecursivoR declaracionVariable')
+	def declaracionVariableRecursivoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.declaracionVariableRecursivoR.append(p.declaracionVariable)
+			return p.declaracionVariableRecursivoR
+		
+	@_('declaracionVariable')
+	def declaracionVariableRecursivoR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableRecursivoR([p.declaracionVariable])
+	
+	'''
+	declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	@_('INOUT declaracionVariableRecursivo')
+	def declaracionVariableINOUT(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableINOUT(p.declaracionVariableRecursivo)
+			
+	@_('empty')
+	def declaracionVariableINOUT(self, p):
+		return None
+		
+	'''
+	declaracionVariableOUT : "OUT" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	@_('OUT declaracionVariableRecursivo')
+	def declaracionVariableOUT(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableOUT(p.declaracionVariableRecursivo)
+		
+	@_('empty')
+	def declaracionVariableOUT(self, p):
+		return None
+	
+	'''
+	declaracionVariableVAR : "VAR" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	@_('VAR declaracionVariableRecursivo')
+	def declaracionVariableVAR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionVariableVAR(p.declaracionVariableRecursivo)
+	
+	@_('empty')
+	def declaracionVariableVAR(self, p):
+		return None
+	
+	'''
+	declaracionVariblePOS : POS declaracionRelacionRecursivo
+	|	empty
+	;
+	'''
+	@_('POS declaracionRelacionRecursivo')
+	def declaracionRelacionPOS(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionRelacionPOS(p.declaracionRelacionRecursivo)
+	
+	@_('empty')
+	def declaracionRelacionPOS(self, p):
+		return None
+	
+	'''
+	declaracionRelacionRecursivo :declaracionRelacionR
+	|	empty
+	;
+	'''
+	@_('declaracionRelacionR')
+	def declaracionRelacionRecursivo(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionRelacionRecursivo(p.declaracionRelacionR)
+		
+	@_('empty')
+	def declaracionRelacionRecursivo(self, p):
+		return None
+	
+	'''
+	declaracionRelacionR : declaracionRelacionR relacion ";"
+	|	relacion ";"
+	;
+	'''
+	
+	@_('declaracionRelacionR relacion ";"')
+	def declaracionRelacionR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.declaracionRelacionR.append(p.relacion)
+			return p.declaracionRelacionR
+		
+	@_('relacion ";"')
+	def declaracionRelacionR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return DeclaracionRelacionR([p.relacion])
+		
+		
+	'''
+	sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
+	|	empty
+	;
+	'''
+	@_('BEGIN sentenciaSecuencia')
+	def sentenciaSecuenciaBEGIN(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return SentenciaSecuenciaBEGIN(p.sentenciaSecuencia)
+
+	@_('empty')
+	def sentenciaSecuenciaBEGIN(self, p):
+		return None
+		
+	'''
+	tipoFormal : expresionCorcheteO "BIT"
+	;
+	'''
+	@_('expresionCorcheteO BIT')
+	def tipoFormal(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormal(p.expresionCorcheteO)
+		
+	'''
+	expresionCorcheteO : expresionCorcheteOR
+	|	empty
+	;
+	'''
+	@_('expresionCorcheteOR')
+	def expresionCorcheteO(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return ExpresionCorcheteO(p.expresionCorcheteOR)
+	
+	@_('empty')
+	def expresionCorcheteO(self, p):
+		return None
+	
+	
+	'''
+	expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
+	|	"[" expresionOpcional "]"
+	;
+	'''
+	@_('expresionCorcheteOR "[" expresionOpcional "]"')
+	def expresionCorcheteOR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.expresionCorcheteOR.append(p.expresionOpcional)
+			return p.expresionOpcional
+		
+	@_('"[" expresionOpcional "]"')
+	def expresionCorcheteOR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return ExpresionCorcheteOR([p.expresionOpcional])
+	
+	'''
+	expresionOpcional : expresion
+	|	empty
+	;
+	'''
+	@_('expresion')
+	def expresionOpcional(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return ExpresionOpcional(p.expresion)
+	
+	@_('empty')
+	def expresionOpcional(self, p):
+		return None
+	
+	
+	'''
+	tipoFormalBus : expresionCorcheteO "TS"
+	|	expresionCorcheteO "OC"
+	;
+	'''
+	@_('expresionCorcheteO TS', 
+	'expresionCorcheteO OC')
+	def tipoFormalBus(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormalBus(p[0], p[1])
+		
+	'''
+	declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 
+	declaracionConstanteCONST 
+	tipoFormalIN
+	tipoFormalINOUT
+	declaracionVariableOUT 
+	declaracionVariableVAR 
+	sentenciaSecuenciaBEGIN 
+	END ID
+	;
+	'''
+	@_('TYPE ID simboloPor listaIdParentesis ";" declaracionConstanteCONST tipoFormalIN tipoFormalINOUT declaracionVariableOUT declaracionVariableVAR declaracionRelacionPOS sentenciaSecuenciaBEGIN END ID')
+	def declaracionTipo(self, p):
+		if(p.ID0!=p.ID1):
+			print("error el {} {} no coincide con su nombre de identificador {} {}".format(p.TYPE, p.ID0, p.END, p.ID1))
+			self.errorStatus=True
+		elif(self.errorStatus):
+			return
+		else:
+			return DeclaracionTipo(p.ID0, p.simboloPor, p.listaIdParentesis, p.declaracionConstanteCONST, p.tipoFormalIN, p.tipoFormalINOUT, p.declaracionVariableOUT, p.declaracionVariableVAR, p.declaracionRelacionPOS, p.sentenciaSecuenciaBEGIN, p.ID1)
+	
+	
+	'''
+	simboloPor : "*"
+	|	empty
+	;
+	'''
+	@_('"*"')
+	def simboloPor(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return p[0]
+		
+	@_('empty')
+	def simboloPor(self, p):
+		return None
+		
+	'''
+	listaIdParentesis : "(" listaId ")"
+	|	empty
+	;
+	'''
+	@_('"(" listaId ")"')
+	def listaIdParentesis(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return ListaIdParentesis(p.listaId)
+		
+	@_('empty')
+	def listaIdParentesis(self, p):
+		return None
+		
+	'''
+	tipoFormalIN : IN tipoFormallistaId
+	|	empty
+	;
+	'''
+	@_('IN tipoFormallistaId')
+	def tipoFormalIN(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormalIN(p.tipoFormallistaId)
+		
+	@_('empty')
+	def tipoFormalIN(self, p):
+		return None
+		
+	'''
+	tipoFormallistaId : tipoFormallistaIdR 
+	|	empty
+	;
+	'''
+	@_('tipoFormallistaIdR')
+	def tipoFormallistaId(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormallistaId(p.tipoFormallistaIdR)
+		
+	@_('empty')
+	def tipoFormallistaId(self, p):
+		return None
+		
+	'''
+	tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
+	|	listaId ":" tipoFormal ";"
+	;
+	'''
+	@_('tipoFormallistaIdR listaId ":" tipoFormal ";"')
+	def tipoFormallistaIdR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			p.tipoFormallistaIdR.append(p.listaId, p.tipoFormal)
+			return p.tipoFormallistaIdR
+		
+	@_('listaId ":" tipoFormal ";"')
+	def tipoFormallistaIdR(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormallistaIdR([p.listaId],[p.tipoFormal])
+
+	'''
+	tipoFormnalINOUT : INOUT tipoFormlBuslistaId
+	|	empty
+	;
+	'''
+	@_('INOUT tipoFormlBuslistaId')
+	def tipoFormalINOUT(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormalINOUT(p.tipoFormlBuslistaId)
+		
+	@_('empty')
+	def tipoFormalINOUT(self, p):
+		return None
+		
+	'''
+	tipoFormlBuslistaId : tipoFormlBuslistaIdR
+	|	empty
+	;
+	'''
+	@_('tipoFormlBuslistaIdR')
+	def tipoFormlBuslistaId(self, p):
+		if(self.errorStatus):
+			return
+		else:
+			return TipoFormlBuslistaId(p.tipoFormlBuslistaIdR)
+		
+	@_('empty')
+	def tipoFormlBuslistaId(self, p):
+		return None
+	
+	'''
+	tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
+	|	listaId ":" tipoFormalBus ";"
+	;
+	'''
+	@_('tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"')
+	def tipoFormlBuslistaIdR(self, p):
+		p.tipoFormlBuslistaIdR.append(p.listaId, p.tipoFormalBus)
+		return p.tipoFormlBuslistaIdR
+		
+	@_('listaId ":" tipoFormalBus ";"')
+	def tipoFormlBuslistaIdR(self, p):
+		return TipoFormlBuslistaIdR([p.listaId], [p.tipoFormalBus])
+	'''
+	assinacionUnidad : ID selector "(" listaExpresiones ")"
+	'''
+	@_('ID selector "(" listaExpresiones ")"')
+	def asignacionUnidad(self, p):
+		pass
+	
+	'''
+	empty :
+	'''
+	@_('')
+	def empty(self, p):
+		pass
+	
+	#prueba de errores
+	'''
+	tipoSimple : tipoBasico
+		|	ID "(" listaExpresiones ")"
+		|	ID
+		;
+	'''
+	# @_('error') 
+	# def tipoSimple(self, p):
+		# print("error al indicar tipo simple en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	tipoBasico : 'BIT'
+		| 'TS'
+		| 'OC'
+		;
+	'''
+	@_('error')
+	def tipoBasico(self, p):
+		print("error al indicar el tipo basico en {} - linea {}, debe ser BIT TS o OC".format(p.error.value, p.error.lineno))
+		self.errok()
+		pass
+		
+	'''
+	listaExpresiones : listaExpresiones "," expresion
+		| expresion
+		;
+	'''
+	# @_('error')
+	# def listaExpresiones(self, p):
+		# print("error al formar la lista de expresiones en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+		
+	'''
+	tipo : "[" expresion "]" tipo
+		|	tipoSimple
+		;
+	'''
+	# @_('error')
+	# def tipo(self, p):
+		# print("error al formar tipo en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	
+	'''
+	declaracionConstante : ID DOSPUNTOSIGUAL expresion ";"'
+	;
+	'''
+	@_('error')
+	def declaracionConstante(self, p):
+		print("error al declarar constante en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
+		pass
+	
+	'''
+	declaracionVariable : listaId ":" tipo ";"
+	;
+	'''
+	@_('listaId error')
+	def declaracionVariable(self, p):
+		print("error al declarar variable en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
+		self.errorStatus=True
+		pass
+	
+	'''
+	listaId : listaId "," ID
+		|	ID
+		;
+	'''
+	@_('error')
+	def listaId(self, p):
+		print("error con la lista de ID en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
+		pass
+	
+	'''
+	selector : selectorR
+	|	empty
+	;
+	'''
+	@_('error')
+	def selector(self, p):
+		print("error al indicar selector en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
 		pass
 		
 	'''
@@ -156,75 +1189,65 @@ class CalcParser(Parser):
 	;
 	'''
 	#'"↑" factor', genera error de enconding
-	@_('ID selector', 
-	'LOGICVALUE', 
-	'INTEGER', 
-	'FLECHAARRIBA factor',
-	'"~" factor', 
-	'"(" expresion ")"', 
-	'MUX "(" expresion ":" expresion "," expresion ")"', 
-	'MUX "(" expresion "," expresion ":" expresion "," expresion "," expresion "," expresion ")"',
-	'REG "(" expresion ")"',
-	'REG "(" expresion "," expresion ")"',
-	'LATCH "(" expresion "," expresion ")"', 
-	'SR "(" expresion , expresion ")"')
-	def factor(self, p):
-		pass
-		#cuando se tiene tokens del mismo en lo largo de la gramatica, se puede referir con p.expresion0, p.expresion1
-	
+	# @_('error')
+	# def factor(self, p):
+		# print("error en declaración de factor en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
 	'''
 	termino : termino simbolosProd factor
 	|	factor
 	;
 	'''	
-	@_('termino simbolosProd factor', 'factor')
+	
+	@_('error factor')
 	def termino(self, p):
+		print("error al declarar termino en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
 		pass
 		
-	
 	'''
 	simbolosProd : "*"
-	|	SLASH
+	|	"/"
 	|	"DIV"
 	|	"MOD"
 	;
 	'''
-	@_('"*"',
-	'"/"',
-	'DIV',
-	'MOD')
-	def simbolosProd(self, p):
-		pass
+	# @_('error')
+	# def simbolosProd(self, p):
+		# print("error en los simbolos de termino en {} se esperaba * / DIV MOD - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
+	
 	'''
 	expresion : expresion "+" termino
 	|	expresion "-" termino
 	|	termino
 	;
 	'''
-	@_('expresion "+" termino',
-	'expresion "-" termino',
-	'termino')
-	def expresion(self, p):
-		pass
+	# @_('error')
+	# def expresion(self, p):
+		# print("error al declarar expresion en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
 	'''
 	asignacion : ID selector DOSPUNTOSIGUAL expresion
 	|	ID selector DOSPUNTOSIGUAL condicion "|" expresion
 	;
 	'''
-	@_('ID selector DOSPUNTOSIGUAL expresion',
-	'ID selector DOSPUNTOSIGUAL condicion "|" expresion')
-	def asignacion(self, p):
-		pass
+	# @_('error')
+	# def asignacion(self, p):
+		# print("error al hacer asignación en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 	
 	'''
 	condicion : expresion
 	;
 	'''
-	@_('expresion')
-	def condicion(self, p):
-		pass
+	# @_('error')
+	# def condicion(self, p):
+		# print("error de la condición en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 	
 	'''
 	relacion : expresion "=" expresion
@@ -235,61 +1258,48 @@ class CalcParser(Parser):
 	|	expresion MAYORIGUAL expresion
 	;
 	'''
-	@_('expresion "=" expresion',
-	'expresion "#" expresion',
-	'expresion "<" expresion',
-	'expresion MENORIGUAL expresion',
-	'expresion ">" expresion',
-	'expresion MAYORIGUAL expresion')
-	def relacion(self, p):
-		pass
+	# @_('error')
+	# def relacion(self, p):
+		# print("error al efectuar relación en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
 	'''
 	sentenciaSi : "IF" relacion "THEN" sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces "END"
 	;
 	'''
-	@_('IF relacion THEN sentenciaSecuencia sentenciaSiSino sentenciaSiEntonces END')
-	def sentenciaSi(self, p):
-		pass
+	# @_('error')
+	# def sentenciaSi(self, p):
+		# print("error declarando el if en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
 	'''
 	sentenciaSiSino : sentenciaSiSinoR
 	|	empty
 	;
 	'''
-	@_('sentenciaSiSinoR',
-	'empty')
-	def sentenciaSiSino(self, p):
-		pass
-	
-	'''
-	sentenciaSiSinoR : sentenciaSiSinoR "ELSIF" relacion "THEN" sentenciaSecuencia
-	|	"ELSIF" relacion "THEN" sentenciaSecuencia
-	;
-	'''
-	
-	@_('sentenciaSiSinoR ELSIF relacion THEN sentenciaSecuencia',
-	'ELSIF relacion THEN sentenciaSecuencia')
-	def sentenciaSiSinoR(self, p):
-		pass
+	# @_('error')
+	# def sentenciaSiSino(self, p):
+		# print("error al declarar el elsif en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 
 	'''
 	sentenciaSiEntonces : "ELSE" sentenciaSecuencia
 	|	empty
 	;
 	'''
-	@_('ELSE sentenciaSecuencia',
-	'empty')
-	def sentenciaSiEntonces(self, p):
-		pass
+	# @_('error')
+	# def sentenciaSiEntonces(self, p):
+		# print("error al declarar else en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
 	'''
 	sentenciaPara : "FOR" ID ":=" expresion DOBLEPUNTO expresion "DO" sentenciaSecuencia "END"
 	;
 	'''
-	@_('FOR ID DOSPUNTOSIGUAL expresion DOBLEPUNTO expresion DO sentenciaSecuencia END')
-	def sentenciaPara(self, p):
-		pass
+	# @_('error')
+	# def sentenciaPara(self, p):
+		# print("error al declarar el for en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 		
 	'''
 	sentencia : asignacion
@@ -299,360 +1309,11 @@ class CalcParser(Parser):
 	|	empty
 	;
 	'''
-	@_('asignacion', 
-	'asignacionUnidad', 
-	'sentenciaSi', 
-	'sentenciaPara',
-	'empty')
-	def sentencia(self, p):
-		pass
-	
-	'''
-	sentenciaSecuencia : sentenciaSecuencia ";" sentencia
-	|	sentencia
-	;
-	'''
-	@_('sentenciaSecuencia ";" sentencia', 'sentencia')
-	def sentenciaSecuencia(self, p):
-		pass
+	# @_('error')
+	# def sentencia(self, p):
+		# print("error al declrar la sentencia en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
 
-	'''
-	modulo : "MODULE" ID ";"
-	declaracionTipoPuntoComa
-	declaracionConstanteCONST
-	declaracionVariableIN
-	declaracionVariableINOUT
-	declaracionVariableOUT
-	declaracionVariableVAR
-	sentenciaSecuenciaBEGIN
-	END ID "."
-	;
-	'''
-	@_('MODULE ID ";" declaracionTipoPuntoComa declaracionConstanteCONST declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR declaracionVariblePOS sentenciaSecuenciaBEGIN END ID "."')
-	def modulo(self, p):
-		if(p.ID0!=p.ID1):
-			print("error al definir modulo, no concuerda el ID {} {} con {} {} - Linea {}".format(p.MODULE, p.ID0, p.END, p.ID1, p.lineno))
-		pass
-		#return Modulo(p.declaracionTipoPuntoComa, p.declaracionConstanteCONST, p.declaracionVariableIN, p.declaracionVariableINOUT, p.declaracionVariableOUT, p.declaracionVariableVAR, p.sentenciaSecuenciaBEGIN, p.ID)
-		
-	'''
-	declaracionTipoPuntoComa : declaracionTipoPuntoComaR
-	|	empty
-	;
-	'''	
-	@_('declaracionTipoPuntoComaR',
-	'empty')
-	def declaracionTipoPuntoComa(self, p):
-		pass
-	
-	'''
-	declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
-	|	declaracionTipo ";"
-	;
-	'''
-	@_('declaracionTipoPuntoComaR declaracionTipo ";"',
-	'declaracionTipo ";"')
-	def declaracionTipoPuntoComaR(self, p):
-		pass
-
-	
-	
-	'''
-	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
-	|	empty
-	;
-	'''
-	@_('CONST declaracionConstanteRecursivo',
-	'empty')
-	def declaracionConstanteCONST(self, p):
-		pass
-		
-	'''
-	declaracionConstanteRecursivo : declaracionConstanteRecursivoR
-	|	empty
-	;
-	'''
-	@_('declaracionConstanteRecursivoR',
-	'empty')
-	def declaracionConstanteRecursivo(self, p):
-		pass
-	
-	'''
-	declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConstante
-	|	declaracionConstante
-	;
-	'''
-	@_('declaracionConstanteRecursivoR declaracionConstante',
-	'declaracionConstante')
-	def declaracionConstanteRecursivoR(self, p):
-		pass
-		
-	'''
-	declaracionVariableIN : "IN" declaracionVariableRecursivo
-	|	empty
-	;
-	'''
-	@_('IN declaracionVariableRecursivo',
-	'empty')
-	def declaracionVariableIN(self, p):
-		pass
-	
-	'''
-	declaracionVariableRecursivo : declaracionVariableRecursivoR
-	|	empty
-	;
-	'''
-	@_('declaracionVariableRecursivoR',
-	'empty')
-	def declaracionVariableRecursivo(self, p):
-		pass
-	
-	'''
-	declaracionVariableRecursivoR : declaracionVariableRecursivoR declaracionVariable
-	|	declaracionVariable
-	;
-	'''
-	@_('declaracionVariableRecursivoR declaracionVariable',
-	'declaracionVariable')
-	def declaracionVariableRecursivoR(self, p):
-		pass
-	
-	'''
-	declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
-	|	empty
-	;
-	'''
-	@_('INOUT declaracionVariableRecursivo',
-	'empty')
-	def declaracionVariableINOUT(self, p):
-		pass
-		
-	'''
-	declaracionVariableOUT : "OUT" declaracionVariableRecursivo
-	|	empty
-	;
-	'''
-	@_('OUT declaracionVariableRecursivo',
-	'empty')
-	def declaracionVariableOUT(self, p):
-		pass
-	
-	'''
-	declaracionVariableVAR : "VAR" declaracionVariableRecursivo
-	|	empty
-	;
-	'''
-	@_('VAR declaracionVariableRecursivo', 
-	'empty')
-	def declaracionVariableVAR(self, p):
-		pass
-	
-	'''
-	declaracionVariblePOS : POS declaracionRelacionRecursivo
-	|	empty
-	;
-	'''
-	@_('POS declaracionRelacionRecursivo', 'empty')
-	def declaracionVariblePOS(self, p):
-		pass
-	
-	'''
-	declaracionRelacionRecursivo :declaracionRelacionRecursivo relacion ";"
-	|	relacion ";"
-	;
-	'''
-	@_('declaracionRelacionRecursivo relacion ";"', 'relacion ";"')
-	def declaracionRelacionRecursivo(self, p):
-		pass
-		
-	'''
-	sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
-	|	empty
-	;
-	'''
-	@_('BEGIN sentenciaSecuencia', 
-	'empty')
-	def sentenciaSecuenciaBEGIN(self, p):
-		pass
-
-	'''
-	tipoFormal : expresionCorcheteO "BIT"
-	;
-	'''
-	@_('expresionCorcheteO BIT')
-	def tipoFormal(self, p):
-		pass
-		
-	'''
-	expresionCorcheteO : expresionCorcheteOR
-	|	empty
-	;
-	'''
-	@_('expresionCorcheteOR',
-	'empty')
-	def expresionCorcheteO(self, p):
-		pass
-	
-	'''
-	expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
-	|	"[" expresionOpcional "]"
-	;
-	'''
-	@_('expresionCorcheteOR "[" expresionOpcional "]"',
-	'"[" expresionOpcional "]"')
-	def expresionCorcheteOR(self, p):
-		pass
-	
-	'''
-	expresionOpcional : expresion
-	|	empty
-	;
-	'''
-	@_('expresion',
-	'empty')
-	def expresionOpcional(self, p):
-		pass
-		
-	'''
-	tipoFormalBus : expresionCorcheteO "TS"
-	|	expresionCorcheteO "OC"
-	;
-	'''
-	@_('expresionCorcheteO TS', 
-	'expresionCorcheteO OC')
-	def tipoFormalBus(self, p):
-		pass
-		
-	'''
-	declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 
-	declaracionConstanteCONST 
-	tipoFormalIN
-	tipoFormlINOUT
-	declaracionVariableOUT 
-	declaracionVariableVAR 
-	sentenciaSecuenciaBEGIN 
-	END ID
-	;
-	'''
-	@_('TYPE ID simboloPor listaIdParentesis ";" declaracionConstanteCONST tipoFormalIN tipoFormlINOUT declaracionVariableOUT declaracionVariableVAR sentenciaSecuenciaBEGIN END ID')
-	def declaracionTipo(self, p):
-		pass
-	
-	
-	
-	'''
-	simboloPor : "*"
-	|	empty
-	;
-	'''
-	@_('"*"',
-	'empty')
-	def simboloPor(self, p):
-		pass
-		
-	'''
-	listaIdParentesis : "(" listaId ")"
-	|	empty
-	;
-	'''
-	@_('"(" listaId ")"',
-	'empty')
-	def listaIdParentesis(self, p):
-		pass
-		
-	'''
-	tipoFormalIN : IN tipoFormallistaId
-	|	empty
-	;
-	'''
-	@_('IN tipoFormallistaId',
-	'empty')
-	def tipoFormalIN(self, p):
-		pass
-		
-	'''
-	tipoFormallistaId : tipoFormallistaIdR 
-	|	empty
-	;
-	'''
-	@_('tipoFormallistaIdR',
-	'empty')
-	def tipoFormallistaId(self, p):
-		pass
-		
-	'''
-	tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
-	|	listaId ":" tipoFormal ";"
-	;
-	'''
-	@_('tipoFormallistaIdR listaId ":" tipoFormal ";"',
-	'listaId ":" tipoFormal ";"')
-	def tipoFormallistaIdR(self, p):
-		pass
-
-	'''
-	tipoFormnalINOUT : INOUT tipoFormlBuslistaId
-	|	empty
-	;
-	'''
-	@_('INOUT tipoFormlBuslistaId',
-	'empty')
-	def tipoFormlINOUT(self, p):
-		pass
-		
-	'''
-	tipoFormlBuslistaId : tipoFormlBuslistaIdR
-	|	empty
-	;
-	'''
-	@_('tipoFormlBuslistaIdR',
-	'empty')
-	def tipoFormlBuslistaId(self, p):
-		pass
-	
-	'''
-	tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
-	|	listaId ":" tipoFormalBus ";"
-	;
-	'''
-	@_('tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"',
-	'listaId ":" tipoFormalBus ";"')
-	def tipoFormlBuslistaIdR(self, p):
-		pass
-
-	'''
-	assinacionUnidad : ID selector "(" listaExpresiones ")"
-	'''
-	@_('ID selector "(" listaExpresiones ")"')
-	def asignacionUnidad(self, p):
-		pass
-	
-	'''
-	empty :
-	'''
-	@_('')
-	def empty(self, p):
-		pass
-	#prueba de errores
-	'''
-	tipoSimple : tipoBasico
-		|	ID "(" listaExpresiones ")"
-		|	ID
-		;
-	'''
-	@_('error') 
-	def tipoSimple(self, p):
-		print("error al indicar tipo simple en {} - linea {}".format(p.error.value, p.error.lineno))
-		pass
-		#return TipoSimple(p.tipoBasico)
-	
-	
-	@_('ID selector error listaExpresiones ")"')
-	def asignacionUnidad(self, p):
-		print ("ERROR 14 - ( expected")
-		#self.error+=1
-		return "fatal"
-	
 	'''
 	modulo : MODULE ID ";"
 	declaracionTipoPuntoComa
@@ -668,8 +1329,183 @@ class CalcParser(Parser):
 	@_('MODULE ID ";" error')
 	def modulo(self, p):
 		print("error al declarar MODULO {} en {} - Line {}".format(p.ID, p.error.value, p.error.lineno))
-		pass
+		self.errok()
+		pass 
 	
+	'''
+	declaracionTipoPuntoComaR : declaracionTipoPuntoComaR declaracionTipo ";"
+	|	declaracionTipo ";"
+	;
+	'''
+	# @_('error')
+	# def declaracionTipoPuntoComaR(self, p):
+		# print("error al decalrar TYPE'S en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionConstanteCONST : "CONST" declaracionConstanteRecursivo
+	|	empty
+	
+	'''
+	# @_('error')
+	# def declaracionConstanteCONST(self, p):
+		# print("error al declarar constante de un MODULO en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionConstanteRecursivo : declaracionConstanteRecursivoR
+	|	empty
+	;
+	'''
+	# @_('declaracionConstanteRecursivoR',
+	# 'empty')
+	# def declaracionConstanteRecursivo(self, p):
+		# pass
+	
+	'''
+	declaracionConstanteRecursivoR : declaracionConstanteRecursivoR declaracionConstante
+	|	declaracionConstante
+	;
+	'''
+	# @_('error')
+	# def declaracionConstanteRecursivoR(self, p):
+		# pass
+		
+	'''
+	declaracionVariableIN : "IN" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableIN(self, p):
+		# print("error al declarar variable de entrada de un MODULO en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionVariableRecursivo : declaracionVariableRecursivoR
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableRecursivo(self, p):
+		# pass
+	
+	'''
+	declaracionVariableRecursivoR : declaracionVariableRecursivoR declaracionVariable
+	|	declaracionVariable
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableRecursivoR(self, p):
+		# pass
+	
+	'''
+	declaracionVariableINOUT : "INOUT" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableINOUT(self, p):
+		# print("error al declrar entrada/salida de un MODULO en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	'''
+	declaracionVariableOUT : "OUT" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableOUT(self, p):
+		# print("error al declarar variable de salida en {} - linea".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionVariableVAR : "VAR" declaracionVariableRecursivo
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariableVAR(self, p):
+		# print("error al declarar variable VAR en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionVariblePOS : POS declaracionRelacionRecursivo
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def declaracionVariblePOS(self, p):
+		# print("error al declarar variable POS de un MODULO en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+	
+	'''
+	declaracionRelacionRecursivo :declaracionRelacionRecursivo relacion ";"
+	|	relacion ";"
+	;
+	'''
+	# @_('error')
+	# def declaracionRelacionRecursivo(self, p):
+		# pass
+		
+	'''
+	sentenciaSecuenciaBEGIN : "BEGIN" sentenciaSecuencia
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def sentenciaSecuenciaBEGIN(self, p):
+		# print("error al declarar BEGIN en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+
+	'''
+	tipoFormal : expresionCorcheteO "BIT"
+	;
+	'''
+	@_('error')
+	def tipoFormal(self, p):
+		print("error al declrar tipo forma en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
+		pass
+		
+	'''
+	expresionCorcheteO : expresionCorcheteOR
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def expresionCorcheteO(self, p):
+		# pass
+	
+	'''
+	expresionCorcheteOR : expresionCorcheteOR "[" expresionOpcional "]"
+	|	"[" expresionOpcional "]"
+	;
+	'''
+	# @_('error')
+	# def expresionCorcheteOR(self, p):
+		# pass
+	
+	'''
+	expresionOpcional : expresion
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def expresionOpcional(self, p):
+		# pass
+		
+	'''
+	tipoFormalBus : expresionCorcheteO "TS"
+	|	expresionCorcheteO "OC"
+	;
+	'''
+	@_('error')
+	def tipoFormalBus(self, p):
+		print("error al declarar bus de datos formal en {} - linea {}".format(p.error.value, p.error.lineno))
+		self.errok()
+		pass
+		
 	'''
 	declaracionTipo : "TYPE" ID simboloPor listaIdParentesis ";" 
 	declaracionConstanteCONST 
@@ -680,38 +1516,116 @@ class CalcParser(Parser):
 	sentenciaSecuenciaBEGIN 
 	END ID
 	;
-	'''	
-	@_('error')
+	'''
+	@_('TYPE ID error')
 	def declaracionTipo(self, p):
-		print("error al declarar tipo en {} - Linea {}".format(p.error.value, p.error.lineno))
+		print("error al declarar el TYPE {} en {} - linea {}".format(p.ID, p.error.value, p.error.lineno))
+		self.errok()
 		pass
 	
-	"""
-	@_('MODULE ID ";" declaracionTipoPuntoComa error declaracionVariableIN declaracionVariableINOUT declaracionVariableOUT declaracionVariableVAR declaracionVariblePOS sentenciaSecuenciaBEGIN END ID "."')
-	def modulo(self, p):
-		print("syntax error al declarar CONST - Line {}".format(p.error.lineno))
+	'''
+	simboloPor : "*"
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def simboloPor(self, p):
+		# print("error se esperaba un * o vacio al declarar un TYPE en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	'''
+	listaIdParentesis : "(" listaId ")"
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def listaIdParentesis(self, p):
+		# print("error se esperaba una lista de identificadores o vacio al declarar un TYPE en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	'''
+	tipoFormalIN : IN tipoFormallistaId
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def tipoFormalIN(self, p):
+		# print("error al declarar entrada de datos de TYPE en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	'''
+	tipoFormallistaId : tipoFormallistaIdR 
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def tipoFormallistaId(self, p):
+		# print("")
+		# pass
+		
+	'''
+	tipoFormallistaIdR : tipoFormallistaIdR listaId ":" tipoFormal ";"
+	|	listaId ":" tipoFormal ";"
+	;
+	'''
+	# @_('error')
+	# def tipoFormallistaIdR(self, p):
+		# pass
+
+	'''
+	tipoFormnalINOUT : INOUT tipoFormlBuslistaId
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def tipoFormlINOUT(self, p):
+		# print("error al declarar entrada/salida de TYPE en {} - linea {}".format(p.error.value, p.error.lineno))
+		# pass
+		
+	'''
+	tipoFormlBuslistaId : tipoFormlBuslistaIdR
+	|	empty
+	;
+	'''
+	# @_('error')
+	# def tipoFormlBuslistaId(self, p):
+		# pass
+	
+	'''
+	tipoFormlBuslistaIdR : tipoFormlBuslistaIdR listaId ":" tipoFormalBus ";"
+	|	listaId ":" tipoFormalBus ";"
+	;
+	'''
+	# @_('error')
+	# def tipoFormlBuslistaIdR(self, p):
+		# pass
+
+	'''
+	assinacionUnidad : ID selector "(" listaExpresiones ")"
+	'''
+	@_('error')
+	def asignacionUnidad(self, p):
+		print("error al asignar unidad en {} - linea {}".format(p.error.value, p.error.lineno))
 		pass
-	"""
-	
-	
-	
 	
 	def error(self, p):
-		
 		if p:
-			
 			#print("Syntax error at token", p.type)
 			# Just discard the token and tell the parser it's okay.
 			self.errok()
 		else:
 			print("Syntax error at EOF")
-		
 		pass
+		
+		#pass
 def parse(data, debug=0):
 	#print(parser.error)
 	p = parser.parse(lexer.tokenize(data))
-	if parser.error:
+	#print(parser.errorStatus)
+	if parser.errorStatus:
+		print("error en codigo")
 		return None
+	print("sin errores --- arbol formado \n")
 	return p
 		
 if __name__ == '__main__':
@@ -736,4 +1650,5 @@ if __name__ == '__main__':
 	"""
 	#print("aplicando tokenize")
 	lexer.fileName=sys.argv[1]
-	parse(file)
+	
+	print(parse(file))

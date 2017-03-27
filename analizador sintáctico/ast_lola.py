@@ -64,89 +64,248 @@ def validate_fields(**fields):
 # ----------------------------------------------------------------------
 
 # Unos pocos nodos ejemplos
+
 @validate_fields(modulos = list)
 class Lola(AST):
-	_fields = ['modulos']
+	_fields=['modulos']
 	def append(self, modu):
-		modulos.append(modu)
+		self.modulos.append(modu)
 
-class Modulo(AST):
-	_fields = ['declaracionTipoPuntoComa', 'declaracionConstanteCONST', 'declaracionVariableIN', 'declaracionVariableINOUT', 'declaracionVariableOUT', 'declaracionVariableVAR', 'sentenciaSecuenciaBEGIN', 'ID']
-
-class TipoSimple(AST):
+class TipoSimpleBasico(AST):
 	_fields = ['tipoBasico']
 	#def append(self, temp):
-	
+
 class TipoSimpleID(AST):
-	_fields = ['ID', 'conjuntoExpresiones']
+	_fields = ['ID']
+	
+class TipoSimpleIDListaExpresion(AST):
+	_fields = ['ID', 'ListaExpresiones']
 
-class ConjuntoExpresiones(AST):
-	_fields= ['listaExpresiones']
-
-#@_validate_fields(expresiones = list)
+class TipoBasico(AST):#valor constante
+	_fields = ['tipoBasico']
+	
+@validate_fields(expresionesLista = list)
 class ListaExpresiones(AST):
-	_fields = ['expresion', 'expresionComa']
-	
-class ExpresionComa(AST):
-	_fields = ['expresionComaR']
-	
-@validate_fields(expresiones = list)
-class ExpresionComaR(AST):
-	_fields = ['expresiones']
-	def append(self, expresion):
-		expresiones.append(expresion)
+	_fields = ['expresionesLista']
+	def append(self, expr):
+		self.expresionesLista.append(expr)
 
 class Tipo(AST):
-	_fields=['expresionCorchete', 'tipoSimple']
+	_fields = ['tipoExpresiones', 'tipoSimple']
+	
+class TipoExpresiones(AST):
+	_fields = ['tipoExpresionesR']
 
-#@_validate_fields(expresiones = list)
-class ExpresionCorchete(AST):
-	_fields = ['expresionCorcheteR']
-
-@_validate_fields(expresiones = list)
-class ExpresionCorcheteR(AST):
-	_fields = ['expresiones']
+@validate_fields(expresionesTipo = list)
+class TipoExpresionesR(AST):
+	_fields = ['expresionesTipo']
 	def append(self, expr):
-		expresiones.append(expr)
-		
+		self.expresionesTipo.append(expr)
+
 class DeclaracionConstante(AST):
 	_fields = ['ID', 'expresion']
-	
+		
 class DeclaracionVariable(AST):
 	_fields = ['listaId', 'tipo']
 
+@validate_fields(idsListaId = list)
 class ListaId(AST):
-	_fields =['ID', 'IDComa']
-
-
-
-
+	_fields = ['idsListaId']
+	def append(self, Id):
+		self.idsListaId.append(Id)
+		
+class Selector(AST):
+	_fields = ['selectorR']
 	
-#ast basic
-class Statement(AST):
-	_fields=[]
+@validate_fields(selectorRRs = list)
+class SelectorR(AST):
+	_fields = ['selectorRRs']
+	def append(self, selector):
+		self.selectorRRs.append(selector)
 
-class PrintStatement(AST):
-	'''
-	print expression ;
-	'''
-	_fields = ['expr']
-	
-class Literal(AST):
-	'''
-	Un valor constante como 2, 2.5, o "dos"
-	'''
+class FactorSelector(AST):
+	_fields = ['ID', 'selector']
+
+class FactorValor(AST):
 	_fields = ['value']
-
-
 	
-@validate_fields(statements=list)
-class Statements(AST):
-	_fields = ['statements']
+	
+class FactorSimbolo(AST):
+	_fields = ['simbolo', 'factor']
+	
+@validate_fields(expresionesFactor = list)
+class FactorDeclaracion(AST):
+	_fields=['declaracion', 'expresionesFactor']
 
+@validate_fields(simbolosTermino = list, factoresTermino = list)
+class Termino(AST):
+	_fields = ['simbolosTermino', 'factoresTermino']
+	def append(self, simboloTermino, factor):
+		self.simbolosTermino.append(simboloTermino)
+		self.factoresTermino.append(factor)
+
+@validate_fields(simbolosExpresion = list, terminosExpresion = list)
+class Expresion(AST):
+	_fields=['simbolosExpresion', 'terminosExpresion']
+	def append(self, simboloExpresion, terminoExpresion):
+		self.simbolosExpresion.append(simboloExpresion)
+		self.terminosExpresion.append(terminoExpresion)
+	
+class Asignacion(AST):
+	_fields = ['ID', 'selector', 'expresion']
+	
+class AsignacionCondicion(AST):
+	_fields = ['ID', 'selector', 'condicion', 'expresion']
+
+class Condicion(AST):
+	_fields = ['expresion']
+	
+class Relacion(AST):
+	_fields = ['expresion0', 'simbolo', 'expresion1']
+	
+class SentenciaSi(AST):
+	_fields = ['relacion', 'sentenciaSecuencia', 'sentenciaSiSino', 'sentenciaSiEntonces']
+
+class SentenciaSiSino(AST):
+	_fields = ['sentenciaSiSinoR']
+
+@validate_fields(relacionesSentenciaSiSinoR = list, sentenciasSecuenciaSentenciaSiSinoR = list)
+class SentenciaSiSinoR(AST):#elsif
+	_fields = ['relacionesSentenciaSiSinoR', 'sentenciasSecuenciaSentenciaSiSinoR']
+	def append(self, relacion, sentenciaSecuencia):
+		self.relacionesSentenciaSiSinoR.append(relacion)
+		self.sentenciasSecuenciaSentenciaSiSinoR.append(sentenciaSecuencia)
+
+class SentenciaSiEntonces(AST):
+	_fields = ['sentenciaSecuencia']
+	
+class SentenciaPara(AST):
+	_fields = ['ID', 'expresionDesde', 'expresionHasta', 'sentenciaSecuencia']
+
+class Sentencia(AST):
+	_fields = ['sentencia']
+
+@validate_fields(sentenciasSecuencia = list)
+class SentenciaSecuencia(AST):
+	_fields = ['sentenciasSecuencia']
+	def append(self, sentencia):
+		self.sentenciasSecuencia.append(sentencia)
+	
+class Modulo(AST):
+	_fields = ['ID0', 'declaracionTipoPuntoComa', 'declaracionConstanteCONST', 'declaracionVariableIN', 'declaracionVariableINOUT', 'declaracionVariableOUT', 'declaracionVariableVAR', 'declaracionRelacionPOS', 'sentenciaSecuenciaBEGIN', 'ID1']
+	
+class DeclaracionTipoPuntoComa(AST):
+	_fields = ['declaracionTipoPuntoComaR'] 
+
+@validate_fields(declaracionesTipo = list)
+class DeclaracionTipoPuntoComaR(AST):
+	_fields = ['declaracionesTipo']
+	def append(self, declaracionTipo):
+		self.declaracionesTipo.append(declaracionTipo)
+
+class DeclaracionConstanteCONST(AST):
+	_fields = ['declaracionConstanteRecursivo']
+	
+class DeclaracionConstanteRecursivo(AST):
+	_fields = ['declaracionConstanteRecursivoR']
+	
+@validate_fields(declaracionesConstante = list)
+class DeclaracionConstanteRecursivoR(AST):
+	_fields = ['declaracionesConstante']
+
+	def append(self, declaracionConstante):
+		self.declaracionesConstante.append(declaracionConstante)
+		
+class DeclaracionVariableIN(AST):
+	_fields = ['declaracionVariableRecursivo']
+		
+class DeclaracionVariableRecursivo(AST):
+	_fields = ['declaracionVariableRecursivoR']
+		
+@validate_fields(declaracionesVariable = list)
+class DeclaracionVariableRecursivoR(AST):
+	_fields = ['declaracionesVariable']
+	def append(self, declaraVariable):
+		self.declaracionesVariable.append(declaraVariable)
+
+class DeclaracionVariableINOUT(AST):
+	_fields = ['declaracionVariableRecursivo']
+	
+class DeclaracionVariableOUT(AST):
+	_fields = ['declaracionVariableRecursivo']
+	
+class DeclaracionVariableVAR(AST):
+	_fields = ['declaracionVariableRecursivo']
+	
+class DeclaracionRelacionPOS(AST):
+	_fields = ['declaracionRelacionRecursivo']
+
+class DeclaracionRelacionRecursivo(AST):
+	_fields = ['declaracionRelacionR']
+
+@validate_fields(relaciones = list)
+class DeclaracionRelacionR(AST):
+	_fields = ['relaciones']
+	def append(self, relacion):
+		self.relaciones.append(relacion)
+	
+class SentenciaSecuenciaBEGIN(AST):
+	_fields = ['sentenciaSecuencia']
+	
+class TipoFormal(AST):
+	_fields = ['expresionCorcheteO']
+
+class ExpresionCorcheteO(AST):
+	_fields = ['expresionCorcheteOR']
+	
+@validate_fields(expresionesOpcional = list)
+class ExpresionCorcheteOR(AST):
+	_fields = ['expresionesOpcional']
+	def append(self, expresionOpcional):
+		self.expresionesOpcional.append(expresionOpcional)
+
+class ExpresionOpcional(AST):
+	_fields = ['expresion']
+	
+class TipoFormalBus(AST):
+	_fields = ['expresionCorcheteO', 'tipoBus']
+
+class DeclaracionTipo(AST):
+	_fields = ['ID0', 'simboloPor', 'listaIdParentesis', 'declaracionConstanteCONST', 'tipoFormalIN', 'tipoFormalINOUT', 'declaracionVariableOUT', 'declaracionVariableVAR', 'declaracionRelacionPOS', 'sentenciaSecuenciaBEGIN', 'ID1']
+	
+class ListaIdParentesis(AST):
+	_fields = ['listaId']
+	
+class TipoFormalIN(AST):
+	_fields = ['tipoFormallistaId']
+	
+class TipoFormallistaId(AST):
+	_fields = ['tipoFormallistaIdR']
+	
+@validate_fields(listasId = list, tiposFormal = list)
+class TipoFormallistaIdR(AST):
+	_fields = ['listasId', 'tiposFormal']
+	def append(self, listaId, tipoFormal):
+		self.listasId.append(listaId)
+		self.tiposFormal.append(tipoFormal)
+
+class TipoFormalINOUT(AST):
+	_fields = ['tipoFormlBuslistaId']
+		
+class TipoFormlBuslistaId(AST):
+	_fields = ['tipoFormlBuslistaIdR']
+		
+@validate_fields(listasId = list, tiposFormalBus = list)
+class TipoFormlBuslistaIdR(AST):
+	_fields = ['listasId', 'tiposFormalBus']
+	def append(self, listaId, tipoFormalBus):
+		self.listasId.append(listaId)
+		self.tiposFormalBus.append(tipoFormalBus)
+		
 class Empty(AST):
 	_fields = []
-	
+
+
 	
 # Usted deberá añadir mas nodos aquí.  Algunos nodos sugeridos son
 # BinaryOperator, UnaryOperator, ConstDeclaration, VarDeclaration,

@@ -40,8 +40,15 @@ listaExpresiones : listaExpresiones "," expresion
 	| expresion
 	;
 
-tipo : "[" expresion "]" tipo
-	|	tipoSimple
+tipo : tipoExpresiones tipoSimple
+	;
+	
+tipoExpresiones : tipoExpresionesR
+	|	empty
+	;
+	
+tipoExpresionesR : tipoExpresionesR "[" expresion "]"
+	|	"[" expresion "]"
 	;
 
 declaracionConstante : ID DOSPUNTOSIGUAL expresion ";"'
