@@ -23,6 +23,7 @@ class AST(object):
 	'''
 	_fields = []
 	def __init__(self, *args, **kwargs):
+		self.hijos=[]
 		assert len(args) == len(self._fields)
 		for name,value in zip(self._fields,args):
 			setattr(self,name,value)
@@ -37,7 +38,8 @@ class AST(object):
 	def pprint(self):
 		for depth, node in flatten(self):
 			print("%s%s" % (" "*(4*depth),node))
-
+			
+	
 			
 def validate_fields(**fields):
 	def validator(cls):
@@ -122,6 +124,9 @@ class SelectorR(AST):
 	_fields = ['selectorRRs']
 	def append(self, selector):
 		self.selectorRRs.append(selector)
+		
+class SelectorRR(AST):
+	_fields = ['ID', 'INTEGER', 'expresion']
 
 class FactorSelector(AST):
 	_fields = ['ID', 'selector']
@@ -302,8 +307,9 @@ class TipoFormlBuslistaIdR(AST):
 		self.listasId.append(listaId)
 		self.tiposFormalBus.append(tipoFormalBus)
 		
-class Empty(AST):
-	_fields = []
+class AsignacionUnidad(AST):
+	_fields = ['ID', 'selector', 'listaExpresiones']
+		
 
 
 	
@@ -360,6 +366,8 @@ class NodeVisitor(object):
 		Este examina el nodo para ver si tiene _fields, es una lista,
 		o puede ser recorrido completamente.
 		'''
+		#
+		#print("entro")
 		for field in getattr(node, "_fields"):
 			value = getattr(node, field, None)
 			if isinstance(value, list):
@@ -368,7 +376,7 @@ class NodeVisitor(object):
 						self.visit(item)
 			elif isinstance(value, AST):
 				self.visit(value)
-				
+		
 # NO MODIFICAR
 class NodeTransformer(NodeVisitor):
 	'''
@@ -384,6 +392,7 @@ class NodeTransformer(NodeVisitor):
 	anteriores a la generación de código.
 	'''
 	def generic_visit(self,node):
+		
 		for field in getattr(node, "_fields"):
 			value = getattr(node,field, None)
 			if isinstance(value, list):
@@ -394,6 +403,7 @@ class NodeTransformer(NodeVisitor):
 						if newnode is not None:
 							newvalues.append(newnode)
 					else:
+						
 						newvalues.append(n)
 				value[:] = newvalues
 			elif isinstance(value, AST):
@@ -413,6 +423,7 @@ def flatten(top):
 	la profundidad del arból de sintaxis y node es un node AST
 	asociado.
 	'''
+	
 	class Flattener(NodeVisitor):
 		def __init__(self):
 			self.depth = 0
