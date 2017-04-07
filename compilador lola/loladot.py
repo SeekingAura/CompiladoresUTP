@@ -38,28 +38,82 @@ class DotCode(ast.NodeVisitor):
 	def visit_Lola(self, node):
 		target = self.new_node(node)
 		self.dot.add_node(target)
+		tieneHijos=False
 		#visita los hijos, por decirlo de algun modo...
 		for field in getattr(node, "_fields"):
 			value = getattr(node, field, None)
 			if isinstance(value, list):
 				for item in value:
-					if isinstance(item, AST):
+					if isinstance(item, ast.AST):
 						self.visit(item)
-					else:#caso de ramas
-						targetHijo = self.new_node(None, value)
-						self.dot.add_node(targetHijo)
 						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
-			elif isinstance(value, AST):
+						#tieneHijos=True
+					elif(item is not None):#caso de ramas
+						targetHijo = self.new_node(None, item)
+						self.dot.add_node(targetHijo)
+						self.dot.add_edge(pgv.Edge(target, targetHijo))
+			elif isinstance(value, ast.AST):
 				self.visit(value)
-		self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+				#tieneHijos=True
+			elif(value is not None):#ramas...
+				targetHijo = self.new_node(None, value)
+				self.dot.add_node(targetHijo)
+				self.dot.add_edge(pgv.Edge(target, targetHijo))
+		
+		
 		
 	
 	def visit_Modulo(self, node):
 		target = self.new_node(node)
 		self.dot.add_node(target)
-		targetHijo=self.visit(hijo)
-		self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+		
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visitar(item)
+						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+					elif(item is not None):#caso de ramas
+						targetHijo = self.new_node(None, item)
+						self.dot.add_node(targetHijo)
+						self.dot.add_edge(pgv.Edge(target, targetHijo))
+			elif isinstance(value, ast.AST):
+				self.visitar(value)
+				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+			elif(value is not None):#ramas...
+				targetHijo = self.new_node(None, value)
+				self.dot.add_node(targetHijo)
+				self.dot.add_edge(pgv.Edge(target, targetHijo))
+		
+		
 		self.stack.append(target)
-	
+		
+	def visitar(self, node):
+		target = self.new_node(node)
+		self.dot.add_node(target)
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visitar(item)
+						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+					elif(item is not None):#caso de ramas
+						targetHijo = self.new_node(None, item)
+						self.dot.add_node(targetHijo)
+						self.dot.add_edge(pgv.Edge(target, targetHijo))
+			elif isinstance(value, ast.AST):
+				self.visitar(value)
+				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+			elif(value is not None):#ramas...
+				targetHijo = self.new_node(None, value)
+				self.dot.add_node(targetHijo)
+				self.dot.add_edge(pgv.Edge(target, targetHijo))
+		
+		
+		self.stack.append(target)
+		
 		
 

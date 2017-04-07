@@ -1769,31 +1769,21 @@ if __name__ == '__main__':
 	#función que palana el arbol y de ese arbol aplanado se le da a cada nodo su hijo según su depth
 	
 	#proceso para tomar el arbl aplanado y asignarle su grupo, o bien lista de hijos
-	arbol=flatten(p)
+	#arbol=flatten(p)
 	
-	for enum, i in enumerate(arbol):
-		print(i)
-		for j in (arbol[enum+1:]):
-			if(j[0]==i[0]):
-				break
-			else:
-				if(j[0]==i[0]+1):
-					i[1].hijos.append(j[1])
-					#print(i[1].hijos)
+	# for enum, i in enumerate(arbol):
+		# #print(i)
+		# for j in (arbol[enum+1:]):
+			# if(j[0]==i[0]):
+				# break
+			# else:
+				# if(j[0]==i[0]+1):
+					# i[1].hijos.append(j[1])
+					# #print(i[1].hijos)
 	
 	
 	
-	# for i in arbol:
-		# for j in arbol:
-			# if(i[0]+1==j[0]):
-				# i[1].hijo=j[1]
-	# nodoslista=[]
-	# for i in arbol:
-		# nodoslista.append(i[1])
 	
-	#for i in nodoslista:
-	#	print(i.hijo)
-	#print(p.hijo)
 		
 	dot=DotCode()
 	dot.visit(p)
