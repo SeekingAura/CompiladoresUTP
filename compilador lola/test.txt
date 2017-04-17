@@ -5,7 +5,7 @@ TYPE Cell; (* Composite Type *)
   OUT z,co:BIT; (* output signals *) 
 BEGIN
   z:=x-y-ci;
-  co:=x*y+x*ci+y*ci;
+  co:=x*y+x*ci+y*ci+as;
 END Cell;
 
 CONST N:=8;
@@ -13,7 +13,7 @@ IN X,Y:[N]BIT; ci:BIT; (* input signals *)
 OUT Z:[N]BIT; co:BIT; (* output signals *)
 VAR S:[N]Cell; (* composite type instances *)
 BEGIN
-  S.0(X.0, Y.0, ci); (* inputs in cell 0 *)
+  S.0(X.0, Y.0, ci); (* inputs in cell 0*)
   FOR i:=1..N-1 DO
     S.i(X.i,Y.i,S[i-1].co); (* inputs in cell i *)
   END;
@@ -21,4 +21,5 @@ BEGIN
     Z.i:=S.i.z;
 END;
   co:=S.7.co;
+  co:=x*y+x*ci+y*ci+as;
 END Adder.

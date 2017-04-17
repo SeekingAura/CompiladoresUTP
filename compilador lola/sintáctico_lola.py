@@ -351,37 +351,22 @@ class CalcParser(Parser):
 	|	factor
 	;
 	'''	
-	@_('termino simbolosProd factor')
+	@_('termino "*" factor', 'termino "/" factor', 'termino DIV factor', 'termino MOD factor')
 	def termino(self, p):
 		if(self.errorStatus or p.termino is None):
 			return
 		else:
-			p.termino.append(p.simbolosProd, p.factor)
-			return p.termino
+			p[0].append(p[1], p[2])
+			return p[0]
 	
 	@_('factor')
 	def termino(self, p):
 		if(self.errorStatus):
 			return
 		else:
-			return	Termino([None],[p.factor])
+			return Termino([None],[p.factor])
 	
-	'''
-	simbolosProd : "*"
-	|	SLASH
-	|	"DIV"
-	|	"MOD"
-	;
-	'''
-	@_('"*"',
-	'"/"',
-	'DIV',
-	'MOD')
-	def simbolosProd(self, p):
-		if(self.errorStatus):
-			return
-		else:
-			return p[0]
+
 		
 	'''
 	expresion : expresion "+" termino
@@ -1766,25 +1751,6 @@ if __name__ == '__main__':
 	#parse(file).pprint()
 	p=parse(file)
 	
-	#función que palana el arbol y de ese arbol aplanado se le da a cada nodo su hijo según su depth
-	
-	#proceso para tomar el arbl aplanado y asignarle su grupo, o bien lista de hijos
-	#arbol=flatten(p)
-	
-	# for enum, i in enumerate(arbol):
-		# #print(i)
-		# for j in (arbol[enum+1:]):
-			# if(j[0]==i[0]):
-				# break
-			# else:
-				# if(j[0]==i[0]+1):
-					# i[1].hijos.append(j[1])
-					# #print(i[1].hijos)
-	
-	
-	
-	
-		
 	dot=DotCode()
 	dot.visit(p)
 	print(dot.__repr__)
