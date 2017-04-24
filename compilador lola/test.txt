@@ -1,12 +1,14 @@
 MODULE Adder;
 
+
 TYPE Cell; (* Composite Type *)
   IN x,y,ci:BIT; (* input signals *)
   OUT z,co:BIT; (* output signals *) 
 BEGIN
   z:=x-y-ci;
-  co:=x*y+x*ci+y*ci+as;
+  co:=x*y+x*ci+y*ci;
 END Cell;
+
 
 CONST N:=8;
 IN X,Y:[N]BIT; ci:BIT; (* input signals *)
@@ -21,5 +23,4 @@ BEGIN
     Z.i:=S.i.z;
 END;
   co:=S.7.co;
-  co:=x*y+x*ci+y*ci+as;
 END Adder.
