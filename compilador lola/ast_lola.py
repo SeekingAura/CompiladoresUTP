@@ -23,7 +23,7 @@ class AST(object):
 	'''
 	_fields = []
 	def __init__(self, *args, **kwargs):
-		self.hijos=[]
+		self.tipo=None
 		assert len(args) == len(self._fields)
 		for name,value in zip(self._fields,args):
 			setattr(self,name,value)
@@ -108,7 +108,7 @@ class DeclaracionConstante(AST):
 	_fields = ['ID', 'expresion']
 		
 class DeclaracionVariable(AST):
-	_fields = ['listaId', 'tipo']
+	_fields = ['listaId', 'tipos']
 
 @validate_fields(idsListaId = list)
 class ListaId(AST):
