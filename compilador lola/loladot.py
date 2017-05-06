@@ -45,6 +45,7 @@ class DotCode(ast.NodeVisitor):
 		self.typePortsIn=[]
 		self.typePortsInOut=[]
 		self.typePortsOut=[]
+		self.typePortsVar=[]
 		self.typeConst=[]
 		
 		
@@ -189,7 +190,7 @@ class DotCode(ast.NodeVisitor):
 		self.typePortsInOut=[]
 		self.typePortsOut=[]
 		self.typeConst=[]
-		
+		self.typePortsVar=[]
 		
 		self.moduleTypes=[]
 		self.modulePortsIn=[]
@@ -225,6 +226,7 @@ class DotCode(ast.NodeVisitor):
 		self.typePortsIn=[]
 		self.typePortsInOut=[]
 		self.typePortsOut=[]
+		self.typePortsVar=[]
 		self.typeConst=[]
 		self.VisitandoModulo=False
 		for field in getattr(node, "_fields"):
@@ -234,7 +236,7 @@ class DotCode(ast.NodeVisitor):
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 			elif(value is not None):#ramas...
 				if(field=="ID0"):
-					self.moduleTypes.append([value, None, None, None, None])
+					self.moduleTypes.append([value, None, None, None, None, None])
 				targetHijo = self.new_node(None, value, 'diamond')
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
@@ -242,11 +244,15 @@ class DotCode(ast.NodeVisitor):
 		self.moduleTypes[len(self.moduleTypes)-1][1]=self.typePortsIn
 		self.moduleTypes[len(self.moduleTypes)-1][2]=self.typePortsInOut
 		self.moduleTypes[len(self.moduleTypes)-1][3]=self.typePortsOut
-		self.moduleTypes[len(self.moduleTypes)-1][4]=self.typeConst
+		self.moduleTypes[len(self.moduleTypes)-1][4]=self.typePortsVar
+		self.moduleTypes[len(self.moduleTypes)-1][5]=self.typeConst
+		
 		self.typePortsIn=[]
 		self.typePortsInOut=[]
 		self.typePortsOut=[]
+		self.typePortsVar=[]
 		self.typeConst=[]
+		
 		self.stack.append(target)
 		
 	def visit_DeclaracionConstanteCONST(self, node):
@@ -427,6 +433,7 @@ class DotCode(ast.NodeVisitor):
 		
 		
 	def visit_Tipo(self, node):
+		target = self.new_node(node)
 		if(self.VisitandoModulo):
 			
 			if(self.PortsIn):
@@ -451,6 +458,9 @@ class DotCode(ast.NodeVisitor):
 			if(self.PortsOut):
 				node.tipo="TYPE-PortsOUT"
 				target = self.new_node(node, shape='octagon', color='pink')
+			if(self.PortsVar):
+				node.tipo="TYPE-PortsVar"
+				target = self.new_node(node, shape='octagon', color='violet')
 		
 		self.dot.add_node(target)
 		
@@ -466,6 +476,7 @@ class DotCode(ast.NodeVisitor):
 	
 	
 	def visit_TipoExpresionesR(self, node):
+		target = self.new_node(node)
 		if(self.VisitandoModulo):
 			
 			if(self.PortsIn):
@@ -490,6 +501,9 @@ class DotCode(ast.NodeVisitor):
 			if(self.PortsOut):
 				node.tipo="TYPE-PortsOUT"
 				target = self.new_node(node, shape='octagon', color='pink')
+			if(self.PortsVar):
+				node.tipo="TYPE-PortsVar"
+				target = self.new_node(node, shape='octagon', color='violet')
 		
 		self.dot.add_node(target)
 		for field in getattr(node, "_fields"):
@@ -541,6 +555,14 @@ class DotCode(ast.NodeVisitor):
 									for resize in self.PortsSize:
 										Ports[1].append(resize)
 								Ports.append("BIT")
+					if(self.PortsVar):
+						for Ports in self.typePortsVar:
+							if(Ports[1] is None):
+								Ports[1]=[self.PortsSize[0]]
+								if(len(self.PortsSize)>1):
+									for resize in self.PortsSize:
+										Ports[1].append(resize)
+								Ports.append("BIT")
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 				setup=True
 		if(not setup):
@@ -560,6 +582,11 @@ class DotCode(ast.NodeVisitor):
 							Ports.append("BIT")
 				if(self.PortsOut):
 					for Ports in self.typePortsOut:
+						if(Ports[1] is None):
+							Ports[1]=[1]
+							Ports.append("BIT")
+				if(self.PortsVar):
+					for Ports in self.typePortsVar:
 						if(Ports[1] is None):
 							Ports[1]=[1]
 							Ports.append("BIT")
@@ -604,6 +631,14 @@ class DotCode(ast.NodeVisitor):
 									for resize in self.PortsSize:
 										Ports[1].append(resize)
 								Ports.append("NOTVALUE")
+					if(self.PortsVar):
+						for Ports in self.typePortsVar:
+							if(Ports[1] is None):
+								Ports[1]=[self.PortsSize[0]]
+								if(len(self.PortsSize)>1):
+									for resize in self.PortsSize:
+										Ports[1].append(resize)
+								Ports.append("NOTVALUE")
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 				setup=True
 			elif(value is not None):
@@ -627,6 +662,11 @@ class DotCode(ast.NodeVisitor):
 								if(Ports[1] is None):
 									Ports[1]=[1]
 									Ports.append("NOTVALUE")
+						if(self.PortsVar):
+							for Ports in self.typePortsVar:
+								if(Ports[1] is None):
+									Ports[1]=[1]
+									Ports.append("NOTVALUE")
 				if(self.PortsIn):
 					for Ports in self.typePortsIn:
 						if(Ports[len(Ports)-1]=="NOTVALUE"):
@@ -638,6 +678,10 @@ class DotCode(ast.NodeVisitor):
 							Ports[len(Ports)-1]==value
 				if(self.PortsOut):
 					for Ports in self.typePortsOut:
+						if(Ports[len(Ports)-1]=="NOTVALUE"):
+							Ports[len(Ports)-1]==value
+				if(self.PortsVar):
+					for Ports in self.typePortsVar:
 						if(Ports[len(Ports)-1]=="NOTVALUE"):
 							Ports[len(Ports)-1]==value
 				else:
@@ -654,6 +698,10 @@ class DotCode(ast.NodeVisitor):
 						for Ports in self.typePortsOut:
 							if(Ports[len(Ports)-1]=="NOTVALUE"):
 								Ports[len(Ports)-1]==value
+					if(self.PortsVar):
+						for Ports in self.typePortsVar:
+							if(Ports[len(Ports)-1]=="NOTVALUE"):
+								Ports[len(Ports)-1]==value
 		
 		
 		
@@ -661,6 +709,7 @@ class DotCode(ast.NodeVisitor):
 		self.stack.append(target)
 	
 	def visit_TipoSimpleBasico(self, node):
+		target = self.new_node(node)
 		if(self.VisitandoModulo):
 			
 			if(self.PortsIn):
@@ -685,11 +734,15 @@ class DotCode(ast.NodeVisitor):
 			if(self.PortsOut):
 				node.tipo="TYPE-PortsOUT"
 				target = self.new_node(node, shape='octagon', color='pink')
+			if(self.PortsVar):
+				node.tipo="TYPE-PortsVAR"
+				target = self.new_node(node, shape='octagon', color='violet')
 		
 		self.dot.add_node(target)
 		for field in getattr(node, "_fields"):
 			value = getattr(node, field, None)
 			if(value is not None):#ramas...
+				targetHijo = self.new_node(None, label=value)
 				if(not self.VisitandoModulo):
 					if(self.PortsIn):
 						for Ports in self.typePortsIn:
@@ -717,6 +770,14 @@ class DotCode(ast.NodeVisitor):
 									Ports[1]=self.PortsSize
 								Ports.append(value)
 						targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsOUT", shape='hexagon', color='pink')
+					if(self.PortsVar):
+						for Ports in self.typePortsVar:
+							if(Ports[1] is None):
+								Ports[1]=self.PortsSize
+								for resize in self.PortsSize:
+									Ports[1]=self.PortsSize
+								Ports.append(value)
+						targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsVar", shape='hexagon', color='violet')
 				elif(self.VisitandoModulo):
 					
 					if(self.PortsIn):
@@ -744,7 +805,14 @@ class DotCode(ast.NodeVisitor):
 									Ports[1]=self.PortsSize
 								Ports.append(value)
 						targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsOUT", shape='hexagon', color='pink')
-				
+					if(self.PortsVar):
+						for Ports in self.modulePortsVar:
+							if(Ports[1] is None):
+								Ports[1]=self.PortsSize
+								for resize in self.PortsSize:
+									Ports[1]=self.PortsSize
+								Ports.append(value)
+						targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsVar", shape='hexagon', color='violet')
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 		self.stack.append(target)
@@ -756,6 +824,7 @@ class DotCode(ast.NodeVisitor):
 			value = getattr(node, field, None)
 			if(value is not None):#ramas...
 				if(self.PortsVar):
+					existValue=False
 					for Ports in self.modulePortsVar:
 						if(Ports[1] is None):
 							
@@ -768,12 +837,19 @@ class DotCode(ast.NodeVisitor):
 							for findPort in self.moduleTypes:
 								if(findPort[0]==value):
 									Ports.append(findPort)
+									existValue=True
+									targetHijo = self.new_node(None, str(value)+" | "+"MODULE-TYPES", shape='hexagon', color='violet')
 									break
-							
+							if(not existValue):
+								targetHijo = self.new_node(None, value, 'diamond')
+								print("el type {} no fue declarado".format(value))
+								
 							#print("valor ports var:",Ports)
 							
+				else:
+					print("solo se pueden declar de tipos de Types declarados en VAR")
+					targetHijo = self.new_node(None, value, 'diamond')
 				
-				targetHijo = self.new_node(None, value, 'diamond')
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 		self.stack.append(target)
@@ -897,14 +973,17 @@ class DotCode(ast.NodeVisitor):
 		else:
 			target = self.new_node(node)
 		self.dot.add_node(target)
-		
 		for field in getattr(node, "_fields"):
 			value = getattr(node, field, None)
 			if(value is not None):
+				targetHijo = self.new_node(None, value)
 				if(self.DeclarandoConstante):
-					targetHijo = self.new_node(None, str(value)+" | "+node.tipo+" | INTEGER",shape='hexagon', color='yellow')
-				else:
-					targetHijo = self.new_node(None, value)
+					targetHijo = self.new_node(None, str(value)+" | "+node.tipo+"-INTEGER",shape='hexagon', color='yellow')
+				elif(isinstance(value, int)):
+					if(self.VisitandoModulo):
+						targetHijo = self.new_node(None, str(value)+" | "+"MODULE-INTEGER",shape='hexagon', color='yellow')
+					else:
+						targetHijo = self.new_node(None, str(value)+" | "+"TYPE-INTEGER",shape='hexagon', color='yellow')
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 				
@@ -918,14 +997,14 @@ class DotCode(ast.NodeVisitor):
 		
 		for field in getattr(node, "_fields"):
 			value = getattr(node, field, None)
+			if(field=="ID"):
+				self.selectorValue=value
 			if isinstance(value, ast.AST):
 				self.visit(value)
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 			elif(value is not None):#ramas...
 				targetHijo = self.new_node(None, value, 'diamond')
-				self.dot.add_node(targetHijo)
-				self.dot.add_edge(pgv.Edge(target, targetHijo))
-				self.stack.append(target)
+				
 				existValue=False
 				if(not self.VisitandoModulo):
 					self.usingConst=None
@@ -933,13 +1012,14 @@ class DotCode(ast.NodeVisitor):
 						if(valuei[0]==value):
 							self.usingConst=valuei[1]
 							existValue=True
+							targetHijo = self.new_node(None, label=value+" | "+"TYPE-CONST", shape='hexagon', color='yellow')
 					
 					if(self.StartAssing):
 						for Ports in self.typePortsIn:
 							if(Ports[0]==value):
 								self.selectorValue=value
 								existValue=True
-								#print("comparando",Ports[len(Ports)-1],self.dataType)
+								targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsIN", shape='hexagon', color='lightgreen')
 								if(Ports[len(Ports)-1]!=self.dataType):
 									
 									print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
@@ -948,34 +1028,48 @@ class DotCode(ast.NodeVisitor):
 							if(Ports[0]==value):
 								selectorValue=value
 								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsINOUT", shape='hexagon', color='orange')
 								if(Ports[len(Ports)-1]!=self.dataType):
 									print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
 						for Ports in self.typePortsOut:
 							if(Ports[0]==value):
 								selectorValue=value
 								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsOUT", shape='hexagon', color='pink')
 								print("Error el puerto de salida debe ser resultado de una asignación, valor", value)
 								if(Ports[len(Ports)-1]!=self.dataType):
 									print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
+						for Ports in self.typePortsVar:
+							if(Ports[0]==value):
+								selectorValue=value
+								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"TYPE-PortsVAR", shape='hexagon', color='violet')
+								#print("Error el puerto de salida debe ser resultado de una asignación, valor", value)
+								#if(Ports[len(Ports)-1]!=self.dataType):
+									#print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
 						
 							
 					if(not existValue):
 						print("{} no ha sido declarado".format(value))
+						targetHijo = self.new_node(None, value, 'diamond')
 				elif(self.VisitandoModulo):#verificar esto
 					self.usingConst=None
 					for valuei in self.moduleConst:
 						if(valuei[0]==value):
 							self.usingConst=valuei[1]
 							existValue=True
+							targetHijo = self.new_node(None, label=value+" | "+"MODULE-CONST", shape='hexagon', color='yellow')
 					for valuei in self.ForValues:
 						if(valuei[0]==value):
 							existValue=True
+							
+							targetHijo = self.new_node(None, label=value+" | "+"MODULE-FOR-VALUE", shape='hexagon', color='yellow')
 					if(self.StartAssing):
 						for Ports in self.modulePortsIn:
 							if(Ports[0]==value):
 								self.selectorValue=value
 								existValue=True
-								#print("aqui comparando", Ports[len(Ports)-1],self.dataType)
+								targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsIN", shape='hexagon', color='lightgreen')
 								if(self.evaluateVAR is not None):
 									if(len(self.evaluateVAR[1])<self.varpos):
 										self.dataType=self.evaluateVAR[1][self.varpos][len(self.evaluateVAR[1][self.varpos])-1]
@@ -990,12 +1084,14 @@ class DotCode(ast.NodeVisitor):
 							if(Ports[0]==value):
 								selectorValue=value
 								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsINOUT", shape='hexagon', color='orange')
 								if(Ports[len(Ports)-1]!=self.dataType):
 									print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
 						for Ports in self.modulePortsOut:
 							if(Ports[0]==value):
 								selectorValue=value
 								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsOUT", shape='hexagon', color='pink')
 								print("Error el puerto de salida debe ser resultado de una asignación, valor", value)
 								if(Ports[len(Ports)-1]!=self.dataType):
 									print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
@@ -1004,13 +1100,18 @@ class DotCode(ast.NodeVisitor):
 							if(Ports[0]==value):
 								selectorValue=value
 								existValue=True
+								targetHijo = self.new_node(None, label=value+" | "+"MODULE-PortsVAR", shape='hexagon', color='violet')
 								#if(Ports[len(Ports)-1]!=self.dataType):
 									#print("Error en uso de variables, los tipos de dato no coinciden con el valor", value)
 						
 						
 					if(not existValue):
 						print("{} no ha sido declarado".format(value))
-				self.stack.append(target)
+						targetHijo = self.new_node(None, value, 'diamond')
+				#print(targetHijo)
+				self.dot.add_node(targetHijo)
+				self.dot.add_edge(pgv.Edge(target, targetHijo))
+				
 				
 		
 		self.stack.append(target)
@@ -1018,6 +1119,7 @@ class DotCode(ast.NodeVisitor):
 		
 	
 	def visit_ListaId(self, node):
+		target = self.new_node(node)
 		if(self.VisitandoModulo):
 			
 			if(self.PortsIn):
@@ -1042,6 +1144,9 @@ class DotCode(ast.NodeVisitor):
 			if(self.PortsOut):
 				node.tipo="TYPE-PortsOUT"
 				target = self.new_node(node, shape='octagon', color='pink')
+			if(self.PortsVar):
+				node.tipo="TYPE-PortsVar"
+				target = self.new_node(node, shape='octagon', color='violet')
 		
 		
 		self.dot.add_node(target)
@@ -1053,7 +1158,7 @@ class DotCode(ast.NodeVisitor):
 						self.visit(item)
 						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 					elif(item is not None):#caso de ramas
-						
+						targetHijo = self.new_node(None, item)
 						if(not self.VisitandoModulo):
 							#print("agrege typesIDs como ", item)
 							existValue=False
@@ -1086,6 +1191,13 @@ class DotCode(ast.NodeVisitor):
 									existValue=True
 									pos=enum
 									break
+							existValue=False
+							pos=None
+							for enum, Ports in enumerate(self.typePortsVar):
+								if(Ports[0]==item):
+									existValue=True
+									pos=enum
+									break
 							if(existValue):
 								del self.typePortsOut[pos];
 								print("peligro redeclarando valor {} que estaba en puertos de entrada de TYPE".format(item))
@@ -1098,7 +1210,9 @@ class DotCode(ast.NodeVisitor):
 							if(self.PortsOut):
 								self.typePortsOut.append([item, None])
 								targetHijo = self.new_node(None, item+" | TYPE-PortsOUT", shape='hexagon', color='pink')
-							
+							if(self.PortsVar):
+								self.typePortsVar.append([item, None])
+								targetHijo = self.new_node(None, item+" | TYPE-PortsVAR", shape='hexagon', color='violet')
 							
 							
 							#print(self.typesIDs)
@@ -1172,7 +1286,13 @@ class DotCode(ast.NodeVisitor):
 		self.stack.append(target)
 	
 	def visit_AsignacionUnidad(self, node):
-		target = self.new_node(node)
+		if(self.VisitandoModulo):
+			node.tipo="MODULE-Sentencias"
+		else:
+			node.tipo="TYPE-Sentencias"
+			print("No es posible aplicar asignación de unidad en TYPE")
+		
+		target = self.new_node(node, shape='parallelogram', color='lightblue')
 		self.dot.add_node(target)
 		self.varpos=0
 		for field in getattr(node, "_fields"):
@@ -1181,20 +1301,23 @@ class DotCode(ast.NodeVisitor):
 				self.visit(value)
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 			elif(value is not None):#ramas...
+				targetHijo = self.new_node(None, value, 'diamond')
 				if(field=="ID"):
+					
 					self.selectorValue=value
 					existValue=False
 					for Ports in self.modulePortsVar:
 						if(Ports[0]==value):
 							self.evaluateVAR=Ports
 							existValue=True
+							targetHijo = self.new_node(None, value+" | "+"MODULE-PortsVAR", shape='hexagon', color='violet')
 							break
 					if(not existValue):
 						print("el valor {} no existe como VAR o no está declarado")
 				
 				#self.dataType
 				
-				targetHijo = self.new_node(None, value, 'diamond')
+				
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 		self.evaluateVAR=None
@@ -1244,16 +1367,47 @@ class DotCode(ast.NodeVisitor):
 				tempvalue=self.visit(value)
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 			elif(value is not None):#ramas...
+				targetHijo = self.new_node(None, value, 'diamond')
+				if isinstance(value, int):
+					if(self.VisitandoModulo):
+						targetHijo = self.new_node(None, str(value)+" | "+"MODULE-INTEGER", shape='hexagon', color='yellow')
+					else:
+						targetHijo = self.new_node(None, str(value)+" | "+"TYPE-INTEGER", shape='hexagon', color='yellow')
+				for valuei in self.ForValues:
+					if(valuei[0]==value):
+						if(self.VisitandoModulo):
+							targetHijo = self.new_node(None, str(value)+" | "+"MODULE-FOR-VALUE", shape='hexagon', color='yellow')
+						else:
+							targetHijo = self.new_node(None, str(value)+" | "+"TYPE-FOR-VALUE", shape='hexagon', color='yellow')
+						
 				if(self.StartAssing):
 					for valuei in self.modulePortsVar:
+						#print("selectorr",value)
+						#print("valuei",valuei[0], self.selectorValue)
 						if(valuei[0]==self.selectorValue):
-							#print(valuei)
-							for item in valuei[2][1]:
-								#print("algo",item)
+							#print("valuei", valuei[2][1])
+							for item in valuei[2][1]:#entrada
+								#print("algo",item[0], value)
 								if(item[0]==value):
+									#print("otro",value)
+									targetHijo = self.new_node(None, value+" | "+"MODULE-TYPE-PortsIN", shape='hexagon', color='lightgreen')
 									if(item[len(item)-1]!=self.dataType):
 										print("no coinciden los datos del VAR {} puerto {}".format(self.selectorValue, value))
-				targetHijo = self.new_node(None, value, 'diamond')
+							for item in valuei[2][2]:#entradasalida
+								#print("algo",item[0], value)
+								if(item[0]==value):
+									#print("otro",value)
+									targetHijo = self.new_node(None, value+" | "+"MODULE-TYPE-PortsINOUT", shape='hexagon', color='orange')
+									if(item[len(item)-1]!=self.dataType):
+										print("no coinciden los datos del VAR {} puerto {}".format(self.selectorValue, value))
+						for item in valuei[2][3]:#entradasalida
+								#print("algo",item[0], value)
+								if(item[0]==value):
+									#print("otro",value)
+									targetHijo = self.new_node(None, value+" | "+"MODULE-TYPE-PortsOUT", shape='hexagon', color='pink')
+									if(item[len(item)-1]!=self.dataType):
+										print("no coinciden los datos del VAR {} puerto {}".format(self.selectorValue, value))
+				
 				self.dot.add_node(targetHijo)
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 				tempvalue=value
@@ -1278,7 +1432,11 @@ class DotCode(ast.NodeVisitor):
 		self.stack.append(target)
 		
 	def visit_Asignacion(self, node):
-		target = self.new_node(node, shape='parallelogram')
+		if(self.VisitandoModulo):
+			node.tipo="MODULE-Sentencias"
+		else:
+			node.tipo="TYPE-Sentencias"
+		target = self.new_node(node, shape='parallelogram', color='lightblue')
 		self.dot.add_node(target)
 		self.StartAssing=True
 		for field in getattr(node, "_fields"):
