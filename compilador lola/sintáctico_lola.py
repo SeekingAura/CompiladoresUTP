@@ -1753,7 +1753,7 @@ if __name__ == '__main__':
 	
 	dot=DotCode()
 	dot.visit(p)
-	print(dot.__repr__)
+	#print(dot.__repr__)
 	#top = parse(file)
 	#for item in flatten(top):
 	#	print(item)

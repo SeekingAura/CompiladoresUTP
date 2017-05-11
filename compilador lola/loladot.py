@@ -110,6 +110,7 @@ class DotCode(ast.NodeVisitor):
 						self.visit(item)
 						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 		self.stack.append(target)
+		"""
 		print("\n\nDiccionario\n")
 		for dic in self.diccionarios:
 			for enum, dicc in enumerate(dic):
@@ -157,6 +158,7 @@ class DotCode(ast.NodeVisitor):
 					print("CONST's:")
 					for item in dicc:
 						print(item)
+		"""
 	def visit_Modulo(self, node):
 		node.tipo="LOLA-MODULE"
 		target = self.new_node(node, None, 'circle', 'white')
