@@ -165,8 +165,7 @@ operaciones:
 	('uneg_type',source,target) # target = -source
 	('print_type',source) # Print value of source
 '''
-import lolaast
-import lolablock
+import ast_lola as ast
 from collections import defaultdict
 
 # PASO 1: Mapee los nombres de los operadores símbolos tales 
@@ -190,7 +189,7 @@ unary_ops = {
 # secuencia de instrucciones SSA en forma de tuplas. Utilice la
 # descripción anterior de los op-codes permitidos como una guía.
 
-class GenerateCode(mgoast.NodeVisitor):
+class GenerateCode(ast.NodeVisitor):
 	'''
 	Clase Node visitor que crea secuencia de instrucciones codificadas
 	3-direcciones.
@@ -206,13 +205,17 @@ class GenerateCode(mgoast.NodeVisitor):
 
 		# Una lista de declaraciones externas (y tipos)
 		self.externs = []
-
+		self.stackBuild=[]
+		self.stackExprOp=[]
+		self.stackTermOp=[]
+		self.stackValues=[]
+		self.valueVisit=0
 	def new_temp(self, typeobj):
 		'''
 		Crea una variable temporal del tipo dado
 		'''
-		name = "__%s_%d" % (typeobj.name, self.versions[typeobj.name])
-		self.versions[typeobj.name] += 1
+		name = "__%s_%d" % (typeobj, self.versions[typeobj])
+		self.versions[typeobj] += 1
 		return name
 
 	# Debe implementar métodos visit_Nodename para todos los otros 
@@ -221,150 +224,392 @@ class GenerateCode(mgoast.NodeVisitor):
 
 	# Siguen algunos métodos de muestra. Deberá de ajustarlos dependiendo
 	# de los nombres de los nodos AST que haya definido.
-
-	def visit_Literal(self, node):
+	
+	def visit_Modulo(self, node):
 		# Crea un nuevo nombre de variable temporal
-		target = self.new_temp(node.type)
+		target = self.new_temp(node.tipo)
 
 		# Cree opcode SSA y agregelo a lista de instrucciones generadas
-		inst = ('literal_'+node.type.name, node.value, target)
+		inst = ('Build_'+node.tipo, node.ID1, target)
 		self.code.append(inst)
 
 		# Grabe nombre de variable temporal donde el valor fue colocado
 		node.gen_location = target
+		#print("location", target)
+		
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			#elif(value is not None):#ramas...
 
-	def visit_BinaryOp(self, node):
-		# Visite las expresiones izquierda y derecha
-		self.visit(node.left)
-		self.visit(node.right)
+			
+		
+	
+	def visit_DeclaracionTipo(self, node):
+		#print("generico")
+		# Crea un nuevo nombre de variable temporal
+		target = self.new_temp(node.tipo)
 
-		# Cree una nueva temporal para guardar el resultado
-		target = self.new_temp(node.type)
-
-		# Cree el opcode y agregelo a la lista
-		opcode = binary_ops[node.op] + "_" + node.left.type.name
-		inst = (opcode, node.left.gen_location, node.right.gen_location, target)
+		# Cree opcode SSA y agregelo a lista de instrucciones generadas
+		inst = ('Build_'+node.tipo, node.ID1, target)
 		self.code.append(inst)
 
-		# Almacene la localización del resultado en el node
+		# Grabe nombre de variable temporal donde el valor fue colocado
 		node.gen_location = target
-
-	def visit_PrintStatement(self, node):
-		# Visite la expresión impresa
-		self.visit(node.expr)
-
-		# Cree el opcode y agregelo a la lista
-		inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-		self.code.append(inst)
-
-	def visit_Program(self,node):
-		self.visit(node.program)
-
-	#def visit_Statements(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	#def visit_Statement(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	def visit_ConstDeclaration(self,node):
-		# localice en memoria
-		inst = ('alloc_'+node.type.name, node.id)
-		self.code.append(inst)
-
-		# almacene el val inicial
-		self.visit(node.value)
-		inst = ('store_'+node.type.name,
-		node.value.gen_location, node.id)
-		self.code.append(inst)
-
-	def visit_VarDeclaration(self,node):
-		# localice en memoria
-		inst = ('alloc_'+node.type.name, node.id)
-		self.code.append(inst)
-		# almacene pot. val inicial
-		if node.value:
-			self.visit(node.value)
-			inst = ('store_'+node.type.name, node.value.gen_location, node.id)
+		
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			#elif(value is not None):#ramas...
+			
+		
+		
+	def visit_ListaId(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			#elif(value is not None):#ramas...
+		# Crea un nuevo nombre de variable temporal
+		
+		node.gen_location = []
+		for IDs in node.idsListaId:
+			target = self.new_temp(node.tipo)
+			# Cree opcode SSA y agregelo a lista de instrucciones generadas
+			inst = ('BuildPort_'+node.tipo, IDs, target)
 			self.code.append(inst)
 
-	def visit_LoadLocation(self,node):
-		target = self.new_temp(node.type)
-		inst = ('load_'+node.type.name, node.name, target)
+			# Grabe nombre de variable temporal donde el valor fue colocado
+			node.gen_location.append(target)
+			
+			self.stackBuild.append([IDs, target])
+		
+	def visit_TipoFormal(self, node):
+		node.gen_location = []
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				#print(value)
+				self.visit(value)
+			elif value is None:
+				
+				for value in self.stackBuild:
+					target = self.new_temp("SET-SIZE")
+					# Cree opcode SSA y agregelo a lista de instrucciones generadas
+					inst = ('SetPortSize_'+value[1][2:-2], [value[1][2:], '1'], target)
+					self.code.append(inst)
+
+					# Grabe nombre de variable temporal donde el valor fue colocado
+					node.gen_location.append(target)
+		node.gen_location = []
+		for value in self.stackBuild:
+			target = self.new_temp("SET-TYPE")
+			# Cree opcode SSA y agregelo a lista de instrucciones generadas
+			inst = ('SetPortType_'+value[1][2:-2], [value[1][2:], 'BIT'], target)
+			self.code.append(inst)
+
+			# Grabe nombre de variable temporal donde el valor fue colocado
+			node.gen_location.append(target)
+			
+			#elif(value is not None):#ramas...
+		self.stackBuild=[]
+	
+	def visit_ExpresionCorcheteOR(self, node):
+		node.gen_location = []
+		#print("pase or")
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+						for value in self.stackBuild:
+							target = self.new_temp("SET-SIZE")
+							# Cree opcode SSA y agregelo a lista de instrucciones generadas
+							inst = ('SetPortSize_'+value[1][2:-2], [value[1][2:], str(self.valueVisit)], target)
+							self.code.append(inst)
+					elif item is None:
+						for value in self.stackBuild:
+							target = self.new_temp("SET-SIZE")
+							# Cree opcode SSA y agregelo a lista de instrucciones generadas
+							inst = ('SetPortSize_'+value[1][2:-2], [value[1][2:], 'INF'], target)
+							self.code.append(inst)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+				
+
+			# Grabe nombre de variable temporal donde el valor fue colocado
+	def visit_FactorValor(self, node):
+		node.gen_location = []
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			elif value is not None:
+				#print(value)
+				self.valueVisit=value
+	def visit_FactorSelector(self, node):
+		node.gen_location = []
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			
+		self.valueVisit=node.ID
+		
+	
+	
+	def visit_Tipo(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			elif value is None:
+				for valueStack in self.stackBuild:
+					#print("yolo", value)
+					target = self.new_temp("SET-SIZE")
+					# Cree opcode SSA y agregelo a lista de instrucciones generadas
+					inst = ('SetPortSize_'+valueStack[1][2:-2], [valueStack[1][2:], "1"], target)
+					self.code.append(inst)
+	
+	def visit_TipoSimpleID(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			
+		for valueStack in self.stackBuild:
+			#print("yolo", value)
+			target = self.new_temp("SET-SIZE")
+			# Cree opcode SSA y agregelo a lista de instrucciones generadas
+			inst = ('SetPortSize_'+valueStack[1][2:-2], [valueStack[1][2:], "1"], target)
+			self.code.append(inst)
+	def visit_TipoSimpleBasico(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if value is not None:
+				for valueStack in self.stackBuild:
+					#print("yolo", value)
+					target = self.new_temp("SET-TYPE")
+					# Cree opcode SSA y agregelo a lista de instrucciones generadas
+					inst = ('SetPortType_'+valueStack[1][2:-2], [valueStack[1][2:], str(value)], target)
+					self.code.append(inst)
+				self.stackBuild=[]
+	
+	def visit_DeclaracionConstante(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, ast.AST):
+				self.visit(value)
+			elif value is not None:
+				target = self.new_temp(node.tipo)
+				# Cree opcode SSA y agregelo a lista de instrucciones generadas
+				inst = ('BuildConst_'+node.tipo, value, target)
+				self.code.append(inst)
+				#self.stackBuild.append([value, target])
+		
+		targetBefore=target[2:]
+		target = self.new_temp("SET-VALUE-CONST")
+		# Cree opcode SSA y agregelo a lista de instrucciones generadas
+		inst = ('SetValueConst_'+node.tipo, [targetBefore, self.valueVisit], target)
 		self.code.append(inst)
-		node.gen_location = target
-
-	#def visit_Extern(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	#def visit_FuncPrototype(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	#def visit_Parameters(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-	# node.gen_location = target
-
-	#def visit_ParamDecl(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	def visit_AssignmentStatement(self,node):
-		self.visit(node.value)
-
-		inst = ('store_'+node.value.type.name, node.value.gen_location, node.location)
-		self.code.append(inst)
-
-	def visit_UnaryOp(self,node):
-		self.visit(node.left)
-		target = self.new_temp(node.type)
-		opcode = unary_ops[node.op] + "_" + node.left.type.name
-		inst = (opcode, node.left.gen_location)
-		self.code.append(inst)
-		node.gen_location = target
-
-	def visit_IfStatement(self,node):
-		pass
-
-	#def visit_Group(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	#def visit_FunCall(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-	#def visit_ExprList(self,node):
-	# self.visit(node.expr)
-	# inst = ('print_'+node.expr.type.name, node.expr.gen_location)
-	# self.code.append(inst)
-
-
-# PASO 3: Pruebas
-#
-# Trate de correr este programa con el archivo de entrada 
-# Project4/Tests/good.g y vea el resultado de la secuencia de 
-# código SSA.
-#
-# bash % python mgocode.py good.g
-# ... mire la salida ...
-#
-# 
-# Salidas de ejemplo pueden encontrarse en Project4/Tests/good.out. 
-# Mientras esté codificando, podrá desear romper el código en partes
-# mas manejables.  Piense en pruebas unitarias.
-
+		
+	def visit_Asignacion(self, node):
+		self.stackExprOp=[]
+		self.stackTermOp=[]		
+		self.stackValues=[]
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, ast.AST):
+				self.visit(value)
+		op1=None
+		firstResult=None
+		op=[]
+		opunary=None
+		
+		lastResult=None
+		pos=0
+		#binary_ops
+		#print("aca", self.stackValues)
+		lenlist=len(self.stackValues)
+		listValues=self.stackValues
+		self.stackValues=iter(self.stackValues)
+		for enum, value in enumerate(self.stackValues):
+			#print("valor", value)
+			if(value=="*"):
+				op.append(value)
+			elif(op1 is None):
+				#print("yolo", value)
+				for findValue in self.code:
+					#print("checando op1", findValue[1], value)
+					if(value==findValue[1]):
+						#print("bingo", findValue[2])
+						op1=findValue[2]
+			elif(firstResult is None and value is not None):
+					for findValue in self.code:
+						if(value==findValue[1]):
+							#print("bongodo", findValue[2])
+							firstResult=findValue[2]
+			elif(value is None and len(op)>0):
+			
+				for operation in op:
+					target = self.new_temp(node.tipo+"_"+binary_ops[operation])
+					# Cree opcode SSA y agregelo a lista de instrucciones generadas
+					inst = (binary_ops[operation]+'_'+node.tipo, [op1, firstResult], target)
+					self.code.append(inst)
+					firstResult=target
+					#self.stackBuild.append([value, target])
+					try:
+						if(listValues[enum+1]!="*"):
+							nextoperation=next(self.stackValues)
+						else:
+							nextoperation=None
+					except:
+						nextoperation=None
+					if(nextoperation is not None):
+						for findValue in self.code:
+							if(value==findValue[1]):
+								op1=findValue[2]
+					elif(nextoperation is None):
+						op=[]
+						if(lastResult is None):
+							lastResult=firstResult
+						else:
+							#print("ay!")
+							if(len(self.stackExprOp)>0):
+								opunary=self.stackExprOp.pop(0)
+							target = self.new_temp(node.tipo+"_"+binary_ops[opunary])
+							# Cree opcode SSA y agregelo a lista de instrucciones generadas
+							inst = (binary_ops[opunary]+'_'+node.tipo, [lastResult, firstResult], target)
+							self.code.append(inst)
+							lastResult=target
+							
+						firstResult=None
+						op1=None
+			else:
+				#print("aqui estoy", value)
+				
+				if(len(self.stackExprOp)>0):
+					opunary=self.stackExprOp.pop(0)
+				if(lastResult is None):
+					try:
+						
+						value=next(self.stackValues)
+						for findValue in self.code:
+							if(value==findValue[1]):
+								lastResult=findValue[2]
+						temp=lastResult
+						lastResult=op1
+						op1=temp
+						#print("en otra parte", lastResult)
+					except:
+						lastResult=None
+						
+				if(opunary is not None):
+					target = self.new_temp(node.tipo+"_"+binary_ops[opunary])
+					# Cree opcode SSA y agregelo a lista de instrucciones generadas
+					inst = (binary_ops[opunary]+'_'+node.tipo, [lastResult, op1], target)
+					self.code.append(inst)
+					lastResult=target
+					#firstResult=None
+					op1=None
+		result=None
+		if(lenlist>2):
+			for findValue in self.code:
+				#print("checando op1", findValue[1], value)
+				if(node.ID==findValue[1]):
+					#print("bingo", findValue[2])
+					result=findValue[2]
+			
+			target = self.new_temp(node.tipo+"_MOV")
+			# Cree opcode SSA y agregelo a lista de instrucciones generadas
+			inst = ('mov_'+node.tipo, [self.code[len(self.code)-1][2], result], target)
+			self.code.append(inst)
+		self.stackExprOp=[]
+		self.stackTermOp=[]		
+		self.stackValues=[]
+	def visit_Expresion(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					elif(item is not None):#caso de ramas
+							self.stackExprOp.append(item)
+		
+	def visit_Termino(self, node):
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+						self.stackValues.append(self.valueVisit)
+					elif(item is not None):#caso de ramas
+							self.stackValues.append(item)
+		self.stackValues.append(None)
+		
+	def generic_visit(self, node):
+		#print("generico")
+		for field in getattr(node, "_fields"):
+			value = getattr(node, field, None)
+			if isinstance(value, list):
+				for item in value:
+					if isinstance(item, ast.AST):
+						self.visit(item)
+					#elif(item is not None):#caso de ramas
+			elif isinstance(value, ast.AST):
+				self.visit(value)
+			#elif(value is not None):#ramas...
+			
+	
+	
+	
+	
 # ---------------------------------------------------------------------
 # NO MODIFIQUE NADA DE LO DE ABAJO
 # ---------------------------------------------------------------------

@@ -2,6 +2,7 @@
 from léxico_lola import CalcLexer
 from ast_lola import *
 from loladot import *
+from lolacode import *
 class CalcParser(Parser):
 	debugfile='parser.out'#control de depuración
 	tokens = CalcLexer.tokens
@@ -48,14 +49,18 @@ class CalcParser(Parser):
 		if(self.errorStatus):
 			return
 		else:
-			return TipoSimpleIDListaExpresion(p.ID, p.listaExpresiones)
+			node=TipoSimpleIDListaExpresion(p.ID, p.listaExpresiones)
+			node.lineno=p.lineno
+			return node
 	
 	@_('ID')
 	def tipoSimple(self, p):
 		if(self.errorStatus):
 			return
 		else:
-			return TipoSimpleID(p.ID)
+			node=TipoSimpleID(p.ID)
+			node.lineno=p.lineno
+			return node
 		
 	'''
 	tipoBasico : 'BIT'
@@ -130,7 +135,7 @@ class CalcParser(Parser):
 			return
 		else:
 			p.tipoExpresionesR.append(p.expresion)
-			return p.tipoExpresiones
+			return p.tipoExpresionesR
 		
 	@_('"[" expresion "]"')
 	def tipoExpresionesR(self, p):
@@ -873,11 +878,11 @@ class CalcParser(Parser):
 	'''
 	@_('expresionCorcheteOR "[" expresionOpcional "]"')
 	def expresionCorcheteOR(self, p):
-		if(self.errorStatus or p.expresionCorcheteOR):
+		if(self.errorStatus or p.expresionCorcheteOR is None):
 			return
 		else:
 			p.expresionCorcheteOR.append(p.expresionOpcional)
-			return p.expresionOpcional
+			return p.expresionCorcheteOR
 		
 	@_('"[" expresionOpcional "]"')
 	def expresionCorcheteOR(self, p):
@@ -1722,7 +1727,7 @@ def parse(data, debug=0):
 	if parser.errorStatus:
 		print("error en codigo")
 		return None
-	print("sin errores --- arbol formado \n")
+	print("sin errores\n")
 	return p
 		
 if __name__ == '__main__':
@@ -1753,6 +1758,16 @@ if __name__ == '__main__':
 	
 	dot=DotCode()
 	dot.visit(p)
+	if(not dot.errorStatus and p is not None):
+		gen=GenerateCode()
+		gen.visit(p)
+		for enum, code in enumerate(gen.code):
+			print(enum,code)
+	else:
+		print("Se han presentado errores en los analisis anteriores")
+	
+	
+	
 	#print(dot.__repr__)
 	#top = parse(file)
 	#for item in flatten(top):

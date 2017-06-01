@@ -2,7 +2,7 @@ MODULE Adder;
 
 
 TYPE Cell; (* Composite Type *)
-  IN x,y,ci:BIT; (* input signals *)
+  IN x,y,ci:[2][][3]BIT; (* input signals *)
   OUT z,co:BIT; (* output signals *) 
 BEGIN
   z:=x-y-ci;
@@ -11,7 +11,7 @@ END Cell;
 
 
 CONST N:=8;
-IN X,Y:[N]BIT; ci:BIT; (* input signals *)
+IN X,Y:[N][2]BIT; ci:BIT; (* input signals *)
 OUT Z:[N]BIT; co:BIT; (* output signals *)
 VAR S:[N]Cell; (* composite type instances *)
 BEGIN

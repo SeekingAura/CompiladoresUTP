@@ -10,7 +10,7 @@ def get_operator_fn(op):
         '-' : operator.sub,
         '*' : operator.mul,
         '/' : operator.truediv,
-        '%' : operator.mod,
+        'MOD' : operator.mod,
         '^' : operator.xor,
         }[op]
 
@@ -25,7 +25,7 @@ class DotCode(ast.NodeVisitor):
 	
 	def __init__(self):
 		super(DotCode, self).__init__()
-		
+		self.errorStatus=False
 		# Secuencia para los nombres de nodos
 		self.id = 0
 		
@@ -160,7 +160,7 @@ class DotCode(ast.NodeVisitor):
 						print(item)
 		"""
 	def visit_Modulo(self, node):
-		node.tipo="LOLA-MODULE"
+		node.tipo="MODULE"
 		target = self.new_node(node, None, 'circle', 'white')
 		self.dot.add_node(target)
 		
@@ -176,6 +176,7 @@ class DotCode(ast.NodeVisitor):
 				if(field=="ID0"):
 					if(len(self.diccionarios)>0):
 						if(self.diccionarios[len(self.diccionarios)-1][0]==value):
+							self.errorStatus=True
 							print("error ya existe modulo", value)
 				if(field=="ID1"):
 					self.diccionarios.append([value])
@@ -294,6 +295,9 @@ class DotCode(ast.NodeVisitor):
 				self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
 			elif(value is not None):#ramas...
 				if(field=="ID" and not self.VisitandoModulo):
+					for const in self.typeConst:
+						if(value==const):
+							print("Ya ha sido declarado una constante con el nombre {}, valor {}. Linea #{}".format(const[0], const[1], node.lineno))
 					self.typeConst.append([value, None])
 				elif(field=="ID" and self.VisitandoModulo):
 					self.moduleConst.append([value, None])
@@ -531,14 +535,24 @@ class DotCode(ast.NodeVisitor):
 				self.visit(value)
 				if(not self.VisitandoModulo):
 					if(self.PortsIn):
-						for Ports in self.typePortsIn:
-							if(Ports[1] is None):
-								Ports[1]=[self.PortsSize[0]]
-								if(len(self.PortsSize)>1):
-									for resize in self.PortsSize:
-										Ports[1].append(resize)
-								Ports.append("BIT")
-								
+						if(len(self.PortsSize)>0):
+							for Ports in self.typePortsIn:
+								#print(self.PortsSize)
+								if(Ports[1] is None):
+									Ports[1]=[self.PortsSize[0]]
+									if(len(self.PortsSize)>1):
+										for resize in self.PortsSize:
+											Ports[1].append(resize)
+									Ports.append("BIT")
+						else:
+							for Ports in self.typePortsIn:
+								#print(self.PortsSize)
+								if(Ports[1] is None):
+									Ports[1]=10
+									if(len(self.PortsSize)>1):
+										for resize in self.PortsSize:
+											Ports[1].append(resize)
+									Ports.append("BIT")
 							
 					if(self.PortsInOut):
 						for Ports in self.typePortsInOut:
@@ -867,13 +881,14 @@ class DotCode(ast.NodeVisitor):
 						self.ValueOperation=None
 						self.StartOperation=False
 						resize=self.visit(item)
-						print("valor resize", resize)
+						#print("valor resize", resize)
 						if(resize is None):
 							self.PortsSize.append(-1)
 						else:
-							self.PortsSize(resize)
-						print("valor portssize ", self.PortsSize)
+							self.PortsSize.append(resize)
+						#print("valor portssize ", self.PortsSize)
 						self.dot.add_edge(pgv.Edge(target, self.stack.pop()))
+					
 		self.stack.append(target)
 	
 	def visit_ExpresionOpcional(self, node):
@@ -990,6 +1005,7 @@ class DotCode(ast.NodeVisitor):
 				self.dot.add_edge(pgv.Edge(target, targetHijo))
 				
 		self.stack.append(target)
+		#print(value)
 		return value
 		
 	

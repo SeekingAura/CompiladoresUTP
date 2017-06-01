@@ -24,6 +24,8 @@ class AST(object):
 	_fields = []
 	def __init__(self, *args, **kwargs):
 		self.tipo=None
+		self.lineno=0
+		self.gen_location=[]
 		assert len(args) == len(self._fields)
 		for name,value in zip(self._fields,args):
 			setattr(self,name,value)
